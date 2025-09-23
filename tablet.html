@@ -20,7 +20,7 @@
 
         body {
             font-family: 'Courier New', monospace;
-            background: radial-gradient(ellipse at center, #1a1a2e 0%, #000 70%);
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #000 70%) fixed;
             color: #00d4ff;
             overflow: hidden;
             display: flex;
@@ -29,6 +29,7 @@
             height: 100vh;
             position: relative;
             font-size: 16px;
+            min-height: 100vh;
         }
 
         .stars {
@@ -74,6 +75,8 @@
             border-radius: 12px;
             padding: 25px;
             box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+            position: relative;
+            z-index: 10;
         }
 
         .vault-container {
@@ -86,6 +89,8 @@
             border-radius: 12px;
             padding: 25px;
             box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+            position: relative;
+            z-index: 10;
         }
 
         .device-panel {
@@ -98,6 +103,8 @@
             border-radius: 12px;
             padding: 25px;
             box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+            position: relative;
+            z-index: 10;
         }
 
         .login-title {

@@ -493,37 +493,7 @@ function copyNetworkLink() {
     }
 }
 
-function generateQR() {
-    const mobileLink = document.getElementById('mobileLink');
-    const mobileLinkText = mobileLink ? mobileLink.textContent : null;
-    
-    if (mobileLinkText && mobileLinkText !== 'Generating...' && mobileLinkText !== 'Network IP not available') {
-        const qrCode = document.getElementById('qrCode');
-        qrCode.innerHTML = `
-            ███████ █ █ ███████<br>
-            █     █ ███ █     █<br>
-            █ ███ █  █  █ ███ █<br>
-            █ ███ █ █ █ █ ███ █<br>
-            █ ███ ██ ███ ███ █<br>
-            █     █  █ █  █     █<br>
-            ███████ █ █ ███████<br>
-                ██ ███<br>
-            █ ██ ███  ██ ██<br>
-            ██  █ █ ███ █ ██<br>
-            █ ███  ██ ████ █<br>
-            ███████  █ █ █ █<br>
-            █     █ ██████ █<br>
-            █ ███ ██ █  ████<br>
-            █ ███ █ ███ █ █ █<br>
-            █ ███ ███ ██████<br>
-            █     █  ██ █ █ █<br>
-            ███████ █ ████ ██
-        `;
-        showNotification('QR Code generated for mobile access!');
-    } else {
-        showNotification('Please wait for mobile link to be generated');
-    }
-}
+
 
 function copyMobileLink() {
     const mobileLink = document.getElementById('mobileLink');

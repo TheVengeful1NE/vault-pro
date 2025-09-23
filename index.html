@@ -667,40 +667,7 @@
             box-shadow: 0 0 8px rgba(0, 255, 65, 0.4);
         }
 
-        .qr-section {
-            text-align: center;
-        }
 
-        .qr-label {
-            color: #888;
-            font-size: 10px;
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-        }
-
-        .qr-code {
-            width: 120px;
-            height: 120px;
-            background: rgba(255, 255, 255, 0.95);
-            border: 2px solid #00d4ff;
-            border-radius: 6px;
-            margin: 0 auto 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: monospace;
-            font-size: 6px;
-            line-height: 1;
-            color: #000;
-            overflow: hidden;
-        }
-
-        .qr-placeholder {
-            color: #666;
-            font-size: 10px;
-            text-align: center;
-            line-height: 1.2;
-        }
 
         .device-list {
             display: flex;
@@ -1313,7 +1280,7 @@
         
         <div class="device-content">
             <div class="device-section">
-                <div class="section-title">🔗 ACCESS LINKS</div>
+                <div class="section-title">🔗 MOBILE ACCESS</div>
                 <div class="link-generator">
                     <div class="link-info">
                         <div class="link-label">CURRENT SERVER ADDRESS:</div>
@@ -1327,13 +1294,7 @@
                         <button class="copy-btn" onclick="copyNetworkLink()">COPY NETWORK LINK</button>
                     </div>
                     
-                    <div class="qr-section">
-                        <div class="qr-label">QR CODE FOR MOBILE ACCESS:</div>
-                        <div class="qr-code" id="qrCode">
-                            <div class="qr-placeholder">📱<br>QR CODE<br>LOADING...</div>
-                        </div>
-                        <button class="generate-qr-btn" onclick="generateQR()">GENERATE QR CODE</button>
-                    </div>
+
                 </div>
             </div>
             

@@ -123,20 +123,10 @@ app.delete('/api/items/:id', (req, res) => {
 
 // Get network information
 app.get('/api/network-info', (req, res) => {
-    const os = require('os');
-    const networkInterfaces = os.networkInterfaces();
-    let networkIP = null;
-    
-    for (const interfaceName in networkInterfaces) {
-        const addresses = networkInterfaces[interfaceName];
-        for (const address of addresses) {
-            if (address.family === 'IPv4' && !address.internal) {
-                networkIP = address.address;
-                break;
-            }
-        }
-        if (networkIP) break;
-    }
+    // For cloud deployment, return the host URL
+    const host = req.get('host');
+    const protocol = req.get('x-forwarded-proto') || 'http';
+    const networkIP = `${protocol}://${host}`;
     
     res.json({ networkIP });
 });

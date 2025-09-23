@@ -145,12 +145,24 @@ app.post('/api/device-connect', (req, res) => {
     if (deviceInfo.userAgent) {
         const ua = deviceInfo.userAgent;
         
-        if (/Mobile|Android|iPhone|iPad/i.test(ua)) {
+        if (deviceInfo.isTablet || /iPad|Android(?!.*Mobile)/i.test(ua)) {
+            deviceType = 'tablet';
+            if (/iPad/i.test(ua)) {
+                deviceName = 'iPad';
+                deviceDetails = 'iOS Tablet Device';
+            } else if (/Android/i.test(ua) && !/Mobile/i.test(ua)) {
+                deviceName = 'Android Tablet';
+                deviceDetails = 'Android Tablet Device';
+            } else {
+                deviceName = 'Tablet Device';
+                deviceDetails = 'Unknown Tablet Device';
+            }
+        } else if (/Mobile|Android|iPhone|iPod/i.test(ua)) {
             deviceType = 'mobile';
             if (/iPhone/i.test(ua)) {
                 deviceName = 'iPhone';
                 deviceDetails = 'iOS Mobile Device';
-            } else if (/Android/i.test(ua)) {
+            } else if (/Android/i.test(ua) && /Mobile/i.test(ua)) {
                 deviceName = 'Android Phone';
                 deviceDetails = 'Android Mobile Device';
             } else {
@@ -191,13 +203,21 @@ app.get('/mobile', (req, res) => {
     res.sendFile(path.join(__dirname, 'mobile.html'));
 });
 
-// Auto-detect mobile and redirect
+// Serve tablet interface
+app.get('/tablet', (req, res) => {
+    res.sendFile(path.join(__dirname, 'tablet.html'));
+});
+
+// Auto-detect device type and redirect
 app.get('/', (req, res) => {
     const userAgent = req.get('User-Agent') || '';
-    const isMobile = /Mobile|Android|iPhone|iPad/i.test(userAgent);
+    const isTablet = /iPad|Android(?!.*Mobile)/i.test(userAgent);
+    const isMobile = /Mobile|Android|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent) && !isTablet;
     const forceDesktop = req.query.desktop === 'true';
     
-    if (isMobile && !forceDesktop) {
+    if (isTablet && !forceDesktop) {
+        res.redirect('/tablet');
+    } else if (isMobile && !forceDesktop) {
         res.redirect('/mobile');
     } else {
         res.sendFile(path.join(__dirname, 'index.html'));

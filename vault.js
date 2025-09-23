@@ -445,18 +445,19 @@ function getNetworkIP() {
 }
 
 function updateMobileLinks(baseURL) {
-    // Add mobile-specific link section if it doesn't exist
     const linkGenerator = document.querySelector('.link-generator');
     
-    // Generate mobile URL
-    let mobileURL;
+    // Generate URLs
+    let mobileURL, tabletURL;
     if (baseURL.includes('http')) {
         mobileURL = `${baseURL}/mobile`;
+        tabletURL = `${baseURL}/tablet`;
     } else {
         mobileURL = `http://${baseURL}:3000/mobile`;
+        tabletURL = `http://${baseURL}:3000/tablet`;
     }
     
-    // Check if mobile link section already exists
+    // Add mobile link section
     if (!document.getElementById('mobileLinkInfo')) {
         const mobileLinkSection = document.createElement('div');
         mobileLinkSection.className = 'link-info';
@@ -467,11 +468,27 @@ function updateMobileLinks(baseURL) {
             <button class="copy-btn" onclick="copyMobileLink()">COPY MOBILE LINK</button>
         `;
         
-        // Insert after network link
         const networkLinkInfo = linkGenerator.children[1];
         linkGenerator.insertBefore(mobileLinkSection, networkLinkInfo.nextSibling);
     } else {
         document.getElementById('mobileLink').textContent = mobileURL;
+    }
+    
+    // Add tablet link section
+    if (!document.getElementById('tabletLinkInfo')) {
+        const tabletLinkSection = document.createElement('div');
+        tabletLinkSection.className = 'link-info';
+        tabletLinkSection.id = 'tabletLinkInfo';
+        tabletLinkSection.innerHTML = `
+            <div class="link-label">TABLET OPTIMIZED LINK:</div>
+            <div class="link-display" id="tabletLink">${tabletURL}</div>
+            <button class="copy-btn" onclick="copyTabletLink()">COPY TABLET LINK</button>
+        `;
+        
+        const mobileLinkInfo = document.getElementById('mobileLinkInfo');
+        linkGenerator.insertBefore(tabletLinkSection, mobileLinkInfo.nextSibling);
+    } else {
+        document.getElementById('tabletLink').textContent = tabletURL;
     }
 }
 
@@ -530,6 +547,30 @@ function copyMobileLink() {
         }
     } else {
         showNotification('Mobile link not ready yet', 'error');
+    }
+}
+
+function copyTabletLink() {
+    const tabletLink = document.getElementById('tabletLink');
+    if (!tabletLink) {
+        showNotification('Tablet link not available yet', 'error');
+        return;
+    }
+    
+    const link = tabletLink.textContent;
+    if (link !== 'Generating...' && link !== 'Network IP not available' && link !== 'Error getting network IP') {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(link).then(() => {
+                showNotification('Tablet link copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                fallbackCopyTextToClipboard(link, 'Tablet link copied to clipboard!');
+            });
+        } else {
+            fallbackCopyTextToClipboard(link, 'Tablet link copied to clipboard!');
+        }
+    } else {
+        showNotification('Tablet link not ready yet', 'error');
     }
 }
 
@@ -641,14 +682,14 @@ function updateDeviceList(devices) {
         
         const connectedDevices = onlineDevices.map(device => `
             <div class="device-item">
-                <div class="device-icon">${device.type === 'mobile' ? '📱' : '💻'}</div>
+                <div class="device-icon">${device.type === 'mobile' ? '📱' : device.type === 'tablet' ? '📱' : '💻'}</div>
                 <div class="device-info">
                     <div class="device-name">${device.name}</div>
                     <div class="device-details">${device.details}</div>
                     <div class="device-status online">ONLINE</div>
                 </div>
                 <div class="device-actions">
-                    <span class="device-badge">${device.type === 'mobile' ? 'MOBILE' : 'CONNECTED'}</span>
+                    <span class="device-badge">${device.type === 'mobile' ? 'MOBILE' : device.type === 'tablet' ? 'TABLET' : 'CONNECTED'}</span>
                 </div>
             </div>
         `).join('');

@@ -4,13 +4,12 @@
   "description": "Secure vault application",
   "main": "server-cloud.js",
   "scripts": {
-    "start": "node server-cloud.js",
-    "dev": "node server-cloud.js"
+    "start": "node server-cloud.js"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "4.18.2"
   }
 }

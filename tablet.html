@@ -873,6 +873,71 @@
             gap: 15px;
             align-items: center;
         }
+
+        /* Landscape orientation optimizations */
+        @media screen and (orientation: landscape) {
+            .login-container {
+                width: 600px;
+                padding: 40px;
+            }
+            
+            .main-panel, .vault-container, .device-panel {
+                width: 98%;
+                max-width: 1600px;
+                height: 95vh;
+            }
+            
+            .vault-content {
+                grid-template-columns: 280px 1fr;
+                gap: 30px;
+            }
+            
+            .system-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 30px;
+                max-width: 1200px;
+            }
+            
+            .system-card {
+                padding: 30px;
+                min-height: 180px;
+            }
+            
+            .system-icon {
+                font-size: 50px;
+            }
+            
+            .device-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 30px;
+            }
+            
+            .item-card {
+                padding: 25px;
+            }
+            
+            .modal-content {
+                width: 700px;
+                max-width: 85%;
+            }
+        }
+
+        /* Portrait tablet optimizations */
+        @media screen and (orientation: portrait) and (min-width: 768px) {
+            .system-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 35px;
+            }
+            
+            .vault-content {
+                grid-template-columns: 320px 1fr;
+            }
+            
+            .device-content {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+        }
     </style>
 </head>
 <body>

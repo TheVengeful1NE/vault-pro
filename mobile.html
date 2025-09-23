@@ -698,6 +698,62 @@
             word-break: break-word;
             white-space: pre-wrap;
         }
+        /* Landscape orientation optimizations */
+        @media screen and (orientation: landscape) and (max-height: 600px) {
+            .mobile-container {
+                height: 100vh;
+                padding: 10px;
+            }
+            
+            .mobile-header {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .mobile-title {
+                font-size: 18px;
+            }
+            
+            .mobile-content {
+                height: calc(100vh - 80px);
+                overflow-y: auto;
+            }
+            
+            .mobile-item-card {
+                padding: 15px;
+                margin-bottom: 10px;
+            }
+            
+            .mobile-item-title {
+                font-size: 16px;
+            }
+            
+            .mobile-item-content {
+                font-size: 12px;
+                max-height: 60px;
+                overflow: hidden;
+            }
+            
+            .mobile-form-btn {
+                padding: 12px;
+                font-size: 12px;
+            }
+            
+            .mobile-modal-content {
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            
+            .mobile-login {
+                padding: 20px;
+            }
+            
+            .mobile-login-card {
+                padding: 30px;
+                width: 90%;
+                max-width: 500px;
+            }
+        }
     </style>
 </head>
 <body>

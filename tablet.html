@@ -1071,62 +1071,88 @@
         </div>
     </div>
 
-    <!-- Password Authentication Modal -->
-    <div class="password-auth-modal" id="passwordAuthModal">
-        <div class="password-auth-content">
-            <div class="password-auth-title">PASSWORD ACCESS</div>
-            <div class="password-auth-subtitle">ENTER SECURITY CODE TO ACCESS PASSWORD VAULT</div>
-            
-            <input type="password" class="password-auth-input" id="passwordAuthInput" placeholder="Enter access code...">
-            
-            <button class="password-auth-btn" onclick="authenticatePasswordAccess()">AUTHENTICATE</button>
-            <button class="password-auth-btn password-auth-cancel" onclick="closePasswordAuth()">CANCEL</button>
-            
-            <div class="password-auth-error" id="passwordAuthError">ACCESS DENIED - INVALID CREDENTIALS</div>
+    <!-- Password Authentication Panel -->
+    <div class="device-panel" id="passwordAuthPanel">
+        <div class="device-header">
+            <div class="device-title">PASSWORD ACCESS</div>
+            <div class="device-nav">
+                <button class="back-btn" onclick="closePasswordAuth()">← BACK</button>
+            </div>
+        </div>
+        
+        <div class="device-content" style="grid-template-columns: 1fr; justify-content: center; align-items: center;">
+            <div class="device-section" style="max-width: 500px; margin: 0 auto; text-align: center;">
+                <div style="font-size: 64px; margin-bottom: 20px;">🔐</div>
+                <div class="section-title">ENTER SECURITY CODE TO ACCESS PASSWORD VAULT</div>
+                
+                <div class="form-group" style="margin: 30px 0;">
+                    <input type="password" class="form-input" id="passwordAuthInput" placeholder="Enter access code..." style="text-align: center; letter-spacing: 2px; font-size: 18px; padding: 20px;">
+                </div>
+                
+                <div style="display: flex; gap: 20px; justify-content: center;">
+                    <button class="modal-btn cancel-btn" onclick="closePasswordAuth()">CANCEL</button>
+                    <button class="modal-btn save-btn" onclick="authenticatePasswordAccess()">AUTHENTICATE</button>
+                </div>
+                
+                <div id="passwordAuthError" style="color: #ff0000; font-size: 14px; margin-top: 20px; display: none;">
+                    ACCESS DENIED - INVALID CREDENTIALS
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Add/Edit Modal -->
-    <div class="modal" id="itemModal">
-        <div class="modal-content">
-            <div class="modal-title" id="modalTitle">ADD NEW ITEM</div>
-            
-            <div class="form-group">
-                <label class="form-label">CATEGORY</label>
-                <select class="form-input" id="itemCategory">
-                    <option value="documents">DOCUMENTS</option>
-                    <option value="passwords">PASSWORDS</option>
-                    <option value="notes">SECRET NOTES</option>
-                </select>
+    <!-- Item Management Panel -->
+    <div class="device-panel" id="itemPanel">
+        <div class="device-header">
+            <div class="device-title" id="itemPanelTitle">ADD NEW ITEM</div>
+            <div class="device-nav">
+                <button class="back-btn" onclick="closeItemPanel()">← BACK</button>
             </div>
-            
-            <div class="form-group">
-                <label class="form-label">TITLE</label>
-                <input type="text" class="form-input" id="itemTitle" placeholder="Enter title...">
-            </div>
-            
-            <div class="form-group" id="contentGroup">
-                <label class="form-label">CONTENT</label>
-                <textarea class="form-textarea" id="itemContent" placeholder="Enter content..."></textarea>
-            </div>
-            
-            <div class="form-group" id="fileGroup" style="display: none;">
-                <label class="form-label">DOCUMENT FILE</label>
-                <div class="file-input-wrapper">
-                    <div class="file-input-custom" id="fileInputCustom">
-                        <span class="file-input-icon">📁</span>
-                        <span class="file-input-text" id="fileInputText">CLICK TO SELECT FILE OR DRAG & DROP</span>
+        </div>
+        
+        <div class="device-content" style="grid-template-columns: 1fr;">
+            <div class="device-section">
+                <div class="section-title">📝 ITEM DETAILS</div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 25px; margin-bottom: 25px;">
+                    <div class="form-group">
+                        <label class="form-label">CATEGORY</label>
+                        <select class="form-input" id="itemCategory">
+                            <option value="documents">DOCUMENTS</option>
+                            <option value="passwords">PASSWORDS</option>
+                            <option value="notes">SECRET NOTES</option>
+                        </select>
                     </div>
-                    <input type="file" class="file-input-hidden" id="documentFile" accept="*/*">
+                    
+                    <div class="form-group">
+                        <label class="form-label">TITLE</label>
+                        <input type="text" class="form-input" id="itemTitle" placeholder="Enter title...">
+                    </div>
                 </div>
-                <div style="font-size: 12px; color: #888; margin-top: 8px; text-align: center;">
-                    🔒 FILE WILL BE ENCRYPTED AND STORED SECURELY
+                
+                <div class="form-group" id="contentGroup">
+                    <label class="form-label">CONTENT</label>
+                    <textarea class="form-textarea" id="itemContent" placeholder="Enter content..." style="height: 180px;"></textarea>
                 </div>
-            </div>
-            
-            <div class="modal-actions">
-                <button class="modal-btn cancel-btn" onclick="closeModal()">CANCEL</button>
-                <button class="modal-btn save-btn" onclick="saveItem()">SAVE</button>
+                
+                <div class="form-group" id="fileGroup" style="display: none;">
+                    <label class="form-label">DOCUMENT FILE</label>
+                    <div class="file-input-wrapper">
+                        <div class="file-input-custom" id="fileInputCustom">
+                            <span class="file-input-icon">📁</span>
+                            <span class="file-input-text" id="fileInputText">CLICK TO SELECT FILE OR DRAG & DROP</span>
+                        </div>
+                        <input type="file" class="file-input-hidden" id="documentFile" accept="*/*">
+                    </div>
+                    <div style="font-size: 14px; color: #888; margin-top: 12px; text-align: center;">
+                        🔒 FILE WILL BE ENCRYPTED AND STORED SECURELY
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 20px; justify-content: flex-end; margin-top: 35px;">
+                    <button class="modal-btn cancel-btn" onclick="closeItemPanel()">CANCEL</button>
+                    <button class="modal-btn save-btn" onclick="saveItem()">SAVE</button>
+                </div>
             </div>
         </div>
     </div>

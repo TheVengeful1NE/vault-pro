@@ -289,12 +289,14 @@ class VaultPro {
         const item = this.data.items.find(item => item.id === id);
         if (item) {
             this.editingId = id;
-            document.getElementById('modalTitle').textContent = 'EDIT ITEM';
+            document.getElementById('itemPanelTitle').textContent = 'EDIT ITEM';
             document.getElementById('itemCategory').value = item.category;
             document.getElementById('itemTitle').value = item.title;
             document.getElementById('itemContent').value = item.content;
             this.toggleContentFields(item.category);
-            document.getElementById('itemModal').style.display = 'flex';
+            
+            document.getElementById('vaultContainer').style.display = 'none';
+            document.getElementById('itemPanel').style.display = 'block';
         }
     }
 
@@ -330,7 +332,8 @@ class VaultPro {
     }
 
     showPasswordAuth() {
-        document.getElementById('passwordAuthModal').style.display = 'flex';
+        document.getElementById('vaultContainer').style.display = 'none';
+        document.getElementById('passwordAuthPanel').style.display = 'block';
         document.getElementById('passwordAuthInput').focus();
     }
 
@@ -413,9 +416,11 @@ function loadCards() {
     }
     
     cardsList.innerHTML = cards.map(card => `
-        <div class="credit-card ${card.type}" onclick="viewCard('${card.id}')">
+        <div class="credit-card ${card.type}" onclick="editCard('${card.id}')">
             <div class="card-chip"></div>
+            <div class="card-type-label">${card.category || 'DEBIT'} CARD</div>
             <div class="card-company">${card.company || 'BANK'}</div>
+            <div class="card-logo ${card.type}"></div>
             <div class="card-brand">${card.type.toUpperCase()}</div>
             <div class="card-number">**** **** **** ${card.number.slice(-4)}</div>
             <div class="card-holder">${card.holder}</div>
@@ -448,59 +453,99 @@ function updateSpendAnalysis() {
     }
 }
 
+let editingCardId = null;
+
 function openAddCardModal() {
-    document.getElementById('cardModalTitle').textContent = 'ADD NEW CARD';
+    editingCardId = null;
+    document.getElementById('cardPanelTitle').textContent = 'ADD NEW CARD';
     document.getElementById('cardType').value = 'visa';
+    document.getElementById('cardCategory').value = 'debit';
     document.getElementById('cardHolder').value = '';
-    document.getElementById('cardCompany').value = '';
+    document.getElementById('cardCompany').value = 'HDFC Bank';
     document.getElementById('cardNumber').value = '';
     document.getElementById('cardExpiry').value = '';
     document.getElementById('cardCVV').value = '';
-    document.getElementById('cardModal').style.display = 'flex';
+    
+    document.getElementById('financialsPanel').style.display = 'none';
+    document.getElementById('cardPanel').style.display = 'block';
 }
 
-function closeCardModal() {
-    document.getElementById('cardModal').style.display = 'none';
+function editCard(cardId) {
+    const cards = JSON.parse(localStorage.getItem('vaultCards') || '[]');
+    const card = cards.find(c => c.id === cardId);
+    if (!card) return;
+    
+    editingCardId = cardId;
+    document.getElementById('cardPanelTitle').textContent = 'EDIT CARD';
+    document.getElementById('cardType').value = card.type;
+    document.getElementById('cardCategory').value = card.category || 'debit';
+    document.getElementById('cardHolder').value = card.holder;
+    document.getElementById('cardCompany').value = card.company || 'HDFC Bank';
+    document.getElementById('cardNumber').value = card.number;
+    document.getElementById('cardExpiry').value = card.expiry;
+    document.getElementById('cardCVV').value = card.cvv;
+    
+    document.getElementById('financialsPanel').style.display = 'none';
+    document.getElementById('cardPanel').style.display = 'block';
+}
+
+function closeCardPanel() {
+    document.getElementById('cardPanel').style.display = 'none';
+    document.getElementById('financialsPanel').style.display = 'block';
+    editingCardId = null;
 }
 
 function saveCard() {
     const cardData = {
-        id: Date.now().toString(),
+        id: editingCardId || Date.now().toString(),
         type: document.getElementById('cardType').value,
+        category: document.getElementById('cardCategory').value,
         holder: document.getElementById('cardHolder').value.trim(),
         company: document.getElementById('cardCompany').value.trim(),
         number: document.getElementById('cardNumber').value.replace(/\s/g, ''),
         expiry: document.getElementById('cardExpiry').value,
         cvv: document.getElementById('cardCVV').value,
-        created: new Date().toISOString()
+        created: editingCardId ? undefined : new Date().toISOString(),
+        modified: editingCardId ? new Date().toISOString() : undefined
     };
     
     if (!cardData.holder || !cardData.company || !cardData.number || !cardData.expiry || !cardData.cvv) {
-        alert('Please fill in all card details including bank/company');
+        showNotification('Please fill in all card details including bank/company', 'error');
         return;
     }
     
     const cards = JSON.parse(localStorage.getItem('vaultCards') || '[]');
-    cards.push(cardData);
+    
+    if (editingCardId) {
+        const index = cards.findIndex(c => c.id === editingCardId);
+        if (index !== -1) {
+            cards[index] = { ...cards[index], ...cardData };
+        }
+    } else {
+        cards.push(cardData);
+    }
+    
     localStorage.setItem('vaultCards', JSON.stringify(cards));
     
-    closeCardModal();
+    closeCardPanel();
     loadCards();
-    showNotification('Card added successfully!');
+    showNotification(editingCardId ? 'Card updated successfully!' : 'Card added successfully!');
 }
 
 function openTransactionModal() {
-    document.getElementById('transactionModal').style.display = 'flex';
+    document.getElementById('financialsPanel').style.display = 'none';
+    document.getElementById('transactionPanel').style.display = 'block';
 }
 
-function closeTransactionModal() {
-    document.getElementById('transactionModal').style.display = 'none';
+function closeTransactionPanel() {
+    document.getElementById('transactionPanel').style.display = 'none';
+    document.getElementById('financialsPanel').style.display = 'block';
 }
 
 function uploadTransactions() {
     const fileInput = document.getElementById('transactionFile');
     if (!fileInput.files[0]) {
-        alert('Please select a transaction file');
+        showNotification('Please select a transaction file', 'error');
         return;
     }
     
@@ -515,7 +560,7 @@ function uploadTransactions() {
     const allTransactions = [...existingTransactions, ...mockTransactions];
     localStorage.setItem('vaultTransactions', JSON.stringify(allTransactions));
     
-    closeTransactionModal();
+    closeTransactionPanel();
     updateSpendAnalysis();
     showNotification('Transactions uploaded successfully!');
 }
@@ -524,7 +569,7 @@ function viewCard(cardId) {
     const cards = JSON.parse(localStorage.getItem('vaultCards') || '[]');
     const card = cards.find(c => c.id === cardId);
     if (card) {
-        alert(`Card Details:\n\nType: ${card.type.toUpperCase()}\nHolder: ${card.holder}\nNumber: **** **** **** ${card.number.slice(-4)}\nExpiry: ${card.expiry}`);
+        showNotification(`${card.type.toUpperCase()} ${card.category || 'DEBIT'} CARD - ${card.company} - **** ${card.number.slice(-4)}`);
     }
 }
 
@@ -894,18 +939,21 @@ function showNotification(message) {
 
 function openAddModal() {
     vault.editingId = null;
-    document.getElementById('modalTitle').textContent = 'ADD NEW ITEM';
+    document.getElementById('itemPanelTitle').textContent = 'ADD NEW ITEM';
     document.getElementById('itemCategory').value = 'documents';
     document.getElementById('itemTitle').value = '';
     document.getElementById('itemContent').value = '';
     document.getElementById('documentFile').value = '';
     vault.handleFileSelection(null);
     vault.toggleContentFields('documents');
-    document.getElementById('itemModal').style.display = 'flex';
+    
+    document.getElementById('vaultContainer').style.display = 'none';
+    document.getElementById('itemPanel').style.display = 'block';
 }
 
-function closeModal() {
-    document.getElementById('itemModal').style.display = 'none';
+function closeItemPanel() {
+    document.getElementById('itemPanel').style.display = 'none';
+    document.getElementById('vaultContainer').style.display = 'block';
 }
 
 async function saveItem() {
@@ -913,7 +961,7 @@ async function saveItem() {
     const title = document.getElementById('itemTitle').value.trim();
     
     if (!title) {
-        alert('Please enter a title');
+        showNotification('Please enter a title', 'error');
         return;
     }
     
@@ -923,14 +971,14 @@ async function saveItem() {
     if (category === 'documents') {
         const fileInput = document.getElementById('documentFile');
         if (!vault.editingId && !fileInput.files[0]) {
-            alert('Please select a file to upload');
+            showNotification('Please select a file to upload', 'error');
             return;
         }
         file = fileInput.files[0];
     } else {
         content = document.getElementById('itemContent').value.trim();
         if (!content) {
-            alert('Please enter content');
+            showNotification('Please enter content', 'error');
             return;
         }
     }
@@ -941,26 +989,31 @@ async function saveItem() {
         } else {
             await vault.addItem(category, title, content, file);
         }
-        closeModal();
+        closeItemPanel();
     } catch (error) {
-        alert('Error saving item: ' + error.message);
+        showNotification('Error saving item: ' + error.message, 'error');
     }
 }
 
-// Close modal when clicking outside
-document.getElementById('itemModal').addEventListener('click', (e) => {
-    if (e.target.id === 'itemModal') {
-        closeModal();
-    }
-});
-
-// Close card modal when clicking outside
+// File input handlers for transaction upload
 document.addEventListener('DOMContentLoaded', () => {
-    const cardModal = document.getElementById('cardModal');
-    if (cardModal) {
-        cardModal.addEventListener('click', (e) => {
-            if (e.target.id === 'cardModal') {
-                closeCardModal();
+    const transactionFileInput = document.getElementById('transactionFile');
+    const transactionFileCustom = document.getElementById('transactionFileCustom');
+    const transactionFileText = document.getElementById('transactionFileText');
+    
+    if (transactionFileInput && transactionFileCustom && transactionFileText) {
+        transactionFileCustom.addEventListener('click', () => {
+            transactionFileInput.click();
+        });
+        
+        transactionFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                transactionFileCustom.classList.add('has-file');
+                transactionFileText.innerHTML = `<span class="file-input-icon">📄</span>SELECTED: ${file.name}`;
+            } else {
+                transactionFileCustom.classList.remove('has-file');
+                transactionFileText.innerHTML = `<span class="file-input-icon">📄</span>CLICK TO SELECT TRANSACTION FILE`;
             }
         });
     }
@@ -981,17 +1034,26 @@ function authenticatePasswordAccess() {
 }
 
 function closePasswordAuth() {
-    document.getElementById('passwordAuthModal').style.display = 'none';
+    document.getElementById('passwordAuthPanel').style.display = 'none';
+    document.getElementById('vaultContainer').style.display = 'block';
     document.getElementById('passwordAuthInput').value = '';
     document.getElementById('passwordAuthError').style.display = 'none';
 }
 
-// Close password auth modal when clicking outside
-document.getElementById('passwordAuthModal').addEventListener('click', (e) => {
-    if (e.target.id === 'passwordAuthModal') {
-        closePasswordAuth();
-    }
-});
+// Panel navigation handlers
+function backToVault() {
+    document.getElementById('itemPanel').style.display = 'none';
+    document.getElementById('cardPanel').style.display = 'none';
+    document.getElementById('transactionPanel').style.display = 'none';
+    document.getElementById('passwordAuthPanel').style.display = 'none';
+    document.getElementById('vaultContainer').style.display = 'block';
+}
+
+function backToFinancials() {
+    document.getElementById('cardPanel').style.display = 'none';
+    document.getElementById('transactionPanel').style.display = 'none';
+    document.getElementById('financialsPanel').style.display = 'block';
+}
 
 // Mobile detection and optimization
 function isMobileDevice() {
@@ -1075,17 +1137,19 @@ function optimizeForMobile() {
     }
 }
 
-// Enhanced notification for mobile
-function showNotification(message) {
+// Enhanced notification system
+function showNotification(message, type = 'success') {
     const notification = document.createElement('div');
     const isMobile = isMobileDevice();
+    
+    const bgColor = type === 'error' ? 'rgba(233, 69, 96, 0.9)' : 'rgba(0, 255, 65, 0.9)';
     
     notification.style.cssText = `
         position: fixed;
         top: ${isMobile ? '10px' : '20px'};
         right: ${isMobile ? '10px' : '20px'};
         left: ${isMobile ? '10px' : 'auto'};
-        background: rgba(0, 255, 65, 0.9);
+        background: ${bgColor};
         color: white;
         padding: ${isMobile ? '15px' : '10px 20px'};
         border-radius: 4px;
@@ -1099,12 +1163,10 @@ function showNotification(message) {
     notification.textContent = message;
     document.body.appendChild(notification);
     
-    // Auto-dismiss after longer time on mobile
     setTimeout(() => {
         notification.remove();
-    }, isMobile ? 4000 : 3000);
+    }, type === 'error' ? 5000 : 3000);
     
-    // Tap to dismiss on mobile
     if (isMobile) {
         notification.addEventListener('touchend', () => {
             notification.remove();

@@ -1,114 +1,16 @@
-// Vault Pro Mobile - JavaScript
+// Mobile Vault Pro - Panel-based UI
 class MobileVaultPro {
     constructor() {
         this.currentCategory = 'all';
         this.editingId = null;
         this.passwordAccessGranted = false;
-        this.data = { items: [] };
         this.init();
     }
 
     async init() {
+        await this.loadData();
         this.setupEventListeners();
-        // Don't load data until authenticated
-    }
-
-    setupEventListeners() {
-        // Mobile navigation buttons
-        document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const category = e.target.dataset.category;
-                
-                // Check if trying to access passwords without authentication
-                if (category === 'passwords' && !this.passwordAccessGranted) {
-                    this.showMobilePasswordAuth();
-                    return;
-                }
-                
-                document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
-                this.currentCategory = category;
-                this.renderMobileItems();
-            });
-        });
-
-        // Category change handler for modal
-        document.getElementById('mobileItemCategory').addEventListener('change', (e) => {
-            this.toggleMobileContentFields(e.target.value);
-        });
-        
-        // Close mobile password modal when clicking outside
-        document.getElementById('mobilePasswordModal').addEventListener('click', (e) => {
-            if (e.target.id === 'mobilePasswordModal') {
-                closeMobilePasswordAuth();
-            }
-        });
-
-        // File upload handler
-        document.getElementById('mobileFileUpload').addEventListener('click', () => {
-            document.getElementById('mobileDocumentFile').click();
-        });
-
-        document.getElementById('mobileDocumentFile').addEventListener('change', (e) => {
-            this.handleMobileFileSelection(e.target.files[0]);
-        });
-
-        // Touch and swipe handlers
-        this.setupTouchHandlers();
-        
-        // Mobile password auth enter key
-        document.getElementById('mobilePasswordAuthInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                authenticateMobilePasswordAccess();
-            }
-        });
-    }
-
-    setupTouchHandlers() {
-        let startX = 0;
-        let startY = 0;
-        let isScrolling = false;
-
-        document.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            isScrolling = false;
-        }, { passive: true });
-
-        document.addEventListener('touchmove', (e) => {
-            if (!startX || !startY) return;
-            
-            const diffX = Math.abs(e.touches[0].clientX - startX);
-            const diffY = Math.abs(e.touches[0].clientY - startY);
-            
-            if (diffY > diffX) {
-                isScrolling = true;
-            }
-        }, { passive: true });
-
-        document.addEventListener('touchend', (e) => {
-            if (isScrolling) return;
-            
-            const endX = e.changedTouches[0].clientX;
-            const diffX = startX - endX;
-            
-            // Swipe navigation in vault view
-            if (Math.abs(diffX) > 50 && document.getElementById('mobileVault').style.display === 'block') {
-                const navButtons = document.querySelectorAll('.mobile-nav-btn');
-                const activeIndex = Array.from(navButtons).findIndex(btn => btn.classList.contains('active'));
-                
-                if (diffX > 0 && activeIndex < navButtons.length - 1) {
-                    // Swipe left - next category
-                    navButtons[activeIndex + 1].click();
-                } else if (diffX < 0 && activeIndex > 0) {
-                    // Swipe right - previous category
-                    navButtons[activeIndex - 1].click();
-                }
-            }
-            
-            startX = 0;
-            startY = 0;
-        }, { passive: true });
+        this.renderItems();
     }
 
     async loadData() {
@@ -121,6 +23,194 @@ class MobileVaultPro {
         }
     }
 
+    setupEventListeners() {
+        // Mobile navigation buttons
+        document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const category = e.target.dataset.category;
+                
+                if (category === 'passwords' && !this.passwordAccessGranted) {
+                    this.showMobilePasswordAuth();
+                    return;
+                }
+                
+                document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                this.currentCategory = category;
+                this.renderItems();
+            });
+        });
+
+        // Category change handler
+        document.getElementById('mobileItemCategory').addEventListener('change', (e) => {
+            this.toggleMobileContentFields(e.target.value);
+        });
+
+        // File upload handler
+        document.getElementById('mobileFileUpload').addEventListener('click', () => {
+            document.getElementById('mobileDocumentFile').click();
+        });
+
+        document.getElementById('mobileDocumentFile').addEventListener('change', (e) => {
+            this.handleMobileFileSelection(e.target.files[0]);
+        });
+    }
+
+    toggleMobileContentFields(category) {
+        const contentGroup = document.getElementById('mobileContentGroup');
+        const fileGroup = document.getElementById('mobileFileGroup');
+        
+        if (category === 'documents') {
+            contentGroup.style.display = 'none';
+            fileGroup.style.display = 'block';
+        } else {
+            contentGroup.style.display = 'block';
+            fileGroup.style.display = 'none';
+        }
+    }
+
+    handleMobileFileSelection(file) {
+        const fileText = document.getElementById('mobileFileText');
+        const fileUpload = document.getElementById('mobileFileUpload');
+        
+        if (file) {
+            fileUpload.classList.add('has-file');
+            fileText.textContent = `SELECTED: ${file.name}`;
+        } else {
+            fileUpload.classList.remove('has-file');
+            fileText.textContent = 'TAP TO SELECT FILE';
+        }
+    }
+
+    getFilteredItems() {
+        if (this.currentCategory === 'all') {
+            return this.data.items;
+        }
+        return this.data.items.filter(item => item.category === this.currentCategory);
+    }
+
+    renderItems() {
+        const mobileContent = document.getElementById('mobileContent');
+        const items = this.getFilteredItems();
+        
+        if (items.length === 0) {
+            mobileContent.innerHTML = `
+                <div class="mobile-empty">
+                    <div class="mobile-empty-icon">🔒</div>
+                    <div class="mobile-empty-text">No items in this category<br>Tap + to add new items</div>
+                </div>
+            `;
+            return;
+        }
+
+        const shouldMaskPasswords = this.currentCategory === 'passwords' && !this.passwordAccessGranted;
+
+        mobileContent.innerHTML = items.map(item => {
+            const isPassword = item.category === 'passwords';
+            const shouldMaskThis = isPassword && !this.passwordAccessGranted;
+            
+            return `
+                <div class="mobile-item">
+                    <div class="mobile-item-title ${shouldMaskThis ? 'password-masked' : ''}">
+                        ${shouldMaskThis ? this.maskText(item.title) : this.escapeHtml(item.title)}
+                    </div>
+                    <div class="mobile-item-content ${shouldMaskThis ? 'password-masked' : ''}">
+                        ${shouldMaskThis ? this.maskText(item.content) : 
+                          this.escapeHtml(item.content).substring(0, 100)}${item.content.length > 100 ? '...' : ''}
+                    </div>
+                    <div class="mobile-item-meta">
+                        ${item.category.toUpperCase()} | ${new Date(item.created).toLocaleDateString()}
+                    </div>
+                    <div class="mobile-item-actions">
+                        ${shouldMaskThis ? 
+                            `<button class="mobile-action-btn" onclick="mobileVault.showMobilePasswordAuth()">🔒 UNLOCK</button>` :
+                            item.category === 'documents' ? 
+                                `<button class="mobile-action-btn" onclick="mobileVault.downloadDocument('${item.id}')">DOWNLOAD</button>` :
+                                `<button class="mobile-action-btn" onclick="mobileVault.viewMobileItem('${item.id}')">VIEW</button>`
+                        }
+                        ${!shouldMaskThis ? `<button class="mobile-action-btn" onclick="mobileVault.openMobileEditModal('${item.id}')">EDIT</button>` : ''}
+                        ${!shouldMaskThis ? `<button class="mobile-action-btn delete" onclick="mobileVault.deleteMobileItem('${item.id}')">DELETE</button>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    viewMobileItem(id) {
+        const item = this.data.items.find(item => item.id === id);
+        if (item) {
+            document.getElementById('mobileViewItemTitle').textContent = item.title;
+            document.getElementById('mobileViewItemCategory').textContent = item.category.toUpperCase();
+            document.getElementById('mobileViewItemContent').textContent = item.content;
+            document.getElementById('mobileViewItemCreated').textContent = new Date(item.created).toLocaleString();
+            document.getElementById('mobileViewItemModified').textContent = new Date(item.modified).toLocaleString();
+            
+            document.getElementById('mobileVault').style.display = 'none';
+            document.getElementById('mobileViewPanel').style.display = 'block';
+        }
+    }
+
+    openMobileEditModal(id) {
+        const item = this.data.items.find(item => item.id === id);
+        if (item) {
+            this.editingId = id;
+            document.getElementById('mobileItemPanelTitle').textContent = 'EDIT ITEM';
+            document.getElementById('mobileItemCategory').value = item.category;
+            document.getElementById('mobileItemTitle').value = item.title;
+            document.getElementById('mobileItemContent').value = item.content;
+            this.toggleMobileContentFields(item.category);
+            
+            document.getElementById('mobileVault').style.display = 'none';
+            document.getElementById('mobileItemPanel').style.display = 'block';
+        }
+    }
+
+    async deleteMobileItem(id) {
+        if (confirm('Delete this item?')) {
+            const item = this.data.items.find(item => item.id === id);
+            if (item) {
+                await this.deleteItemFile(id, item.category);
+                await this.loadData();
+                this.renderItems();
+            }
+        }
+    }
+
+    downloadDocument(id) {
+        window.open(`/api/documents/${id}`, '_blank');
+    }
+
+    showMobilePasswordAuth() {
+        document.getElementById('mobileVault').style.display = 'none';
+        document.getElementById('mobilePasswordPanel').style.display = 'block';
+        document.getElementById('mobilePasswordAuthInput').focus();
+    }
+
+    grantMobilePasswordAccess() {
+        this.passwordAccessGranted = true;
+        if (this.currentCategory !== 'passwords') {
+            document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('[data-category="passwords"]').classList.add('active');
+            this.currentCategory = 'passwords';
+        }
+        this.renderItems();
+    }
+
+    maskText(text) {
+        return text.split('').map(char => {
+            if (char === ' ') return ' ';
+            if (char === '\n') return '\n';
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+            return chars[Math.floor(Math.random() * chars.length)];
+        }).join('');
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     async saveItem(item) {
         try {
             await fetch('/api/items', {
@@ -130,7 +220,6 @@ class MobileVaultPro {
             });
         } catch (error) {
             console.error('Error saving item:', error);
-            throw error;
         }
     }
 
@@ -162,7 +251,6 @@ class MobileVaultPro {
             await fetch(`/api/items/${id}?category=${category}`, { method: 'DELETE' });
         } catch (error) {
             console.error('Error deleting item:', error);
-            throw error;
         }
     }
 
@@ -183,7 +271,7 @@ class MobileVaultPro {
         }
         
         await this.loadData();
-        this.renderMobileItems();
+        this.renderItems();
     }
 
     async editItem(id, category, title, content, file = null) {
@@ -201,203 +289,26 @@ class MobileVaultPro {
         }
         
         await this.loadData();
-        this.renderMobileItems();
-    }
-
-    async deleteItem(id) {
-        if (confirm('Delete this item?')) {
-            const item = this.data.items.find(item => item.id === id);
-            if (item) {
-                await this.deleteItemFile(id, item.category);
-                await this.loadData();
-                this.renderMobileItems();
-            }
-        }
-    }
-
-    getFilteredItems() {
-        if (this.currentCategory === 'all') {
-            return this.data.items;
-        }
-        return this.data.items.filter(item => item.category === this.currentCategory);
-    }
-
-    renderMobileItems() {
-        const content = document.getElementById('mobileContent');
-        const items = this.getFilteredItems();
-        
-        if (items.length === 0) {
-            content.innerHTML = `
-                <div class="mobile-empty">
-                    <div class="mobile-empty-icon">🔒</div>
-                    <div class="mobile-empty-text">
-                        No items in this category<br>
-                        <small>Tap + to add new items</small>
-                    </div>
-                </div>
-            `;
-            return;
-        }
-
-        // Check if we're showing passwords without authentication
-        const isPasswordCategory = this.currentCategory === 'passwords' || 
-                                 (this.currentCategory === 'all' && items.some(item => item.category === 'passwords'));
-        const shouldMaskPasswords = isPasswordCategory && !this.passwordAccessGranted;
-
-        content.innerHTML = items.map(item => {
-            const isPassword = item.category === 'passwords';
-            const shouldMaskThis = isPassword && !this.passwordAccessGranted;
-            
-            return `
-                <div class="mobile-item">
-                    <div class="mobile-item-title">
-                        ${shouldMaskThis ? this.maskText(item.title) : this.escapeHtml(item.title)}
-                    </div>
-                    <div class="mobile-item-content">
-                        ${shouldMaskThis ? this.maskText(item.content) : 
-                          this.escapeHtml(item.content).substring(0, 100)}${item.content.length > 100 ? '...' : ''}
-                    </div>
-                    <div class="mobile-item-meta">
-                        ${item.category.toUpperCase()} • ${new Date(item.created).toLocaleDateString()} • 🔐 ENCRYPTED
-                    </div>
-                    <div class="mobile-item-actions">
-                        ${shouldMaskThis ? 
-                            `<button class="mobile-action-btn" onclick="mobileVault.showMobilePasswordAuth()">🔓 UNLOCK</button>` :
-                            item.category === 'documents' ? 
-                                `<button class="mobile-action-btn" onclick="mobileVault.downloadDocument('${item.id}')">DOWNLOAD</button>` :
-                                `<button class="mobile-action-btn" onclick="mobileVault.viewMobileItem('${item.id}')">VIEW</button>`
-                        }
-                        ${!shouldMaskThis ? `<button class="mobile-action-btn delete" onclick="mobileVault.deleteItem('${item.id}')">DELETE</button>` : ''}
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-
-    maskText(text) {
-        return text.split('').map(char => {
-            if (char === ' ') return ' ';
-            if (char === '\n') return '\n';
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
-            return chars[Math.floor(Math.random() * chars.length)];
-        }).join('');
-    }
-
-    showMobilePasswordAuth() {
-        document.getElementById('mobilePasswordModal').style.display = 'block';
-        setTimeout(() => {
-            document.getElementById('mobilePasswordAuthInput').focus();
-        }, 300);
-    }
-
-    grantMobilePasswordAccess() {
-        this.passwordAccessGranted = true;
-        // Switch to passwords category if not already there
-        if (this.currentCategory !== 'passwords') {
-            document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
-            document.querySelector('[data-category="passwords"]').classList.add('active');
-            this.currentCategory = 'passwords';
-        }
-        this.renderMobileItems();
-        this.showMobileNotification('Password access granted!');
-    }
-
-    viewMobileItem(id) {
-        const item = this.data.items.find(item => item.id === id);
-        if (item) {
-            document.getElementById('mobileViewItemTitle').textContent = item.title;
-            document.getElementById('mobileViewItemCategory').textContent = item.category.toUpperCase();
-            document.getElementById('mobileViewItemContent').textContent = item.content;
-            document.getElementById('mobileViewItemCreated').textContent = new Date(item.created).toLocaleString();
-            document.getElementById('mobileViewItemModified').textContent = new Date(item.modified).toLocaleString();
-            document.getElementById('mobileViewPanel').style.display = 'block';
-        }
-    }
-
-    downloadDocument(id) {
-        window.open(`/api/documents/${id}`, '_blank');
-    }
-
-    // Edit functionality removed for mobile version
-
-    toggleMobileContentFields(category) {
-        const contentGroup = document.getElementById('mobileContentGroup');
-        const fileGroup = document.getElementById('mobileFileGroup');
-        
-        if (category === 'documents') {
-            contentGroup.style.display = 'none';
-            fileGroup.style.display = 'block';
-        } else {
-            contentGroup.style.display = 'block';
-            fileGroup.style.display = 'none';
-        }
-    }
-
-    handleMobileFileSelection(file) {
-        const fileUpload = document.getElementById('mobileFileUpload');
-        const fileText = document.getElementById('mobileFileText');
-        
-        if (file) {
-            fileUpload.classList.add('has-file');
-            fileText.innerHTML = `📄 ${file.name}<br><small>${this.formatFileSize(file.size)}</small>`;
-        } else {
-            fileUpload.classList.remove('has-file');
-            fileText.innerHTML = '📁<br>TAP TO SELECT FILE';
-        }
-    }
-
-    formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
-
-    showMobileNotification(message, type = 'success') {
-        const notification = document.createElement('div');
-        notification.className = 'mobile-notification';
-        notification.textContent = message;
-        
-        if (type === 'error') {
-            notification.style.background = 'rgba(233, 69, 96, 0.9)';
-        }
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => notification.classList.add('show'), 100);
-        setTimeout(() => {
-            notification.classList.remove('show');
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
-    }
-
-    escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
+        this.renderItems();
     }
 }
 
-// Global functions for mobile interface
+// Global mobile functions
 function mobileAuthenticate() {
     const password = document.getElementById('mobilePassword').value;
     
     if (password === 'OMEGA###') {
         document.getElementById('mobileLogin').style.display = 'none';
         document.getElementById('mobileMain').style.display = 'block';
-        
-        // Track mobile device connection
-        trackMobileDevice();
     } else {
-        mobileVault.showMobileNotification('Access denied - Invalid credentials', 'error');
+        showMobileNotification('ACCESS DENIED - INVALID CREDENTIALS', 'error');
         document.getElementById('mobilePassword').value = '';
     }
 }
 
 function mobileLogout() {
-    document.getElementById('mobileVault').style.display = 'none';
     document.getElementById('mobileMain').style.display = 'none';
+    document.getElementById('mobileVault').style.display = 'none';
     document.getElementById('mobileLogin').style.display = 'flex';
     document.getElementById('mobilePassword').value = '';
 }
@@ -406,15 +317,9 @@ function openMobileVault() {
     document.getElementById('mobileMain').style.display = 'none';
     document.getElementById('mobileVault').style.display = 'block';
     
-    // Initialize vault if not already done
     if (!window.mobileVault) {
         window.mobileVault = new MobileVaultPro();
     }
-    
-    // Load data and render
-    mobileVault.loadData().then(() => {
-        mobileVault.renderMobileItems();
-    });
 }
 
 function backToMobileMain() {
@@ -423,64 +328,34 @@ function backToMobileMain() {
 }
 
 function openMobileAddModal() {
-    document.getElementById('mobileModalTitle').textContent = 'ADD NEW ITEM';
+    window.mobileVault.editingId = null;
+    document.getElementById('mobileItemPanelTitle').textContent = 'ADD NEW ITEM';
     document.getElementById('mobileItemCategory').value = 'documents';
     document.getElementById('mobileItemTitle').value = '';
     document.getElementById('mobileItemContent').value = '';
     document.getElementById('mobileDocumentFile').value = '';
-    mobileVault.handleMobileFileSelection(null);
-    mobileVault.toggleMobileContentFields('documents');
-    document.getElementById('mobileModal').style.display = 'block';
+    window.mobileVault.handleMobileFileSelection(null);
+    window.mobileVault.toggleMobileContentFields('documents');
+    
+    document.getElementById('mobileVault').style.display = 'none';
+    document.getElementById('mobileItemPanel').style.display = 'block';
 }
 
-function closeMobileModal() {
-    document.getElementById('mobileModal').style.display = 'none';
-}
-
-async function saveMobileItem() {
-    const category = document.getElementById('mobileItemCategory').value;
-    const title = document.getElementById('mobileItemTitle').value.trim();
-    
-    if (!title) {
-        mobileVault.showMobileNotification('Please enter a title', 'error');
-        return;
-    }
-    
-    let content = '';
-    let file = null;
-    
-    if (category === 'documents') {
-        const fileInput = document.getElementById('mobileDocumentFile');
-        if (!fileInput.files[0]) {
-            mobileVault.showMobileNotification('Please select a file to upload', 'error');
-            return;
-        }
-        file = fileInput.files[0];
-    } else {
-        content = document.getElementById('mobileItemContent').value.trim();
-        if (!content) {
-            mobileVault.showMobileNotification('Please enter content', 'error');
-            return;
-        }
-    }
-    
-    try {
-        await mobileVault.addItem(category, title, content, file);
-        mobileVault.showMobileNotification('Item added successfully!');
-        closeMobileModal();
-    } catch (error) {
-        mobileVault.showMobileNotification('Error saving item: ' + error.message, 'error');
-    }
-}
-
-function closeMobilePasswordAuth() {
-    document.getElementById('mobilePasswordModal').style.display = 'none';
-    document.getElementById('mobilePasswordAuthInput').value = '';
-    document.getElementById('mobilePasswordAuthError').style.display = 'none';
+function closeMobileItemPanel() {
+    document.getElementById('mobileItemPanel').style.display = 'none';
+    document.getElementById('mobileVault').style.display = 'block';
 }
 
 function closeMobileViewPanel() {
     document.getElementById('mobileViewPanel').style.display = 'none';
+    document.getElementById('mobileVault').style.display = 'block';
+}
+
+function closeMobilePasswordAuth() {
+    document.getElementById('mobilePasswordPanel').style.display = 'none';
+    document.getElementById('mobileVault').style.display = 'block';
+    document.getElementById('mobilePasswordAuthInput').value = '';
+    document.getElementById('mobilePasswordAuthError').style.display = 'none';
 }
 
 function authenticateMobilePasswordAccess() {
@@ -490,87 +365,118 @@ function authenticateMobilePasswordAccess() {
     if (password === 'PASSWORD###') {
         errorMsg.style.display = 'none';
         closeMobilePasswordAuth();
-        mobileVault.grantMobilePasswordAccess();
+        window.mobileVault.grantMobilePasswordAccess();
     } else {
         errorMsg.style.display = 'block';
         document.getElementById('mobilePasswordAuthInput').value = '';
-        // Add shake animation
-        const input = document.getElementById('mobilePasswordAuthInput');
-        input.style.animation = 'shake 0.5s';
-        setTimeout(() => {
-            input.style.animation = '';
-        }, 500);
     }
 }
 
-function trackMobileDevice() {
-    const deviceInfo = {
-        userAgent: navigator.userAgent,
-        platform: navigator.platform,
-        timestamp: new Date().toISOString(),
-        type: 'mobile',
-        isMobile: true,
-        screenInfo: {
-            width: window.screen.width,
-            height: window.screen.height,
-            orientation: window.screen.orientation ? window.screen.orientation.type : 'unknown'
-        },
-        touchSupport: 'ontouchstart' in window,
-        language: navigator.language
-    };
+async function saveMobileItem() {
+    const category = document.getElementById('mobileItemCategory').value;
+    const title = document.getElementById('mobileItemTitle').value.trim();
     
-    fetch('/api/device-connect', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(deviceInfo)
-    }).catch(error => {
-        console.error('Error tracking mobile device:', error);
+    if (!title) {
+        showMobileNotification('Please enter a title', 'error');
+        return;
+    }
+    
+    let content = '';
+    let file = null;
+    
+    if (category === 'documents') {
+        const fileInput = document.getElementById('mobileDocumentFile');
+        if (!window.mobileVault.editingId && !fileInput.files[0]) {
+            showMobileNotification('Please select a file to upload', 'error');
+            return;
+        }
+        file = fileInput.files[0];
+    } else {
+        content = document.getElementById('mobileItemContent').value.trim();
+        if (!content) {
+            showMobileNotification('Please enter content', 'error');
+            return;
+        }
+    }
+    
+    try {
+        if (window.mobileVault.editingId) {
+            await window.mobileVault.editItem(window.mobileVault.editingId, category, title, content, file);
+        } else {
+            await window.mobileVault.addItem(category, title, content, file);
+        }
+        closeMobileItemPanel();
+        showMobileNotification('Item saved successfully!');
+    } catch (error) {
+        showMobileNotification('Error saving item: ' + error.message, 'error');
+    }
+}
+
+function showMobileNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    const bgColor = type === 'error' ? 'rgba(233, 69, 96, 0.9)' : 'rgba(0, 255, 65, 0.9)';
+    
+    notification.style.cssText = `
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        background: ${bgColor};
+        color: white;
+        padding: 15px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+        z-index: 3000;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, type === 'error' ? 5000 : 3000);
+    
+    notification.addEventListener('touchend', () => {
+        notification.remove();
     });
 }
 
-// Initialize mobile vault
-window.mobileVault = null;
-
-// Initialize on page load
+// Initialize mobile optimizations
 document.addEventListener('DOMContentLoaded', () => {
-    // Focus password input after a short delay to ensure keyboard doesn't interfere
-    setTimeout(() => {
-        const passwordInput = document.getElementById('mobilePassword');
-        if (passwordInput) {
-            passwordInput.focus();
+    // Prevent zoom on input focus
+    const inputs = document.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+        input.addEventListener('focus', () => {
+            const viewport = document.querySelector('meta[name=viewport]');
+            viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+        });
+    });
+
+    // Add touch feedback
+    const touchElements = document.querySelectorAll('.mobile-card, .mobile-nav-btn, .mobile-action-btn, .mobile-form-btn, .mobile-login-btn');
+    touchElements.forEach(element => {
+        element.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.95)';
+            this.style.transition = 'transform 0.1s';
+        });
+        
+        element.addEventListener('touchend', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+
+    // Enter key handlers
+    document.getElementById('mobilePassword').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            mobileAuthenticate();
         }
-    }, 500);
-    
-    // Add mobile-specific optimizations
-    document.body.style.userSelect = 'none';
-    document.body.style.webkitUserSelect = 'none';
-    document.body.style.webkitTouchCallout = 'none';
-    
-    // Prevent zoom on double tap
-    let lastTouchEnd = 0;
-    document.addEventListener('touchend', function (event) {
-        const now = (new Date()).getTime();
-        if (now - lastTouchEnd <= 300) {
-            event.preventDefault();
+    });
+
+    document.getElementById('mobilePasswordAuthInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            authenticateMobilePasswordAccess();
         }
-        lastTouchEnd = now;
-    }, false);
-    
-    // Show mobile welcome message
-    setTimeout(() => {
-        if (!sessionStorage.getItem('mobileWelcomeShown')) {
-            const notification = document.createElement('div');
-            notification.className = 'mobile-notification show';
-            notification.textContent = 'Welcome to Vault Pro Mobile! Optimized for touch.';
-            notification.style.background = 'rgba(0, 212, 255, 0.9)';
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-            
-            sessionStorage.setItem('mobileWelcomeShown', 'true');
-        }
-    }, 1000);
+    });
 });

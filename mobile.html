@@ -829,17 +829,17 @@
         <button class="mobile-add-btn" onclick="openMobileAddModal()">+</button>
     </div>
 
-    <!-- Mobile Password Authentication Modal -->
-    <div class="mobile-modal" id="mobilePasswordModal">
-        <div class="mobile-modal-content">
-            <div class="mobile-modal-header">
-                <div class="mobile-modal-title">PASSWORD ACCESS</div>
-                <button class="mobile-modal-close" onclick="closeMobilePasswordAuth()">×</button>
-            </div>
-            
-            <div style="text-align: center; margin-bottom: 20px;">
-                <div style="font-size: 48px; margin-bottom: 15px;">🔐</div>
-                <div style="color: #888; font-size: 11px; line-height: 1.4;">
+    <!-- Mobile Password Authentication Panel -->
+    <div class="mobile-vault" id="mobilePasswordPanel" style="display: none;">
+        <div class="mobile-header">
+            <div class="mobile-title">PASSWORD ACCESS</div>
+            <button class="mobile-logout" onclick="closeMobilePasswordAuth()">← BACK</button>
+        </div>
+        
+        <div class="mobile-content" style="padding-top: 50px;">
+            <div style="text-align: center; margin-bottom: 40px;">
+                <div style="font-size: 64px; margin-bottom: 20px;">🔐</div>
+                <div style="color: #888; font-size: 14px; line-height: 1.4;">
                     ENTER SECURITY CODE TO ACCESS<br>PASSWORD VAULT
                 </div>
             </div>
@@ -854,61 +854,59 @@
                 <button class="mobile-form-btn save" onclick="authenticateMobilePasswordAccess()">AUTHENTICATE</button>
             </div>
             
-            <div id="mobilePasswordAuthError" style="color: #ff0000; font-size: 11px; text-align: center; margin-top: 15px; display: none;">
+            <div id="mobilePasswordAuthError" style="color: #ff0000; font-size: 12px; text-align: center; margin-top: 20px; display: none;">
                 ACCESS DENIED - INVALID CREDENTIALS
             </div>
         </div>
     </div>
 
     <!-- Mobile View Panel -->
-    <div class="mobile-modal" id="mobileViewPanel">
-        <div class="mobile-modal-content">
-            <div class="mobile-modal-header">
-                <div class="mobile-modal-title" id="mobileViewTitle">ITEM DETAILS</div>
-                <button class="mobile-modal-close" onclick="closeMobileViewPanel()">×</button>
+    <div class="mobile-vault" id="mobileViewPanel" style="display: none;">
+        <div class="mobile-header">
+            <div class="mobile-title" id="mobileViewTitle">ITEM DETAILS</div>
+            <button class="mobile-logout" onclick="closeMobileViewPanel()">← BACK</button>
+        </div>
+        
+        <div class="mobile-content">
+            <div class="mobile-view-field">
+                <div class="mobile-view-label">TITLE:</div>
+                <div class="mobile-view-value" id="mobileViewItemTitle"></div>
             </div>
             
-            <div class="mobile-view-content">
-                <div class="mobile-view-field">
-                    <div class="mobile-view-label">TITLE:</div>
-                    <div class="mobile-view-value" id="mobileViewItemTitle"></div>
-                </div>
-                
-                <div class="mobile-view-field">
-                    <div class="mobile-view-label">CATEGORY:</div>
-                    <div class="mobile-view-value" id="mobileViewItemCategory"></div>
-                </div>
-                
-                <div class="mobile-view-field">
-                    <div class="mobile-view-label">CONTENT:</div>
-                    <div class="mobile-view-value" id="mobileViewItemContent"></div>
-                </div>
-                
-                <div class="mobile-view-field">
-                    <div class="mobile-view-label">CREATED:</div>
-                    <div class="mobile-view-value" id="mobileViewItemCreated"></div>
-                </div>
-                
-                <div class="mobile-view-field">
-                    <div class="mobile-view-label">MODIFIED:</div>
-                    <div class="mobile-view-value" id="mobileViewItemModified"></div>
-                </div>
+            <div class="mobile-view-field">
+                <div class="mobile-view-label">CATEGORY:</div>
+                <div class="mobile-view-value" id="mobileViewItemCategory"></div>
             </div>
             
-            <div class="mobile-form-actions">
+            <div class="mobile-view-field">
+                <div class="mobile-view-label">CONTENT:</div>
+                <div class="mobile-view-value" id="mobileViewItemContent"></div>
+            </div>
+            
+            <div class="mobile-view-field">
+                <div class="mobile-view-label">CREATED:</div>
+                <div class="mobile-view-value" id="mobileViewItemCreated"></div>
+            </div>
+            
+            <div class="mobile-view-field">
+                <div class="mobile-view-label">MODIFIED:</div>
+                <div class="mobile-view-value" id="mobileViewItemModified"></div>
+            </div>
+            
+            <div class="mobile-form-actions" style="margin-top: 30px;">
                 <button class="mobile-form-btn cancel" onclick="closeMobileViewPanel()">CLOSE</button>
             </div>
         </div>
     </div>
 
-    <!-- Mobile Modal -->
-    <div class="mobile-modal" id="mobileModal">
-        <div class="mobile-modal-content">
-            <div class="mobile-modal-header">
-                <div class="mobile-modal-title" id="mobileModalTitle">ADD NEW ITEM</div>
-                <button class="mobile-modal-close" onclick="closeMobileModal()">×</button>
-            </div>
-            
+    <!-- Mobile Item Panel -->
+    <div class="mobile-vault" id="mobileItemPanel" style="display: none;">
+        <div class="mobile-header">
+            <div class="mobile-title" id="mobileItemPanelTitle">ADD NEW ITEM</div>
+            <button class="mobile-logout" onclick="closeMobileItemPanel()">← BACK</button>
+        </div>
+        
+        <div class="mobile-content">
             <div class="mobile-form-group">
                 <label class="mobile-form-label">CATEGORY</label>
                 <select class="mobile-form-select" id="mobileItemCategory">
@@ -937,8 +935,8 @@
                 </div>
             </div>
             
-            <div class="mobile-form-actions">
-                <button class="mobile-form-btn cancel" onclick="closeMobileModal()">CANCEL</button>
+            <div class="mobile-form-actions" style="margin-top: 30px;">
+                <button class="mobile-form-btn cancel" onclick="closeMobileItemPanel()">CANCEL</button>
                 <button class="mobile-form-btn save" onclick="saveMobileItem()">SAVE</button>
             </div>
         </div>

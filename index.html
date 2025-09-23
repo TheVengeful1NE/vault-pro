@@ -1363,15 +1363,7 @@
             box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
         }
 
-        .card-brand {
-            position: absolute;
-            top: 20px;
-            right: 25px;
-            font-size: 14px;
-            font-weight: bold;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
+
 
         .card-number {
             position: absolute;
@@ -1563,18 +1555,33 @@
         </div>
     </div>
 
-    <!-- Password Authentication Modal -->
-    <div class="password-auth-modal" id="passwordAuthModal">
-        <div class="password-auth-content">
-            <div class="password-auth-title">PASSWORD ACCESS</div>
-            <div class="password-auth-subtitle">ENTER SECURITY CODE TO ACCESS PASSWORD VAULT</div>
-            
-            <input type="password" class="password-auth-input" id="passwordAuthInput" placeholder="Enter access code...">
-            
-            <button class="password-auth-btn" onclick="authenticatePasswordAccess()">AUTHENTICATE</button>
-            <button class="password-auth-btn password-auth-cancel" onclick="closePasswordAuth()">CANCEL</button>
-            
-            <div class="password-auth-error" id="passwordAuthError">ACCESS DENIED - INVALID CREDENTIALS</div>
+    <!-- Password Authentication Panel -->
+    <div class="device-panel" id="passwordAuthPanel">
+        <div class="device-header">
+            <div class="device-title">PASSWORD ACCESS</div>
+            <div class="device-nav">
+                <button class="back-btn" onclick="closePasswordAuth()">← BACK</button>
+            </div>
+        </div>
+        
+        <div class="device-content" style="grid-template-columns: 1fr; justify-content: center; align-items: center;">
+            <div class="device-section" style="max-width: 500px; margin: 0 auto; text-align: center;">
+                <div style="font-size: 64px; margin-bottom: 20px;">🔐</div>
+                <div class="section-title">ENTER SECURITY CODE TO ACCESS PASSWORD VAULT</div>
+                
+                <div class="form-group" style="margin: 30px 0;">
+                    <input type="password" class="form-input" id="passwordAuthInput" placeholder="Enter access code..." style="text-align: center; letter-spacing: 2px; font-size: 18px; padding: 20px;">
+                </div>
+                
+                <div style="display: flex; gap: 20px; justify-content: center;">
+                    <button class="modal-btn cancel-btn" onclick="closePasswordAuth()">CANCEL</button>
+                    <button class="modal-btn save-btn" onclick="authenticatePasswordAccess()">AUTHENTICATE</button>
+                </div>
+                
+                <div id="passwordAuthError" style="color: #ff0000; font-size: 14px; margin-top: 20px; display: none;">
+                    ACCESS DENIED - INVALID CREDENTIALS
+                </div>
+            </div>
         </div>
     </div>
 

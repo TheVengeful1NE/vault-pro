@@ -418,10 +418,9 @@ function loadCards() {
     cardsList.innerHTML = cards.map(card => `
         <div class="credit-card ${card.type}" onclick="editCard('${card.id}')">
             <div class="card-chip"></div>
-            <div class="card-type-label">${card.category || 'DEBIT'} CARD</div>
+            <div class="card-type-label">${(card.category || 'DEBIT').toUpperCase()} CARD</div>
             <div class="card-company">${card.company || 'BANK'}</div>
             <div class="card-logo ${card.type}"></div>
-            <div class="card-brand">${card.type.toUpperCase()}</div>
             <div class="card-number">**** **** **** ${card.number.slice(-4)}</div>
             <div class="card-holder">${card.holder}</div>
             <div class="card-expiry">${card.expiry}</div>

@@ -183,7 +183,9 @@ class MobileVaultPro {
     showMobilePasswordAuth() {
         document.getElementById('mobileVault').style.display = 'none';
         document.getElementById('mobilePasswordPanel').style.display = 'block';
-        document.getElementById('mobilePasswordAuthInput').focus();
+        setTimeout(() => {
+            document.getElementById('mobilePasswordAuthInput').focus();
+        }, 100);
     }
 
     grantMobilePasswordAccess() {

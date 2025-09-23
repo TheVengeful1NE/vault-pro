@@ -418,29 +418,43 @@ function initializeDeviceLink() {
 }
 
 function getNetworkIP() {
-    // This will be handled by the server
     fetch('/api/network-info')
         .then(response => response.json())
         .then(data => {
             const networkLink = document.getElementById('networkLink');
             if (data.networkIP) {
-                networkLink.textContent = `http://${data.networkIP}:3000`;
-                
-                // Update mobile link as well
-                updateMobileLinks(data.networkIP);
+                // For cloud deployment, use the full URL
+                if (data.networkIP.includes('http')) {
+                    networkLink.textContent = data.networkIP;
+                    updateMobileLinks(data.networkIP);
+                } else {
+                    networkLink.textContent = `http://${data.networkIP}:3000`;
+                    updateMobileLinks(`http://${data.networkIP}:3000`);
+                }
             } else {
-                networkLink.textContent = 'Network IP not available';
+                networkLink.textContent = window.location.origin;
+                updateMobileLinks(window.location.origin);
             }
         })
         .catch(error => {
             console.error('Error getting network IP:', error);
-            document.getElementById('networkLink').textContent = 'Error getting network IP';
+            const fallbackURL = window.location.origin;
+            document.getElementById('networkLink').textContent = fallbackURL;
+            updateMobileLinks(fallbackURL);
         });
 }
 
-function updateMobileLinks(networkIP) {
+function updateMobileLinks(baseURL) {
     // Add mobile-specific link section if it doesn't exist
     const linkGenerator = document.querySelector('.link-generator');
+    
+    // Generate mobile URL
+    let mobileURL;
+    if (baseURL.includes('http')) {
+        mobileURL = `${baseURL}/mobile`;
+    } else {
+        mobileURL = `http://${baseURL}:3000/mobile`;
+    }
     
     // Check if mobile link section already exists
     if (!document.getElementById('mobileLinkInfo')) {
@@ -449,7 +463,7 @@ function updateMobileLinks(networkIP) {
         mobileLinkSection.id = 'mobileLinkInfo';
         mobileLinkSection.innerHTML = `
             <div class="link-label">MOBILE OPTIMIZED LINK:</div>
-            <div class="link-display" id="mobileLink">http://${networkIP}:3000/mobile</div>
+            <div class="link-display" id="mobileLink">${mobileURL}</div>
             <button class="copy-btn" onclick="copyMobileLink()">COPY MOBILE LINK</button>
         `;
         
@@ -457,7 +471,7 @@ function updateMobileLinks(networkIP) {
         const networkLinkInfo = linkGenerator.children[1];
         linkGenerator.insertBefore(mobileLinkSection, networkLinkInfo.nextSibling);
     } else {
-        document.getElementById('mobileLink').textContent = `http://${networkIP}:3000/mobile`;
+        document.getElementById('mobileLink').textContent = mobileURL;
     }
 }
 

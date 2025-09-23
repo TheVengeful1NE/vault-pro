@@ -4,20 +4,20 @@ A secure vault application for storing critical documents, passwords, and secret
 
 ## Features
 
-- **Secure Login**: Protected with password "OMEGA###"
+- **Secure Login**: Protected with password
 - **Multiple Categories**: 
   - Documents
   - Passwords  
   - Secret Notes
 - **Local File Storage**: Data stored in browser localStorage
-- **Sci-Fi UI**: Inspired by Galaxy Navigator System design
+- **Sci-Fi UI**: Inspired by Galaxy
 - **CRUD Operations**: Create, Read, Update, Delete items
 - **Responsive Design**: Works on different screen sizes
 
 ## Usage
 
 1. Open `index.html` in a web browser
-2. Enter password: `OMEGA###`
+2. Enter password:
 3. Click "AUTHENTICATE" to access the vault
 4. Use the sidebar to navigate between categories
 5. Click "ADD NEW ITEM" to create new entries

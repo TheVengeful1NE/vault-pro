@@ -388,8 +388,116 @@ function openVaultStorage() {
 function backToMain() {
     document.getElementById('vaultContainer').style.display = 'none';
     document.getElementById('devicePanel').style.display = 'none';
+    document.getElementById('financialsPanel').style.display = 'none';
     document.getElementById('mainPanel').style.display = 'block';
 }
+
+function initializeFinancials() {
+    loadCards();
+    updateSpendAnalysis();
+}
+
+function loadCards() {
+    const cards = JSON.parse(localStorage.getItem('vaultCards') || '[]');
+    const cardsList = document.getElementById('cardsList');
+    
+    if (cards.length === 0) {
+        cardsList.innerHTML = `
+            <div class="empty-cards">
+                <div class="empty-icon">💳</div>
+                <div class="empty-text">No cards stored</div>
+                <div class="empty-subtext">Click "ADD NEW CARD" to get started</div>
+            </div>
+        `;
+        return;
+    }
+    
+    cardsList.innerHTML = cards.map(card => `
+        <div class="credit-card ${card.type}" onclick="viewCard('${card.id}')">
+            <div class="card-brand">${card.type.toUpperCase()}</div>
+            <div class="card-number">**** **** **** ${card.number.slice(-4)}</div>
+            <div class="card-holder">${card.holder}</div>
+            <div class="card-expiry">${card.expiry}</div>
+        </div>
+    `).join('');
+}
+
+function updateSpendAnalysis() {
+    // Mock data - in real app would connect to financial APIs
+    document.getElementById('totalSpending').textContent = '$2,847.32';
+    document.getElementById('monthlySpending').textContent = '$1,234.56';
+    document.getElementById('lastTransaction').textContent = '$89.99';
+}
+
+function openAddCardModal() {
+    document.getElementById('cardModalTitle').textContent = 'ADD NEW CARD';
+    document.getElementById('cardType').value = 'visa';
+    document.getElementById('cardHolder').value = '';
+    document.getElementById('cardNumber').value = '';
+    document.getElementById('cardExpiry').value = '';
+    document.getElementById('cardCVV').value = '';
+    document.getElementById('cardModal').style.display = 'flex';
+}
+
+function closeCardModal() {
+    document.getElementById('cardModal').style.display = 'none';
+}
+
+function saveCard() {
+    const cardData = {
+        id: Date.now().toString(),
+        type: document.getElementById('cardType').value,
+        holder: document.getElementById('cardHolder').value.trim(),
+        number: document.getElementById('cardNumber').value.replace(/\s/g, ''),
+        expiry: document.getElementById('cardExpiry').value,
+        cvv: document.getElementById('cardCVV').value,
+        created: new Date().toISOString()
+    };
+    
+    if (!cardData.holder || !cardData.number || !cardData.expiry || !cardData.cvv) {
+        alert('Please fill in all card details');
+        return;
+    }
+    
+    const cards = JSON.parse(localStorage.getItem('vaultCards') || '[]');
+    cards.push(cardData);
+    localStorage.setItem('vaultCards', JSON.stringify(cards));
+    
+    closeCardModal();
+    loadCards();
+    showNotification('Card added successfully!');
+}
+
+function viewCard(cardId) {
+    const cards = JSON.parse(localStorage.getItem('vaultCards') || '[]');
+    const card = cards.find(c => c.id === cardId);
+    if (card) {
+        alert(`Card Details:\n\nType: ${card.type.toUpperCase()}\nHolder: ${card.holder}\nNumber: **** **** **** ${card.number.slice(-4)}\nExpiry: ${card.expiry}`);
+    }
+}
+
+// Format card number input
+document.addEventListener('DOMContentLoaded', () => {
+    const cardNumberInput = document.getElementById('cardNumber');
+    if (cardNumberInput) {
+        cardNumberInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\s/g, '').replace(/\D/g, '');
+            value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+            e.target.value = value;
+        });
+    }
+    
+    const cardExpiryInput = document.getElementById('cardExpiry');
+    if (cardExpiryInput) {
+        cardExpiryInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+    }
+});
 
 function openDeviceLink() {
     document.getElementById('mainPanel').style.display = 'none';
@@ -397,6 +505,14 @@ function openDeviceLink() {
     
     // Initialize device link functionality
     initializeDeviceLink();
+}
+
+function openFinancials() {
+    document.getElementById('mainPanel').style.display = 'none';
+    document.getElementById('financialsPanel').style.display = 'block';
+    
+    // Initialize financials
+    initializeFinancials();
 }
 
 function initializeDeviceLink() {
@@ -783,6 +899,18 @@ async function saveItem() {
 document.getElementById('itemModal').addEventListener('click', (e) => {
     if (e.target.id === 'itemModal') {
         closeModal();
+    }
+});
+
+// Close card modal when clicking outside
+document.addEventListener('DOMContentLoaded', () => {
+    const cardModal = document.getElementById('cardModal');
+    if (cardModal) {
+        cardModal.addEventListener('click', (e) => {
+            if (e.target.id === 'cardModal') {
+                closeCardModal();
+            }
+        });
     }
 });
 

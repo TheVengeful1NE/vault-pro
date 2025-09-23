@@ -1208,6 +1208,164 @@
         .cancel-btn:hover {
             background: rgba(233, 69, 96, 0.2);
         }
+
+        /* Financials Panel Styles */
+        .spend-analysis {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .spend-card {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .spend-label {
+            color: #888;
+            font-size: 10px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .spend-amount {
+            color: #00ff41;
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 0 0 6px #00ff41;
+        }
+
+        .add-card-btn {
+            background: linear-gradient(145deg, #2a4a2e, #1e3e22);
+            border: 1px solid #00ff41;
+            border-radius: 6px;
+            color: #00ff41;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            padding: 10px 15px;
+            transition: all 0.2s ease;
+            text-shadow: 0 0 4px #00ff41;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 20px;
+        }
+
+        .add-card-btn:hover {
+            background: linear-gradient(145deg, #3a5a3e, #2e4e32);
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.4);
+        }
+
+        .cards-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            max-height: calc(100% - 80px);
+        }
+
+        .credit-card {
+            width: 100%;
+            height: 200px;
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .credit-card.visa {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }
+
+        .credit-card.mastercard {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+        }
+
+        .credit-card.amex {
+            background: linear-gradient(135deg, #2c5530 0%, #416d3a 100%);
+        }
+
+        .credit-card.discover {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        }
+
+        .credit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-brand {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-number {
+            position: absolute;
+            bottom: 60px;
+            left: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            font-family: 'Courier New', monospace;
+        }
+
+        .card-holder {
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-expiry {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            font-family: 'Courier New', monospace;
+        }
+
+        .card-actions {
+            margin-bottom: 20px;
+        }
+
+        .empty-cards {
+            text-align: center;
+            color: #888;
+            margin-top: 50px;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .empty-text {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .empty-subtext {
+            font-size: 10px;
+        }
     </style>
 </head>
 <body>
@@ -1248,6 +1406,13 @@
                     <div class="system-icon">📱</div>
                     <div class="system-title">DEVICE LINK</div>
                     <div class="system-description">Generate access links and manage connected devices</div>
+                    <div class="system-status">OPERATIONAL</div>
+                </div>
+                
+                <div class="system-card" onclick="openFinancials()">
+                    <div class="system-icon">💳</div>
+                    <div class="system-title">FINANCIALS</div>
+                    <div class="system-description">Manage spending analysis and secure card storage</div>
                     <div class="system-status">OPERATIONAL</div>
                 </div>
                 
@@ -1354,6 +1519,93 @@
             <button class="password-auth-btn password-auth-cancel" onclick="closePasswordAuth()">CANCEL</button>
             
             <div class="password-auth-error" id="passwordAuthError">ACCESS DENIED - INVALID CREDENTIALS</div>
+        </div>
+    </div>
+
+    <!-- Financials Panel -->
+    <div class="device-panel" id="financialsPanel">
+        <div class="device-header">
+            <div class="device-title">FINANCIALS MANAGER</div>
+            <div class="device-nav">
+                <button class="back-btn" onclick="backToMain()">← BACK TO MAIN</button>
+                <button class="logout-btn" onclick="logout()">LOGOUT</button>
+            </div>
+        </div>
+        
+        <div class="device-content">
+            <div class="device-section">
+                <div class="section-title">📊 SPEND ANALYSIS</div>
+                <div class="spend-analysis">
+                    <div class="spend-card">
+                        <div class="spend-label">TOTAL SPENDING</div>
+                        <div class="spend-amount" id="totalSpending">$0.00</div>
+                    </div>
+                    <div class="spend-card">
+                        <div class="spend-label">THIS MONTH</div>
+                        <div class="spend-amount" id="monthlySpending">$0.00</div>
+                    </div>
+                    <div class="spend-card">
+                        <div class="spend-label">LAST TRANSACTION</div>
+                        <div class="spend-amount" id="lastTransaction">$0.00</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-section">
+                <div class="section-title">💳 CARD STORAGE</div>
+                <div class="card-actions">
+                    <button class="add-card-btn" onclick="openAddCardModal()">+ ADD NEW CARD</button>
+                </div>
+                <div class="cards-list" id="cardsList">
+                    <div class="empty-cards">
+                        <div class="empty-icon">💳</div>
+                        <div class="empty-text">No cards stored</div>
+                        <div class="empty-subtext">Click "ADD NEW CARD" to get started</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Card Modal -->
+    <div class="modal" id="cardModal">
+        <div class="modal-content">
+            <div class="modal-title" id="cardModalTitle">ADD NEW CARD</div>
+            
+            <div class="form-group">
+                <label class="form-label">CARD TYPE</label>
+                <select class="form-input" id="cardType">
+                    <option value="visa">VISA</option>
+                    <option value="mastercard">MASTERCARD</option>
+                    <option value="amex">AMERICAN EXPRESS</option>
+                    <option value="discover">DISCOVER</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">CARD HOLDER NAME</label>
+                <input type="text" class="form-input" id="cardHolder" placeholder="Enter cardholder name...">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">CARD NUMBER</label>
+                <input type="text" class="form-input" id="cardNumber" placeholder="**** **** **** ****" maxlength="19">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">EXPIRY DATE</label>
+                <input type="text" class="form-input" id="cardExpiry" placeholder="MM/YY" maxlength="5">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">CVV</label>
+                <input type="text" class="form-input" id="cardCVV" placeholder="***" maxlength="4">
+            </div>
+            
+            <div class="modal-actions">
+                <button class="modal-btn cancel-btn" onclick="closeCardModal()">CANCEL</button>
+                <button class="modal-btn save-btn" onclick="saveCard()">SAVE CARD</button>
+            </div>
         </div>
     </div>
 

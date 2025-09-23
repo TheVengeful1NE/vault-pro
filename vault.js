@@ -511,16 +511,16 @@ function copyNetworkLink() {
     if (link !== 'Generating...' && link !== 'Network IP not available' && link !== 'Error getting network IP') {
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(link).then(() => {
-                showNotification('Network link copied to clipboard!');
+                showNotification('Desktop link copied to clipboard!');
             }).catch(err => {
                 console.error('Failed to copy: ', err);
-                fallbackCopyTextToClipboard(link, 'Network link copied to clipboard!');
+                fallbackCopyTextToClipboard(link, 'Desktop link copied to clipboard!');
             });
         } else {
-            fallbackCopyTextToClipboard(link, 'Network link copied to clipboard!');
+            fallbackCopyTextToClipboard(link, 'Desktop link copied to clipboard!');
         }
     } else {
-        showNotification('Network link not ready yet', 'error');
+        showNotification('Desktop link not ready yet', 'error');
     }
 }
 

@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VAULT PRO MOBILE - SECURE ACCESS</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="cache-buster" content="v2.0.1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a1a2e">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #000 70%);
+            color: #00d4ff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+            touch-action: manipulation;
+        }
+
+        .stars {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(1px 1px at 20px 30px, #fff, transparent),
+                radial-gradient(1px 1px at 40px 70px, #fff, transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+                radial-gradient(1px 1px at 130px 80px, #fff, transparent);
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: twinkle 6s ease-in-out infinite alternate;
+            z-index: -1;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        /* Mobile Login Screen */
+        .mobile-login {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3), 0 0 60px rgba(233, 69, 96, 0.2);
+            position: relative;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00d4ff, #e94560, #00d4ff);
+            border-radius: 12px;
+            z-index: -1;
+            animation: borderGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes borderGlow {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .login-logo {
+            font-size: 48px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
+        }
+
+        .login-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #e94560;
+            text-shadow: 0 0 10px #e94560;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        .login-subtitle {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+
+        .mobile-input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .mobile-input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 11px;
+            color: #00d4ff;
+            letter-spacing: 1px;
+        }
+
+        .mobile-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            border-radius: 8px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .mobile-input:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+            border-color: #00ff41;
+        }
+
+        .mobile-login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(145deg, rgba(0, 212, 255, 0.1), rgba(0, 212, 255, 0.2));
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 8px;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .mobile-login-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.7);
+        }
+
+
+
+        /* Mobile Main Panel */
+        .mobile-main {
+            display: none;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .mobile-header {
+            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
+            border-bottom: 2px solid #0f3460;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .mobile-title {
+            color: #00d4ff;
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-shadow: 0 0 6px #00d4ff;
+        }
+
+        .mobile-logout {
+            background: rgba(233, 69, 96, 0.2);
+            border: 1px solid #e94560;
+            border-radius: 6px;
+            color: #e94560;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            padding: 8px 12px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .mobile-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .mobile-card {
+            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
+            border: 2px solid #0f3460;
+            border-radius: 12px;
+            padding: 25px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mobile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .mobile-card:active::before {
+            left: 100%;
+        }
+
+        .mobile-card:active {
+            transform: scale(0.98);
+            border-color: #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .mobile-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .mobile-card-icon {
+            font-size: 42px;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
+        }
+
+        .mobile-card-title {
+            color: #00d4ff;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px #00d4ff;
+        }
+
+        .mobile-card-desc {
+            color: #ccc;
+            font-size: 10px;
+            line-height: 1.3;
+            margin-bottom: 10px;
+        }
+
+        .mobile-status {
+            font-size: 8px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .mobile-status.operational {
+            background: rgba(0, 255, 65, 0.2);
+            color: #00ff41;
+            border: 1px solid #00ff41;
+        }
+
+        .mobile-status.coming-soon {
+            background: rgba(233, 69, 96, 0.2);
+            color: #e94560;
+            border: 1px solid #e94560;
+        }
+
+        /* Mobile Vault Interface */
+        .mobile-vault {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .mobile-nav {
+            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
+            border-bottom: 1px solid #0f3460;
+            padding: 10px;
+            display: flex;
+            overflow-x: auto;
+            gap: 8px;
+            position: sticky;
+            top: 60px;
+            z-index: 99;
+        }
+
+        .mobile-nav-btn {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #0f3460;
+            border-radius: 20px;
+            color: #00d4ff;
+            cursor: pointer;
+            font-size: 10px;
+            padding: 8px 15px;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            font-family: 'Courier New', monospace;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .mobile-nav-btn.active {
+            background: rgba(0, 212, 255, 0.3);
+            border-color: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+        }
+
+        .mobile-content {
+            padding: 15px;
+            padding-bottom: 80px;
+        }
+
+        .mobile-add-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(145deg, rgba(0, 255, 65, 0.2), rgba(0, 255, 65, 0.3));
+            border: 2px solid #00ff41;
+            border-radius: 50%;
+            color: #00ff41;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 255, 65, 0.3);
+            z-index: 1000;
+        }
+
+        .mobile-add-btn:active {
+            transform: scale(0.95);
+        }
+
+        .mobile-item {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            padding: 18px;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .mobile-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #00d4ff, #e94560);
+            border-radius: 8px 8px 0 0;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .mobile-item:active {
+            border-color: #00d4ff;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+        }
+
+        .mobile-item:active::before {
+            opacity: 1;
+        }
+
+        .mobile-item-title {
+            color: #e94560;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .mobile-item-content {
+            color: #ccc;
+            font-size: 11px;
+            line-height: 1.3;
+            margin-bottom: 10px;
+            word-break: break-word;
+        }
+
+        .mobile-item-meta {
+            font-size: 9px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .mobile-item-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .mobile-action-btn {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #0f3460;
+            border-radius: 15px;
+            color: #00d4ff;
+            cursor: pointer;
+            font-size: 9px;
+            padding: 6px 12px;
+            transition: all 0.2s ease;
+            font-family: 'Courier New', monospace;
+            flex: 1;
+            text-align: center;
+            min-width: 60px;
+        }
+
+        .mobile-action-btn:active {
+            background: rgba(0, 212, 255, 0.2);
+            transform: scale(0.95);
+        }
+
+        .mobile-action-btn.delete {
+            background: rgba(233, 69, 96, 0.1);
+            border-color: #e94560;
+            color: #e94560;
+        }
+
+        /* Mobile Modal */
+        .mobile-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            overflow-y: auto;
+            backdrop-filter: blur(5px);
+        }
+
+        .mobile-modal-content {
+            background: linear-gradient(145deg, rgba(26, 26, 46, 0.98), rgba(22, 33, 62, 0.98));
+            border-top: 3px solid #00d4ff;
+            border-radius: 12px 12px 0 0;
+            padding: 25px;
+            margin-top: 8vh;
+            min-height: 92vh;
+            box-shadow: 0 -10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .mobile-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #0f3460;
+        }
+
+        .mobile-modal-title {
+            color: #e94560;
+            font-size: 16px;
+            text-shadow: 0 0 6px #e94560;
+        }
+
+        .mobile-modal-close {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .mobile-form-group {
+            margin-bottom: 20px;
+        }
+
+        .mobile-form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #00d4ff;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+
+        .mobile-form-input, .mobile-form-textarea, .mobile-form-select {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            border-radius: 8px;
+        }
+
+        .mobile-form-textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .mobile-form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .mobile-form-btn {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .mobile-form-btn.save {
+            background: rgba(0, 255, 65, 0.1);
+            border-color: #00ff41;
+            color: #00ff41;
+        }
+
+        .mobile-form-btn.cancel {
+            background: rgba(233, 69, 96, 0.1);
+            border-color: #e94560;
+            color: #e94560;
+        }
+
+        /* File Upload for Mobile */
+        .mobile-file-upload {
+            border: 2px dashed #00d4ff;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 212, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mobile-file-upload:active {
+            border-color: #00ff41;
+            background: rgba(0, 255, 65, 0.1);
+        }
+
+        .mobile-file-upload.has-file {
+            border-color: #00ff41;
+            background: rgba(0, 255, 65, 0.1);
+        }
+
+        .mobile-file-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .mobile-file-text {
+            font-size: 11px;
+            color: #00d4ff;
+        }
+
+        /* Empty State */
+        .mobile-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+        }
+
+        .mobile-empty-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .mobile-empty-text {
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        /* Loading State */
+        .mobile-loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .mobile-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #0f3460;
+            border-top: 3px solid #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Notification */
+        .mobile-notification {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0, 255, 65, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            text-align: center;
+            z-index: 3000;
+            transform: translateY(-100px);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-notification.show {
+            transform: translateY(0);
+        }
+
+        /* Shake animation for invalid password */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* Enhanced mobile password modal */
+        #mobilePasswordModal .mobile-modal-content {
+            border-top: 3px solid #e94560;
+        }
+
+        #mobilePasswordModal .mobile-form-btn.save {
+            background: rgba(233, 69, 96, 0.1);
+            border-color: #e94560;
+            color: #e94560;
+        }
+
+        #mobilePasswordModal .mobile-form-btn.save:active {
+            background: rgba(233, 69, 96, 0.2);
+            transform: scale(0.98);
+        }
+
+        /* Mobile view panel */
+        .mobile-view-content {
+            margin: 20px 0;
+        }
+
+        .mobile-view-field {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #0f3460;
+            border-radius: 6px;
+        }
+
+        .mobile-view-label {
+            color: #00d4ff;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .mobile-view-value {
+            color: #ccc;
+            font-size: 12px;
+            line-height: 1.4;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    
+    <!-- Mobile Login Screen -->
+    <div class="mobile-login" id="mobileLogin">
+        <div class="login-card">
+            <div class="login-logo">🔐</div>
+            <div class="login-title">VAULT PRO</div>
+            <div class="login-subtitle">MOBILE SECURE ACCESS</div>
+            
+            <div class="mobile-input-group">
+                <label class="mobile-input-label">SECURITY CLEARANCE</label>
+                <input type="password" class="mobile-input" id="mobilePassword" placeholder="Enter access code...">
+            </div>
+            
+            <button class="mobile-login-btn" onclick="mobileAuthenticate()">AUTHENTICATE</button>
+        </div>
+    </div>
+
+    <!-- Mobile Main Panel -->
+    <div class="mobile-main" id="mobileMain">
+        <div class="mobile-header">
+            <div class="mobile-title">VAULT PRO MOBILE</div>
+            <button class="mobile-logout" onclick="mobileLogout()">LOGOUT</button>
+        </div>
+        
+        <div class="mobile-grid">
+            <div class="mobile-card" onclick="openMobileVault()">
+                <div class="mobile-card-icon">🔒</div>
+                <div class="mobile-card-title">SECURE STORAGE</div>
+                <div class="mobile-card-desc">Access encrypted documents, passwords, and secret notes</div>
+                <div class="mobile-status operational">OPERATIONAL</div>
+            </div>
+            
+            <div class="mobile-card disabled">
+                <div class="mobile-card-icon">⚙️</div>
+                <div class="mobile-card-title">SETTINGS</div>
+                <div class="mobile-card-desc">Configure mobile app preferences</div>
+                <div class="mobile-status coming-soon">COMING SOON</div>
+            </div>
+            
+            <div class="mobile-card disabled">
+                <div class="mobile-card-icon">📊</div>
+                <div class="mobile-card-title">ANALYTICS</div>
+                <div class="mobile-card-desc">View usage statistics and reports</div>
+                <div class="mobile-status coming-soon">COMING SOON</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Vault Interface -->
+    <div class="mobile-vault" id="mobileVault">
+        <div class="mobile-header">
+            <div class="mobile-title">SECURE STORAGE</div>
+            <button class="mobile-logout" onclick="backToMobileMain()">← BACK</button>
+        </div>
+        
+        <div class="mobile-nav" id="mobileNav">
+            <button class="mobile-nav-btn active" data-category="all">ALL</button>
+            <button class="mobile-nav-btn" data-category="documents">DOCS</button>
+            <button class="mobile-nav-btn" data-category="passwords">PASSWORDS</button>
+            <button class="mobile-nav-btn" data-category="notes">NOTES</button>
+        </div>
+        
+        <div class="mobile-content" id="mobileContent">
+            <div class="mobile-loading">
+                <div class="mobile-spinner"></div>
+            </div>
+        </div>
+        
+        <button class="mobile-add-btn" onclick="openMobileAddModal()">+</button>
+    </div>
+
+    <!-- Mobile Password Authentication Modal -->
+    <div class="mobile-modal" id="mobilePasswordModal">
+        <div class="mobile-modal-content">
+            <div class="mobile-modal-header">
+                <div class="mobile-modal-title">PASSWORD ACCESS</div>
+                <button class="mobile-modal-close" onclick="closeMobilePasswordAuth()">×</button>
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-size: 48px; margin-bottom: 15px;">🔐</div>
+                <div style="color: #888; font-size: 11px; line-height: 1.4;">
+                    ENTER SECURITY CODE TO ACCESS<br>PASSWORD VAULT
+                </div>
+            </div>
+            
+            <div class="mobile-form-group">
+                <label class="mobile-form-label">SECURITY CODE</label>
+                <input type="password" class="mobile-form-input" id="mobilePasswordAuthInput" placeholder="Enter access code..." style="text-align: center; letter-spacing: 2px;">
+            </div>
+            
+            <div class="mobile-form-actions">
+                <button class="mobile-form-btn cancel" onclick="closeMobilePasswordAuth()">CANCEL</button>
+                <button class="mobile-form-btn save" onclick="authenticateMobilePasswordAccess()">AUTHENTICATE</button>
+            </div>
+            
+            <div id="mobilePasswordAuthError" style="color: #ff0000; font-size: 11px; text-align: center; margin-top: 15px; display: none;">
+                ACCESS DENIED - INVALID CREDENTIALS
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile View Panel -->
+    <div class="mobile-modal" id="mobileViewPanel">
+        <div class="mobile-modal-content">
+            <div class="mobile-modal-header">
+                <div class="mobile-modal-title" id="mobileViewTitle">ITEM DETAILS</div>
+                <button class="mobile-modal-close" onclick="closeMobileViewPanel()">×</button>
+            </div>
+            
+            <div class="mobile-view-content">
+                <div class="mobile-view-field">
+                    <div class="mobile-view-label">TITLE:</div>
+                    <div class="mobile-view-value" id="mobileViewItemTitle"></div>
+                </div>
+                
+                <div class="mobile-view-field">
+                    <div class="mobile-view-label">CATEGORY:</div>
+                    <div class="mobile-view-value" id="mobileViewItemCategory"></div>
+                </div>
+                
+                <div class="mobile-view-field">
+                    <div class="mobile-view-label">CONTENT:</div>
+                    <div class="mobile-view-value" id="mobileViewItemContent"></div>
+                </div>
+                
+                <div class="mobile-view-field">
+                    <div class="mobile-view-label">CREATED:</div>
+                    <div class="mobile-view-value" id="mobileViewItemCreated"></div>
+                </div>
+                
+                <div class="mobile-view-field">
+                    <div class="mobile-view-label">MODIFIED:</div>
+                    <div class="mobile-view-value" id="mobileViewItemModified"></div>
+                </div>
+            </div>
+            
+            <div class="mobile-form-actions">
+                <button class="mobile-form-btn cancel" onclick="closeMobileViewPanel()">CLOSE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Modal -->
+    <div class="mobile-modal" id="mobileModal">
+        <div class="mobile-modal-content">
+            <div class="mobile-modal-header">
+                <div class="mobile-modal-title" id="mobileModalTitle">ADD NEW ITEM</div>
+                <button class="mobile-modal-close" onclick="closeMobileModal()">×</button>
+            </div>
+            
+            <div class="mobile-form-group">
+                <label class="mobile-form-label">CATEGORY</label>
+                <select class="mobile-form-select" id="mobileItemCategory">
+                    <option value="documents">DOCUMENTS</option>
+                    <option value="passwords">PASSWORDS</option>
+                    <option value="notes">SECRET NOTES</option>
+                </select>
+            </div>
+            
+            <div class="mobile-form-group">
+                <label class="mobile-form-label">TITLE</label>
+                <input type="text" class="mobile-form-input" id="mobileItemTitle" placeholder="Enter title...">
+            </div>
+            
+            <div class="mobile-form-group" id="mobileContentGroup">
+                <label class="mobile-form-label">CONTENT</label>
+                <textarea class="mobile-form-textarea" id="mobileItemContent" placeholder="Enter content..."></textarea>
+            </div>
+            
+            <div class="mobile-form-group" id="mobileFileGroup" style="display: none;">
+                <label class="mobile-form-label">DOCUMENT FILE</label>
+                <div class="mobile-file-upload" id="mobileFileUpload">
+                    <div class="mobile-file-icon">📁</div>
+                    <div class="mobile-file-text" id="mobileFileText">TAP TO SELECT FILE</div>
+                    <input type="file" style="display: none;" id="mobileDocumentFile" accept="*/*">
+                </div>
+            </div>
+            
+            <div class="mobile-form-actions">
+                <button class="mobile-form-btn cancel" onclick="closeMobileModal()">CANCEL</button>
+                <button class="mobile-form-btn save" onclick="saveMobileItem()">SAVE</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="mobile.js?v=2.0.1"></script>
+</body>
+</html>

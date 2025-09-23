@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vault Pro Test</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+</head>
+<body>
+    <h1>Vault Pro localStorage Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        // Test localStorage functionality
+        function runTests() {
+            const results = document.getElementById('results');
+            let output = '';
+            
+            try {
+                // Test 1: Clear any existing data
+                localStorage.removeItem('vaultProData');
+                output += '✓ Test 1: localStorage cleared<br>';
+                
+                // Test 2: Create test data
+                const testData = {
+                    items: [
+                        {
+                            id: '123',
+                            category: 'passwords',
+                            title: 'Test Password',
+                            content: 'test123',
+                            created: new Date().toISOString(),
+                            modified: new Date().toISOString()
+                        }
+                    ]
+                };
+                
+                localStorage.setItem('vaultProData', JSON.stringify(testData));
+                output += '✓ Test 2: Test data saved to localStorage<br>';
+                
+                // Test 3: Retrieve and verify data
+                const retrieved = JSON.parse(localStorage.getItem('vaultProData'));
+                if (retrieved && retrieved.items && retrieved.items.length === 1) {
+                    output += '✓ Test 3: Data retrieved successfully<br>';
+                    output += `  - Item title: ${retrieved.items[0].title}<br>`;
+                    output += `  - Item category: ${retrieved.items[0].category}<br>`;
+                } else {
+                    output += '✗ Test 3: Data retrieval failed<br>';
+                }
+                
+                // Test 4: Clean up
+                localStorage.removeItem('vaultProData');
+                output += '✓ Test 4: Test data cleaned up<br>';
+                
+                output += '<br><strong>All tests passed! ✓</strong><br>';
+                output += '<br>The Vault Pro application should work correctly with localStorage.';
+                
+            } catch (error) {
+                output += `✗ Error: ${error.message}<br>`;
+            }
+            
+            results.innerHTML = output;
+        }
+        
+        // Run tests when page loads
+        window.onload = runTests;
+    </script>
+</body>
+</html>

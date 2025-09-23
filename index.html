@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>VAULT PRO - SECURE DATA STORAGE</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="cache-buster" content="v2.0.1">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #000 70%);
+            color: #00d4ff;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+        }
+
+        .stars {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+                radial-gradient(2px 2px at 40px 70px, #fff, transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+                radial-gradient(1px 1px at 130px 80px, #fff, transparent),
+                radial-gradient(2px 2px at 160px 30px, #fff, transparent);
+            background-repeat: repeat;
+            background-size: 400px 400px;
+            animation: twinkle 4s ease-in-out infinite alternate;
+            z-index: -1;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .login-container {
+            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
+            border: 2px solid #00d4ff;
+            border-radius: 8px;
+            padding: 40px;
+            width: 400px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3), 0 0 40px rgba(233, 69, 96, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+
+        .main-panel {
+            display: none;
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
+            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .vault-container {
+            display: none;
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
+            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .login-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #e94560;
+            text-shadow: 0 0 10px #e94560;
+        }
+
+        .login-subtitle {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #00d4ff;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00d4ff;
+            color: #00d4ff;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 4px;
+        }
+
+        .login-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+        }
+
+        .error-message {
+            color: #ff0000;
+            font-size: 12px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .vault-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #0f3460;
+        }
+
+        .vault-title {
+            color: #00d4ff;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px #00d4ff;
+        }
+
+        .logout-btn {
+            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
+            border: 1px solid #0f3460;
+            border-radius: 4px;
+            color: #e94560;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            padding: 8px 16px;
+            transition: all 0.2s ease;
+            text-shadow: 0 0 4px #e94560;
+            font-family: 'Courier New', monospace;
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(145deg, #3a3a4e, #2e2e42);
+            border-color: #e94560;
+            box-shadow: 0 0 8px rgba(233, 69, 96, 0.4);
+        }
+
+        .vault-content {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+            height: calc(100% - 80px);
+        }
+
+        .sidebar {
+            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .main-content {
+            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .category-btn {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 15px;
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 1px solid #0f3460;
+            border-radius: 6px;
+            color: #00d4ff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background: linear-gradient(145deg, #3a3a4e, #2e2e42);
+            border-color: #00d4ff;
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+        }
+
+        .add-btn {
+            background: linear-gradient(145deg, #2a4a2e, #1e3e22);
+            border: 1px solid #00ff41;
+            border-radius: 6px;
+            color: #00ff41;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            padding: 12px 20px;
+            transition: all 0.2s ease;
+            text-shadow: 0 0 4px #00ff41;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 20px;
+        }
+
+        .add-btn:hover {
+            background: linear-gradient(145deg, #3a5a3e, #2e4e32);
+            box-shadow: 0 0 12px rgba(0, 255, 65, 0.4);
+        }
+
+        .item-card {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .item-card:hover {
+            border-color: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .item-title {
+            color: #e94560;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .item-content {
+            color: #ccc;
+            font-size: 12px;
+            line-height: 1.4;
+            word-break: break-all;
+        }
+
+        .item-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #0f3460;
+            border-radius: 4px;
+            color: #00d4ff;
+            cursor: pointer;
+            font-size: 10px;
+            padding: 6px 12px;
+            transition: all 0.2s ease;
+            font-family: 'Courier New', monospace;
+        }
+
+        .action-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+        }
+
+        .delete-btn {
+            background: rgba(233, 69, 96, 0.1);
+            border-color: #e94560;
+            color: #e94560;
+        }
+
+        .delete-btn:hover {
+            background: rgba(233, 69, 96, 0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
+            border: 2px solid #00d4ff;
+            border-radius: 8px;
+            padding: 30px;
+            width: 500px;
+            max-width: 90%;
+        }
+
+        .modal-title {
+            color: #e94560;
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 8px #e94560;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            color: #00d4ff;
+            font-size: 12px;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00d4ff;
+            color: #00d4ff;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            border-color: #00d4ff;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-custom {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(145deg, rgba(0, 212, 255, 0.1), rgba(0, 212, 255, 0.05));
+            border: 2px dashed #00d4ff;
+            color: #00d4ff;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .file-input-custom:hover {
+            background: linear-gradient(145deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.1));
+            border-color: #00ff41;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .file-input-custom.has-file {
+            background: linear-gradient(145deg, rgba(0, 255, 65, 0.1), rgba(0, 255, 65, 0.05));
+            border-color: #00ff41;
+            border-style: solid;
+        }
+
+        .file-input-hidden {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input-text {
+            pointer-events: none;
+        }
+
+        .file-input-icon {
+            font-size: 16px;
+            margin-right: 8px;
+        }
+
+        .main-header, .vault-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #0f3460;
+        }
+
+        .vault-nav {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .main-title, .vault-title {
+            color: #00d4ff;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px #00d4ff;
+        }
+
+        .back-btn {
+            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
+            border: 1px solid #0f3460;
+            border-radius: 4px;
+            color: #00d4ff;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            padding: 8px 16px;
+            transition: all 0.2s ease;
+            text-shadow: 0 0 4px #00d4ff;
+            font-family: 'Courier New', monospace;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(145deg, #3a3a4e, #2e2e42);
+            border-color: #00d4ff;
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+        }
+
+        .main-content-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: calc(100% - 80px);
+        }
+
+        .system-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            max-width: 800px;
+        }
+
+        .system-card {
+            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
+            border: 2px solid #0f3460;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .system-card:hover:not(.disabled) {
+            border-color: #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .system-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .system-card.disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .system-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
+        }
+
+        .system-title {
+            color: #00d4ff;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px #00d4ff;
+        }
+
+        .system-description {
+            color: #ccc;
+            font-size: 12px;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+
+        .system-status {
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .system-card:not(.disabled) .system-status {
+            background: rgba(0, 255, 65, 0.2);
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            text-shadow: 0 0 4px #00ff41;
+        }
+
+        .system-card.disabled .system-status {
+            background: rgba(233, 69, 96, 0.2);
+            color: #e94560;
+            border: 1px solid #e94560;
+            text-shadow: 0 0 4px #e94560;
+        }
+
+        .device-panel {
+            display: none;
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
+            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .device-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #0f3460;
+        }
+
+        .device-title {
+            color: #00d4ff;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px #00d4ff;
+        }
+
+        .device-nav {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .device-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            height: calc(100% - 80px);
+            overflow: hidden;
+        }
+
+        .device-section {
+            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            padding: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            color: #00d4ff;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 0 0 6px #00d4ff;
+            letter-spacing: 1px;
+        }
+
+        .link-generator {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .link-info {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #0f3460;
+            border-radius: 6px;
+            padding: 15px;
+        }
+
+        .link-label {
+            color: #888;
+            font-size: 10px;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .link-display {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #00d4ff;
+            border-radius: 4px;
+            padding: 10px;
+            color: #00d4ff;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            word-break: break-all;
+            margin-bottom: 10px;
+        }
+
+        .copy-btn, .generate-qr-btn {
+            background: rgba(0, 255, 65, 0.1);
+            border: 1px solid #00ff41;
+            border-radius: 4px;
+            color: #00ff41;
+            cursor: pointer;
+            font-size: 10px;
+            padding: 8px 12px;
+            transition: all 0.2s ease;
+            font-family: 'Courier New', monospace;
+            width: 100%;
+        }
+
+        .copy-btn:hover, .generate-qr-btn:hover {
+            background: rgba(0, 255, 65, 0.2);
+            box-shadow: 0 0 8px rgba(0, 255, 65, 0.4);
+        }
+
+        .qr-section {
+            text-align: center;
+        }
+
+        .qr-label {
+            color: #888;
+            font-size: 10px;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .qr-code {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #00d4ff;
+            border-radius: 6px;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: monospace;
+            font-size: 6px;
+            line-height: 1;
+            color: #000;
+            overflow: hidden;
+        }
+
+        .qr-placeholder {
+            color: #666;
+            font-size: 10px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .device-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+            flex: 1;
+            max-height: calc(100% - 40px);
+            padding-right: 5px;
+        }
+
+        .device-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .device-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 2px;
+        }
+
+        .device-list::-webkit-scrollbar-thumb {
+            background: #00d4ff;
+            border-radius: 2px;
+        }
+
+        .device-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #0f3460;
+            border-radius: 6px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .device-item.current-device {
+            border-color: #00ff41;
+            background: rgba(0, 255, 65, 0.05);
+        }
+
+        .device-icon {
+            font-size: 24px;
+            width: 40px;
+            text-align: center;
+        }
+
+        .device-info {
+            flex: 1;
+        }
+
+        .device-name {
+            color: #00d4ff;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .device-details {
+            color: #888;
+            font-size: 10px;
+            margin-bottom: 5px;
+        }
+
+        .device-status {
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .device-status.online {
+            background: rgba(0, 255, 65, 0.2);
+            color: #00ff41;
+            border: 1px solid #00ff41;
+        }
+
+        .device-status.offline {
+            background: rgba(233, 69, 96, 0.2);
+            color: #e94560;
+            border: 1px solid #e94560;
+        }
+
+        .device-badge {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            border: 1px solid #00d4ff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .device-item.offline-device {
+            opacity: 0.6;
+        }
+
+        .device-item.offline-device .device-badge {
+            background: rgba(233, 69, 96, 0.2);
+            color: #e94560;
+            border-color: #e94560;
+        }
+
+        .password-auth-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .password-auth-content {
+            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
+            border: 2px solid #e94560;
+            border-radius: 8px;
+            padding: 40px;
+            width: 400px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(233, 69, 96, 0.5);
+        }
+
+        .password-auth-title {
+            color: #e94560;
+            font-size: 20px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #e94560;
+            letter-spacing: 2px;
+        }
+
+        .password-auth-subtitle {
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 30px;
+        }
+
+        .password-auth-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #e94560;
+            color: #e94560;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .password-auth-input:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.5);
+        }
+
+        .password-auth-btn {
+            width: 100%;
+            padding: 12px;
+            background: rgba(233, 69, 96, 0.1);
+            border: 2px solid #e94560;
+            color: #e94560;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .password-auth-btn:hover {
+            background: rgba(233, 69, 96, 0.2);
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.5);
+        }
+
+        .password-auth-cancel {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        .password-auth-cancel:hover {
+            background: rgba(0, 212, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+        }
+
+        .password-auth-error {
+            color: #ff0000;
+            font-size: 12px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .password-masked {
+            filter: blur(8px);
+            user-select: none;
+            transition: filter 0.3s ease;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            .login-container {
+                width: 95%;
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .main-panel, .vault-container, .device-panel {
+                width: 98%;
+                height: 95vh;
+                padding: 15px;
+                margin: 10px;
+            }
+            
+            .main-title, .vault-title, .device-title {
+                font-size: 16px;
+                letter-spacing: 1px;
+            }
+            
+            .system-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 10px;
+            }
+            
+            .system-card {
+                padding: 20px;
+                margin-bottom: 15px;
+            }
+            
+            .system-icon {
+                font-size: 36px;
+                margin-bottom: 10px;
+            }
+            
+            .system-title {
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
+            
+            .system-description {
+                font-size: 11px;
+                line-height: 1.3;
+            }
+            
+            .vault-content {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                height: calc(100% - 60px);
+            }
+            
+            .sidebar {
+                order: 2;
+                padding: 15px;
+            }
+            
+            .main-content {
+                order: 1;
+                max-height: 60vh;
+                overflow-y: auto;
+            }
+            
+            .category-btn {
+                padding: 12px;
+                margin-bottom: 8px;
+                font-size: 11px;
+            }
+            
+            .add-btn {
+                padding: 10px 15px;
+                font-size: 12px;
+                margin-bottom: 15px;
+            }
+            
+            .item-card {
+                padding: 15px;
+                margin-bottom: 12px;
+            }
+            
+            .item-title {
+                font-size: 14px;
+                margin-bottom: 8px;
+            }
+            
+            .item-content {
+                font-size: 11px;
+                line-height: 1.3;
+            }
+            
+            .item-actions {
+                margin-top: 12px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            
+            .action-btn {
+                font-size: 9px;
+                padding: 8px 10px;
+                flex: 1;
+                min-width: 60px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .modal-title {
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
+            
+            .form-input, .form-textarea {
+                padding: 12px;
+                font-size: 14px;
+            }
+            
+            .form-textarea {
+                height: 80px;
+            }
+            
+            .modal-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .modal-btn {
+                width: 100%;
+                padding: 12px;
+                font-size: 12px;
+            }
+            
+            .device-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .device-section {
+                padding: 15px;
+            }
+            
+            .link-display {
+                font-size: 10px;
+                padding: 8px;
+                word-break: break-all;
+            }
+            
+            .qr-code {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .device-item {
+                padding: 12px;
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .device-info {
+                text-align: center;
+            }
+            
+            .password-auth-content {
+                width: 95%;
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .password-auth-title {
+                font-size: 18px;
+            }
+            
+            .password-auth-input {
+                padding: 14px;
+                font-size: 16px;
+            }
+            
+            .password-auth-btn {
+                padding: 14px;
+                font-size: 14px;
+            }
+            
+            .file-input-custom {
+                padding: 15px;
+                font-size: 11px;
+            }
+            
+            .logout-btn, .back-btn {
+                font-size: 10px;
+                padding: 8px 12px;
+            }
+            
+            .vault-nav {
+                flex-direction: column;
+                gap: 8px;
+                align-items: stretch;
+            }
+            
+            .vault-nav .back-btn,
+            .vault-nav .logout-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+        
+        /* Touch-friendly improvements */
+        @media (max-width: 768px) and (pointer: coarse) {
+            .category-btn, .action-btn, .modal-btn, .login-btn {
+                min-height: 44px;
+                touch-action: manipulation;
+            }
+            
+            .system-card {
+                min-height: 120px;
+                touch-action: manipulation;
+            }
+            
+            .form-input, .form-textarea, .password-auth-input {
+                min-height: 44px;
+                -webkit-appearance: none;
+                border-radius: 4px;
+            }
+            
+            .input-field {
+                min-height: 44px;
+                -webkit-appearance: none;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-width: 480px) {
+            .main-panel, .vault-container, .device-panel {
+                width: 100%;
+                height: 100vh;
+                padding: 10px;
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .login-container {
+                width: 100%;
+                margin: 0;
+                border-radius: 0;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            
+            .system-grid {
+                padding: 5px;
+                gap: 15px;
+            }
+            
+            .system-card {
+                padding: 15px;
+            }
+            
+            .vault-content {
+                height: calc(100% - 50px);
+            }
+            
+            .main-content {
+                max-height: 50vh;
+            }
+        }
+
+        .password-category-locked {
+            opacity: 0.7;
+            position: relative;
+        }
+
+        .password-category-locked::after {
+            content: '🔒 LOCKED - AUTHENTICATION REQUIRED';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(233, 69, 96, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            z-index: 10;
+        }
+
+        .form-textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: 1px solid;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .save-btn {
+            background: rgba(0, 255, 65, 0.1);
+            border-color: #00ff41;
+            color: #00ff41;
+        }
+
+        .save-btn:hover {
+            background: rgba(0, 255, 65, 0.2);
+        }
+
+        .cancel-btn {
+            background: rgba(233, 69, 96, 0.1);
+            border-color: #e94560;
+            color: #e94560;
+        }
+
+        .cancel-btn:hover {
+            background: rgba(233, 69, 96, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    
+    <!-- Login Screen -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-title">VAULT PRO</div>
+        <div class="login-subtitle">SECURE DATA STORAGE SYSTEM</div>
+        
+        <div class="input-group">
+            <label class="input-label">SECURITY CLEARANCE</label>
+            <input type="password" class="input-field" id="password" placeholder="Enter access code...">
+        </div>
+        
+        <button class="login-btn" onclick="authenticate()">AUTHENTICATE</button>
+        <div class="error-message" id="error">ACCESS DENIED - INVALID CREDENTIALS</div>
+    </div>
+
+    <!-- Main Panel -->
+    <div class="main-panel" id="mainPanel">
+        <div class="main-header">
+            <div class="main-title">VAULT PRO - COMMAND CENTER</div>
+            <button class="logout-btn" onclick="logout()">LOGOUT</button>
+        </div>
+        
+        <div class="main-content-center">
+            <div class="system-grid">
+                <div class="system-card" onclick="openVaultStorage()">
+                    <div class="system-icon">🔒</div>
+                    <div class="system-title">SECURE STORAGE</div>
+                    <div class="system-description">Access encrypted document vault, password manager, and secret notes</div>
+                    <div class="system-status">OPERATIONAL</div>
+                </div>
+                
+                <!-- Placeholder for future features -->
+                <div class="system-card" onclick="openDeviceLink()">
+                    <div class="system-icon">📱</div>
+                    <div class="system-title">DEVICE LINK</div>
+                    <div class="system-description">Generate access links and manage connected devices</div>
+                    <div class="system-status">OPERATIONAL</div>
+                </div>
+                
+                <div class="system-card disabled">
+                    <div class="system-icon">⚙️</div>
+                    <div class="system-title">SYSTEM CONFIG</div>
+                    <div class="system-description">Configure vault settings and security parameters</div>
+                    <div class="system-status">COMING SOON</div>
+                </div>
+                
+                <div class="system-card disabled">
+                    <div class="system-icon">📊</div>
+                    <div class="system-title">ANALYTICS</div>
+                    <div class="system-description">View storage statistics and security reports</div>
+                    <div class="system-status">COMING SOON</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Device Link Panel -->
+    <div class="device-panel" id="devicePanel">
+        <div class="device-header">
+            <div class="device-title">DEVICE LINK MANAGER</div>
+            <div class="device-nav">
+                <button class="back-btn" onclick="backToMain()">← BACK TO MAIN</button>
+                <button class="logout-btn" onclick="logout()">LOGOUT</button>
+            </div>
+        </div>
+        
+        <div class="device-content">
+            <div class="device-section">
+                <div class="section-title">🔗 ACCESS LINKS</div>
+                <div class="link-generator">
+                    <div class="link-info">
+                        <div class="link-label">CURRENT SERVER ADDRESS:</div>
+                        <div class="link-display" id="serverLink">http://localhost:3000</div>
+                        <button class="copy-btn" onclick="copyLink()">COPY LINK</button>
+                    </div>
+                    
+                    <div class="link-info">
+                        <div class="link-label">NETWORK ACCESS LINK:</div>
+                        <div class="link-display" id="networkLink">Generating...</div>
+                        <button class="copy-btn" onclick="copyNetworkLink()">COPY NETWORK LINK</button>
+                    </div>
+                    
+                    <div class="qr-section">
+                        <div class="qr-label">QR CODE FOR MOBILE ACCESS:</div>
+                        <div class="qr-code" id="qrCode">
+                            <div class="qr-placeholder">📱<br>QR CODE<br>LOADING...</div>
+                        </div>
+                        <button class="generate-qr-btn" onclick="generateQR()">GENERATE QR CODE</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-section">
+                <div class="section-title">💻 CONNECTED DEVICES</div>
+                <div class="device-list" id="deviceList">
+                    <div class="device-item current-device">
+                        <div class="device-icon">💻</div>
+                        <div class="device-info">
+                            <div class="device-name">HOST COMPUTER</div>
+                            <div class="device-details">Windows PC - Current Session</div>
+                            <div class="device-status online">ONLINE</div>
+                        </div>
+                        <div class="device-actions">
+                            <span class="device-badge">PRIMARY</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vault Storage Interface -->
+    <div class="vault-container" id="vaultContainer">
+        <div class="vault-header">
+            <div class="vault-title">VAULT PRO - SECURE STORAGE</div>
+            <div class="vault-nav">
+                <button class="back-btn" onclick="backToMain()">← BACK TO MAIN</button>
+                <button class="logout-btn" onclick="logout()">LOGOUT</button>
+            </div>
+        </div>
+        
+        <div class="vault-content">
+            <div class="sidebar">
+                <button class="add-btn" onclick="openAddModal()">+ ADD NEW ITEM</button>
+                <button class="category-btn active" data-category="all">ALL ITEMS</button>
+                <button class="category-btn" data-category="documents">DOCUMENTS</button>
+                <button class="category-btn" data-category="passwords">PASSWORDS</button>
+                <button class="category-btn" data-category="notes">SECRET NOTES</button>
+            </div>
+            
+            <div class="main-content" id="mainContent">
+                <div id="itemsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Authentication Modal -->
+    <div class="password-auth-modal" id="passwordAuthModal">
+        <div class="password-auth-content">
+            <div class="password-auth-title">PASSWORD ACCESS</div>
+            <div class="password-auth-subtitle">ENTER SECURITY CODE TO ACCESS PASSWORD VAULT</div>
+            
+            <input type="password" class="password-auth-input" id="passwordAuthInput" placeholder="Enter access code...">
+            
+            <button class="password-auth-btn" onclick="authenticatePasswordAccess()">AUTHENTICATE</button>
+            <button class="password-auth-btn password-auth-cancel" onclick="closePasswordAuth()">CANCEL</button>
+            
+            <div class="password-auth-error" id="passwordAuthError">ACCESS DENIED - INVALID CREDENTIALS</div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal" id="itemModal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle">ADD NEW ITEM</div>
+            
+            <div class="form-group">
+                <label class="form-label">CATEGORY</label>
+                <select class="form-input" id="itemCategory">
+                    <option value="documents">DOCUMENTS</option>
+                    <option value="passwords">PASSWORDS</option>
+                    <option value="notes">SECRET NOTES</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">TITLE</label>
+                <input type="text" class="form-input" id="itemTitle" placeholder="Enter title...">
+            </div>
+            
+            <div class="form-group" id="contentGroup">
+                <label class="form-label">CONTENT</label>
+                <textarea class="form-textarea" id="itemContent" placeholder="Enter content..."></textarea>
+            </div>
+            
+            <div class="form-group" id="fileGroup" style="display: none;">
+                <label class="form-label">DOCUMENT FILE</label>
+                <div class="file-input-wrapper">
+                    <div class="file-input-custom" id="fileInputCustom">
+                        <span class="file-input-icon">📁</span>
+                        <span class="file-input-text" id="fileInputText">CLICK TO SELECT FILE OR DRAG & DROP</span>
+                    </div>
+                    <input type="file" class="file-input-hidden" id="documentFile" accept="*/*">
+                </div>
+                <div style="font-size: 10px; color: #888; margin-top: 5px; text-align: center;">
+                    🔒 FILE WILL BE ENCRYPTED AND STORED SECURELY
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="modal-btn cancel-btn" onclick="closeModal()">CANCEL</button>
+                <button class="modal-btn save-btn" onclick="saveItem()">SAVE</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="vault.js?v=2.0.1"></script>
+</body>
+</html>

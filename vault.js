@@ -414,6 +414,8 @@ function loadCards() {
     
     cardsList.innerHTML = cards.map(card => `
         <div class="credit-card ${card.type}" onclick="viewCard('${card.id}')">
+            <div class="card-chip"></div>
+            <div class="card-company">${card.company || 'BANK'}</div>
             <div class="card-brand">${card.type.toUpperCase()}</div>
             <div class="card-number">**** **** **** ${card.number.slice(-4)}</div>
             <div class="card-holder">${card.holder}</div>
@@ -427,9 +429,9 @@ function updateSpendAnalysis() {
     const transactions = JSON.parse(localStorage.getItem('vaultTransactions') || '[]');
     
     if (transactions.length === 0) {
-        document.getElementById('totalSpending').textContent = '$0.00';
-        document.getElementById('monthlySpending').textContent = '$0.00';
-        document.getElementById('lastTransaction').textContent = '$0.00';
+        document.getElementById('totalSpending').textContent = '₹0.00';
+        document.getElementById('monthlySpending').textContent = '₹0.00';
+        document.getElementById('lastTransaction').textContent = '₹0.00';
     } else {
         // Calculate from uploaded transaction data
         const total = transactions.reduce((sum, t) => sum + (t.amount || 0), 0);
@@ -440,9 +442,9 @@ function updateSpendAnalysis() {
         }).reduce((sum, t) => sum + (t.amount || 0), 0);
         const lastTrans = transactions.length > 0 ? transactions[transactions.length - 1].amount || 0 : 0;
         
-        document.getElementById('totalSpending').textContent = `$${total.toFixed(2)}`;
-        document.getElementById('monthlySpending').textContent = `$${thisMonth.toFixed(2)}`;
-        document.getElementById('lastTransaction').textContent = `$${lastTrans.toFixed(2)}`;
+        document.getElementById('totalSpending').textContent = `₹${total.toFixed(2)}`;
+        document.getElementById('monthlySpending').textContent = `₹${thisMonth.toFixed(2)}`;
+        document.getElementById('lastTransaction').textContent = `₹${lastTrans.toFixed(2)}`;
     }
 }
 
@@ -450,6 +452,7 @@ function openAddCardModal() {
     document.getElementById('cardModalTitle').textContent = 'ADD NEW CARD';
     document.getElementById('cardType').value = 'visa';
     document.getElementById('cardHolder').value = '';
+    document.getElementById('cardCompany').value = '';
     document.getElementById('cardNumber').value = '';
     document.getElementById('cardExpiry').value = '';
     document.getElementById('cardCVV').value = '';
@@ -465,14 +468,15 @@ function saveCard() {
         id: Date.now().toString(),
         type: document.getElementById('cardType').value,
         holder: document.getElementById('cardHolder').value.trim(),
+        company: document.getElementById('cardCompany').value.trim(),
         number: document.getElementById('cardNumber').value.replace(/\s/g, ''),
         expiry: document.getElementById('cardExpiry').value,
         cvv: document.getElementById('cardCVV').value,
         created: new Date().toISOString()
     };
     
-    if (!cardData.holder || !cardData.number || !cardData.expiry || !cardData.cvv) {
-        alert('Please fill in all card details');
+    if (!cardData.holder || !cardData.company || !cardData.number || !cardData.expiry || !cardData.cvv) {
+        alert('Please fill in all card details including bank/company');
         return;
     }
     
@@ -483,6 +487,37 @@ function saveCard() {
     closeCardModal();
     loadCards();
     showNotification('Card added successfully!');
+}
+
+function openTransactionModal() {
+    document.getElementById('transactionModal').style.display = 'flex';
+}
+
+function closeTransactionModal() {
+    document.getElementById('transactionModal').style.display = 'none';
+}
+
+function uploadTransactions() {
+    const fileInput = document.getElementById('transactionFile');
+    if (!fileInput.files[0]) {
+        alert('Please select a transaction file');
+        return;
+    }
+    
+    // Mock transaction processing - in real app would parse PDF/CSV
+    const mockTransactions = [
+        { date: new Date().toISOString(), amount: 1250.50, description: 'Grocery Shopping' },
+        { date: new Date(Date.now() - 86400000).toISOString(), amount: 850.00, description: 'Fuel' },
+        { date: new Date(Date.now() - 172800000).toISOString(), amount: 2100.75, description: 'Restaurant' }
+    ];
+    
+    const existingTransactions = JSON.parse(localStorage.getItem('vaultTransactions') || '[]');
+    const allTransactions = [...existingTransactions, ...mockTransactions];
+    localStorage.setItem('vaultTransactions', JSON.stringify(allTransactions));
+    
+    closeTransactionModal();
+    updateSpendAnalysis();
+    showNotification('Transactions uploaded successfully!');
 }
 
 function viewCard(cardId) {

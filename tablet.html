@@ -23,6 +23,9 @@
             background: radial-gradient(ellipse at center, #1a1a2e 0%, #000 70%);
             color: #00d4ff;
             overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             height: 100vh;
             position: relative;
         }
@@ -34,7 +37,9 @@
             background: 
                 radial-gradient(2px 2px at 20px 30px, #fff, transparent),
                 radial-gradient(2px 2px at 40px 70px, #fff, transparent),
-                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+                radial-gradient(1px 1px at 130px 80px, #fff, transparent),
+                radial-gradient(2px 2px at 160px 30px, #fff, transparent);
             background-repeat: repeat;
             background-size: 400px 400px;
             animation: twinkle 4s ease-in-out infinite alternate;
@@ -46,87 +51,65 @@
             100% { opacity: 1; }
         }
 
-        .tablet-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            padding: 15px;
-            gap: 15px;
-        }
-
-        .tablet-header {
+        .login-container {
             background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
             border: 2px solid #00d4ff;
             border-radius: 8px;
-            padding: 20px;
+            padding: 40px;
+            width: 400px;
             text-align: center;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3), 0 0 40px rgba(233, 69, 96, 0.2);
+            position: relative;
+            z-index: 10;
         }
 
-        .tablet-title {
-            font-size: 24px;
-            color: #e94560;
-            text-shadow: 0 0 10px #e94560;
-            margin-bottom: 5px;
-        }
-
-        .tablet-subtitle {
-            font-size: 12px;
-            color: #888;
-        }
-
-        .tablet-content {
-            flex: 1;
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 15px;
-            overflow: hidden;
-        }
-
-        .tablet-sidebar {
-            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
-            border: 2px solid #00d4ff;
-            border-radius: 8px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .tablet-main {
-            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
-            border: 2px solid #00d4ff;
-            border-radius: 8px;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .tablet-login {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .login-card {
+        .main-panel {
+            display: none;
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
             background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
             border: 2px solid #00d4ff;
             border-radius: 12px;
-            padding: 40px;
-            width: 450px;
-            text-align: center;
+            padding: 20px;
             box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
         }
 
+        .vault-container {
+            display: none;
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
+            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .device-panel {
+            display: none;
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
+            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
+            border: 2px solid #00d4ff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        }
+
+
+
         .login-title {
-            font-size: 28px;
+            font-size: 24px;
+            margin-bottom: 10px;
             color: #e94560;
             text-shadow: 0 0 10px #e94560;
-            margin-bottom: 10px;
         }
 
         .login-subtitle {
-            font-size: 14px;
+            font-size: 12px;
             color: #888;
             margin-bottom: 30px;
         }
@@ -138,43 +121,110 @@
 
         .input-label {
             display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
+            margin-bottom: 5px;
+            font-size: 12px;
             color: #00d4ff;
+        }
+
+        .error-message {
+            color: #ff0000;
+            font-size: 12px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .vault-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #0f3460;
+        }
+
+        .vault-title {
+            color: #00d4ff;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px #00d4ff;
+        }
+
+        .logout-btn {
+            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
+            border: 1px solid #0f3460;
+            border-radius: 4px;
+            color: #e94560;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            padding: 8px 16px;
+            transition: all 0.2s ease;
+            text-shadow: 0 0 4px #e94560;
+            font-family: 'Courier New', monospace;
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(145deg, #3a3a4e, #2e2e42);
+            border-color: #e94560;
+            box-shadow: 0 0 8px rgba(233, 69, 96, 0.4);
+        }
+
+        .vault-content {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+            height: calc(100% - 80px);
+        }
+
+        .sidebar {
+            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .main-content {
+            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
         }
 
         .input-field {
             width: 100%;
-            padding: 15px;
+            padding: 10px;
             background: rgba(0, 0, 0, 0.8);
             border: 1px solid #00d4ff;
             color: #00d4ff;
             font-family: 'Courier New', monospace;
-            font-size: 16px;
-            border-radius: 6px;
+            font-size: 14px;
+            border-radius: 4px;
         }
 
         .input-field:focus {
             outline: none;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
         }
 
         .login-btn {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             background: rgba(0, 212, 255, 0.1);
             border: 2px solid #00d4ff;
             color: #00d4ff;
             font-family: 'Courier New', monospace;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
             transition: all 0.3s;
-            border-radius: 6px;
+            border-radius: 4px;
         }
 
         .login-btn:hover {
             background: rgba(0, 212, 255, 0.2);
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
         }
 
         .category-btn {

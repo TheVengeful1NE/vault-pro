@@ -423,10 +423,27 @@ function loadCards() {
 }
 
 function updateSpendAnalysis() {
-    // Mock data - in real app would connect to financial APIs
-    document.getElementById('totalSpending').textContent = '$2,847.32';
-    document.getElementById('monthlySpending').textContent = '$1,234.56';
-    document.getElementById('lastTransaction').textContent = '$89.99';
+    // Check if any transaction documents have been uploaded
+    const transactions = JSON.parse(localStorage.getItem('vaultTransactions') || '[]');
+    
+    if (transactions.length === 0) {
+        document.getElementById('totalSpending').textContent = '$0.00';
+        document.getElementById('monthlySpending').textContent = '$0.00';
+        document.getElementById('lastTransaction').textContent = '$0.00';
+    } else {
+        // Calculate from uploaded transaction data
+        const total = transactions.reduce((sum, t) => sum + (t.amount || 0), 0);
+        const thisMonth = transactions.filter(t => {
+            const transDate = new Date(t.date);
+            const now = new Date();
+            return transDate.getMonth() === now.getMonth() && transDate.getFullYear() === now.getFullYear();
+        }).reduce((sum, t) => sum + (t.amount || 0), 0);
+        const lastTrans = transactions.length > 0 ? transactions[transactions.length - 1].amount || 0 : 0;
+        
+        document.getElementById('totalSpending').textContent = `$${total.toFixed(2)}`;
+        document.getElementById('monthlySpending').textContent = `$${thisMonth.toFixed(2)}`;
+        document.getElementById('lastTransaction').textContent = `$${lastTrans.toFixed(2)}`;
+    }
 }
 
 function openAddCardModal() {

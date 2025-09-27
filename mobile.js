@@ -55,8 +55,8 @@ class MobileVaultPro {
     }
 
     setupEventListeners() {
-        // Mobile navigation buttons
-        document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+        // Category buttons
+        document.querySelectorAll('.category-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const category = e.target.dataset.category;
                 
@@ -65,7 +65,7 @@ class MobileVaultPro {
                     return;
                 }
                 
-                document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
                 this.currentCategory = category;
                 this.renderItems();
@@ -363,12 +363,14 @@ class MobileVaultPro {
 // Global mobile functions
 function mobileAuthenticate() {
     const password = document.getElementById('mobilePassword').value;
+    const errorMsg = document.getElementById('mobileError');
     
     if (password === 'OMEGA###') {
+        errorMsg.style.display = 'none';
         document.getElementById('mobileLogin').style.display = 'none';
         document.getElementById('mobileMain').style.display = 'block';
     } else {
-        showMobileNotification('ACCESS DENIED - INVALID CREDENTIALS', 'error');
+        errorMsg.style.display = 'block';
         document.getElementById('mobilePassword').value = '';
     }
 }
@@ -376,6 +378,7 @@ function mobileAuthenticate() {
 function mobileLogout() {
     document.getElementById('mobileMain').style.display = 'none';
     document.getElementById('mobileVault').style.display = 'none';
+    document.getElementById('mobileDevicePanel').style.display = 'none';
     document.getElementById('mobileLogin').style.display = 'flex';
     document.getElementById('mobilePassword').value = '';
 }

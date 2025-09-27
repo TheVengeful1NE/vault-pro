@@ -4,14 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>VAULT PRO MOBILE - SECURE ACCESS</title>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <meta name="cache-buster" content="v2.0.1">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#1a1a2e">
     <style>
         * {
             margin: 0;
@@ -21,14 +16,26 @@
 
         body {
             font-family: 'Courier New', monospace;
-            background: radial-gradient(ellipse at center, #1a1a2e 0%, #000 70%);
+            background: #000;
+            background-image: radial-gradient(ellipse at center, #1a1a2e 0%, #000 70%);
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
             color: #00d4ff;
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             height: 100vh;
+            width: 100vw;
             position: relative;
+        }
+
+        html {
+            background: #000;
+            background-image: radial-gradient(ellipse at center, #1a1a2e 0%, #000 70%);
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            height: 100%;
+            width: 100%;
         }
 
         .stars {
@@ -53,52 +60,23 @@
         }
 
         .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            padding: 20px;
+        }
+
+        .login-box {
             background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
             border: 2px solid #00d4ff;
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 30px;
-            width: 90%;
-            max-width: 400px;
+            width: 100%;
+            max-width: 350px;
             text-align: center;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3), 0 0 40px rgba(233, 69, 96, 0.2);
-            position: relative;
-            z-index: 10;
-        }
-
-        .main-panel {
-            display: none;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
-            border: none;
-            border-radius: 0;
-            padding: 10px;
-            box-shadow: none;
-            overflow: hidden;
-        }
-
-        .vault-container {
-            display: none;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
-            border: none;
-            border-radius: 0;
-            padding: 10px;
-            box-shadow: none;
-            overflow: hidden;
-        }
-
-        .device-panel {
-            display: none;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
-            border: none;
-            border-radius: 0;
-            padding: 10px;
-            box-shadow: none;
-            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
         }
 
         .login-title {
@@ -167,26 +145,46 @@
             display: none;
         }
 
-        .vault-header, .main-header, .device-header {
+        .fullscreen-btn {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
+            border: 1px solid #00d4ff;
+            border-radius: 4px;
+            color: #00d4ff;
+            cursor: pointer;
+            font-size: 8px;
+            font-weight: bold;
+            padding: 6px 10px;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 4px #00d4ff;
+        }
+
+        .fullscreen-btn:hover {
+            background: linear-gradient(145deg, #3a3a4e, #2e2e42);
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+        }
+
+        .main-container {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            padding: 15px;
+            overflow: hidden;
+        }
+
+        .header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 2px solid #0f3460;
-            flex-wrap: wrap;
-            gap: 15px;
         }
 
-        @media (max-width: 480px) {
-            .vault-header, .main-header, .device-header {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 10px;
-            }
-        }
-
-        .vault-title, .main-title, .device-title {
+        .title {
             color: #00d4ff;
             font-size: 14px;
             font-weight: bold;
@@ -194,224 +192,72 @@
             text-shadow: 0 0 8px #00d4ff;
         }
 
-        .logout-btn, .back-btn, .fullscreen-btn {
+        .nav-buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .nav-btn {
             background: linear-gradient(145deg, #2a2a3e, #1e1e32);
             border: 1px solid #0f3460;
             border-radius: 4px;
             color: #e94560;
             cursor: pointer;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: bold;
-            letter-spacing: 1px;
             padding: 8px 12px;
             transition: all 0.2s ease;
             text-shadow: 0 0 4px #e94560;
             font-family: 'Courier New', monospace;
+            white-space: nowrap;
         }
 
-        .back-btn {
+        .nav-btn.back {
             color: #00d4ff;
             text-shadow: 0 0 4px #00d4ff;
         }
 
-        .fullscreen-btn {
-            color: #00d4ff;
-            text-shadow: 0 0 4px #00d4ff;
-        }
-
-        .logout-btn:hover, .back-btn:hover, .fullscreen-btn:hover {
+        .nav-btn:hover {
             background: linear-gradient(145deg, #3a3a4e, #2e2e42);
-            border-color: #e94560;
             box-shadow: 0 0 8px rgba(233, 69, 96, 0.4);
         }
 
-        .back-btn:hover, .fullscreen-btn:hover {
-            border-color: #00d4ff;
+        .nav-btn.back:hover {
             box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
         }
 
-        .vault-content {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            height: calc(100vh - 120px);
+        .content {
+            height: calc(100vh - 80px);
             overflow: hidden;
-        }
-
-        .sidebar {
-            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
-            border: 1px solid #0f3460;
-            border-radius: 8px;
-            padding: 12px;
-            flex-shrink: 0;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .main-content {
-            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
-            border: 1px solid #0f3460;
-            border-radius: 8px;
-            padding: 12px;
-            overflow-y: auto;
-            flex: 1;
-            min-height: 0;
-        }
-
-        .category-btn {
-            display: block;
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 14px 12px;
-            background: linear-gradient(145deg, #1a1a2e, #16213e);
-            border: 1px solid #0f3460;
-            border-radius: 6px;
-            color: #00d4ff;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: 'Courier New', monospace;
-            font-size: 11px;
-            text-align: left;
-            white-space: nowrap;
-        }
-
-        .category-btn:hover, .category-btn.active {
-            background: linear-gradient(145deg, #3a3a4e, #2e2e42);
-            border-color: #00d4ff;
-            box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
-        }
-
-        .add-btn {
-            background: linear-gradient(145deg, #2a4a2e, #1e3e22);
-            border: 1px solid #00ff41;
-            border-radius: 6px;
-            color: #00ff41;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            padding: 12px 15px;
-            transition: all 0.2s ease;
-            text-shadow: 0 0 4px #00ff41;
-            font-family: 'Courier New', monospace;
-            margin-bottom: 15px;
-        }
-
-        .add-btn:hover {
-            background: linear-gradient(145deg, #3a5a3e, #2e4e32);
-            box-shadow: 0 0 12px rgba(0, 255, 65, 0.4);
-        }
-
-        .item-card {
-            background: linear-gradient(145deg, #1a1a2e, #16213e);
-            border: 1px solid #0f3460;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 10px;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
-        }
-
-        .item-card:hover {
-            border-color: #00d4ff;
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
-        }
-
-        .item-title {
-            color: #e94560;
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        .item-content {
-            color: #ccc;
-            font-size: 10px;
-            line-height: 1.4;
-            word-break: break-all;
-        }
-
-        .item-actions {
-            margin-top: 12px;
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            background: rgba(0, 212, 255, 0.1);
-            border: 1px solid #0f3460;
-            border-radius: 4px;
-            color: #00d4ff;
-            cursor: pointer;
-            font-size: 9px;
-            padding: 8px 12px;
-            transition: all 0.2s ease;
-            font-family: 'Courier New', monospace;
-            flex: 1;
-            text-align: center;
-            min-width: 60px;
-            white-space: nowrap;
-        }
-
-        @media (max-width: 480px) {
-            .item-actions {
-                flex-direction: column;
-                gap: 6px;
-            }
-            
-            .action-btn {
-                width: 100%;
-                flex: none;
-            }
-        }
-
-        .action-btn:hover {
-            background: rgba(0, 212, 255, 0.2);
-            border-color: #00d4ff;
-        }
-
-        .delete-btn {
-            background: rgba(233, 69, 96, 0.1);
-            border-color: #e94560;
-            color: #e94560;
-        }
-
-        .delete-btn:hover {
-            background: rgba(233, 69, 96, 0.2);
-        }
-
-        .main-content-center {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: calc(100% - 60px);
         }
 
         .system-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 20px;
-            max-width: 100%;
-            width: 100%;
+            gap: 15px;
+            height: 100%;
+            align-content: center;
+            padding: 0 10px;
         }
 
         .system-card {
             background: linear-gradient(145deg, #2a2a3e, #1e1e32);
             border: 2px solid #0f3460;
-            border-radius: 12px;
-            padding: 25px 20px;
+            border-radius: 8px;
+            padding: 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
             min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .system-card:hover:not(.disabled) {
             border-color: #00d4ff;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
             transform: translateY(-2px);
         }
 
@@ -421,25 +267,25 @@
         }
 
         .system-icon {
-            font-size: 36px;
-            margin-bottom: 12px;
-            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
+            font-size: 32px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.5));
         }
 
         .system-title {
             color: #00d4ff;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
             margin-bottom: 8px;
             letter-spacing: 1px;
-            text-shadow: 0 0 8px #00d4ff;
+            text-shadow: 0 0 6px #00d4ff;
         }
 
         .system-description {
             color: #ccc;
-            font-size: 10px;
+            font-size: 9px;
             line-height: 1.4;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .system-status {
@@ -447,7 +293,7 @@
             font-weight: bold;
             letter-spacing: 1px;
             padding: 4px 8px;
-            border-radius: 15px;
+            border-radius: 10px;
             display: inline-block;
         }
 
@@ -465,22 +311,153 @@
             text-shadow: 0 0 4px #e94560;
         }
 
+        .vault-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            height: 100%;
+        }
+
+        .sidebar {
+            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
+            border: 1px solid #0f3460;
+            border-radius: 6px;
+            padding: 12px;
+            flex-shrink: 0;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
+            border: 1px solid #0f3460;
+            border-radius: 6px;
+            padding: 12px;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .add-btn {
+            background: linear-gradient(145deg, #2a4a2e, #1e3e22);
+            border: 1px solid #00ff41;
+            border-radius: 4px;
+            color: #00ff41;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            padding: 10px 12px;
+            transition: all 0.2s ease;
+            text-shadow: 0 0 4px #00ff41;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 12px;
+            width: 100%;
+        }
+
+        .add-btn:hover {
+            background: linear-gradient(145deg, #3a5a3e, #2e4e32);
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.4);
+        }
+
+        .category-btn {
+            display: block;
+            width: 100%;
+            margin-bottom: 8px;
+            padding: 10px;
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 1px solid #0f3460;
+            border-radius: 4px;
+            color: #00d4ff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Courier New', monospace;
+            font-size: 9px;
+            text-align: left;
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background: linear-gradient(145deg, #3a3a4e, #2e2e42);
+            border-color: #00d4ff;
+            box-shadow: 0 0 6px rgba(0, 212, 255, 0.4);
+        }
+
+        .item-card {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 1px solid #0f3460;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .item-card:hover {
+            border-color: #00d4ff;
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+        }
+
+        .item-title {
+            color: #e94560;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .item-content {
+            color: #ccc;
+            font-size: 9px;
+            line-height: 1.4;
+            word-break: break-all;
+            margin-bottom: 10px;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .action-btn {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #0f3460;
+            border-radius: 3px;
+            color: #00d4ff;
+            cursor: pointer;
+            font-size: 8px;
+            padding: 6px 8px;
+            transition: all 0.2s ease;
+            font-family: 'Courier New', monospace;
+            flex: 1;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+        }
+
+        .delete-btn {
+            background: rgba(233, 69, 96, 0.1);
+            border-color: #e94560;
+            color: #e94560;
+        }
+
+        .delete-btn:hover {
+            background: rgba(233, 69, 96, 0.2);
+        }
+
         .device-content {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            height: calc(100vh - 120px);
-            overflow: hidden;
+            height: 100%;
         }
 
         .device-section {
             background: linear-gradient(145deg, #2a2a3e, #1e1e32);
             border: 1px solid #0f3460;
-            border-radius: 8px;
+            border-radius: 6px;
             padding: 12px;
             overflow-y: auto;
-            display: flex;
-            flex-direction: column;
             flex: 1;
             min-height: 0;
         }
@@ -489,24 +466,17 @@
             color: #00d4ff;
             font-size: 12px;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             text-shadow: 0 0 6px #00d4ff;
             letter-spacing: 1px;
-        }
-
-        .link-generator {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            flex: 1;
-            overflow-y: auto;
         }
 
         .link-info {
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid #0f3460;
-            border-radius: 6px;
-            padding: 12px;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
         }
 
         .link-label {
@@ -519,11 +489,11 @@
         .link-display {
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid #00d4ff;
-            border-radius: 4px;
+            border-radius: 3px;
             padding: 8px;
             color: #00d4ff;
             font-family: 'Courier New', monospace;
-            font-size: 9px;
+            font-size: 8px;
             word-break: break-all;
             margin-bottom: 8px;
         }
@@ -531,11 +501,11 @@
         .copy-btn {
             background: rgba(0, 255, 65, 0.1);
             border: 1px solid #00ff41;
-            border-radius: 4px;
+            border-radius: 3px;
             color: #00ff41;
             cursor: pointer;
             font-size: 8px;
-            padding: 6px 10px;
+            padding: 6px 8px;
             transition: all 0.2s ease;
             font-family: 'Courier New', monospace;
             width: 100%;
@@ -543,25 +513,18 @@
 
         .copy-btn:hover {
             background: rgba(0, 255, 65, 0.2);
-            box-shadow: 0 0 8px rgba(0, 255, 65, 0.4);
-        }
-
-        .device-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            overflow-y: auto;
-            flex: 1;
+            box-shadow: 0 0 6px rgba(0, 255, 65, 0.4);
         }
 
         .device-item {
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid #0f3460;
-            border-radius: 6px;
-            padding: 12px;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .device-item.current-device {
@@ -570,8 +533,8 @@
         }
 
         .device-icon {
-            font-size: 20px;
-            width: 30px;
+            font-size: 16px;
+            width: 25px;
             text-align: center;
         }
 
@@ -581,22 +544,22 @@
 
         .device-name {
             color: #00d4ff;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: bold;
             margin-bottom: 3px;
         }
 
         .device-details {
             color: #888;
-            font-size: 8px;
+            font-size: 7px;
             margin-bottom: 3px;
         }
 
         .device-status {
             font-size: 7px;
             font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 8px;
+            padding: 2px 4px;
+            border-radius: 6px;
             display: inline-block;
         }
 
@@ -611,49 +574,47 @@
             color: #00d4ff;
             border: 1px solid #00d4ff;
             padding: 3px 6px;
-            border-radius: 4px;
+            border-radius: 3px;
             font-size: 6px;
             font-weight: bold;
             letter-spacing: 1px;
         }
 
-        .vault-nav, .device-nav {
-            display: flex;
+        .financials-grid {
+            display: grid;
+            grid-template-columns: 1fr;
             gap: 8px;
-            align-items: center;
-            flex-wrap: wrap;
-            justify-content: flex-end;
+            margin-bottom: 12px;
         }
 
-        .vault-nav button, .device-nav button {
-            min-width: 60px;
-            white-space: nowrap;
+        .stat-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #0f3460;
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
         }
 
-        @media (max-width: 480px) {
-            .vault-nav, .device-nav {
-                flex-direction: column;
-                gap: 8px;
-                align-items: stretch;
-                width: 100%;
-            }
-            
-            .vault-nav button, .device-nav button {
-                font-size: 9px;
-                padding: 8px 12px;
-                width: 100%;
-                margin: 0;
-            }
+        .stat-label {
+            color: #888;
+            font-size: 8px;
+            margin-bottom: 5px;
         }
 
-        @media screen and (orientation: landscape) {
+        .stat-value {
+            color: #00ff41;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        @media (orientation: landscape) {
             .vault-content {
                 flex-direction: row;
                 gap: 10px;
             }
             
             .sidebar {
-                width: 180px;
+                width: 160px;
                 max-height: none;
                 flex-shrink: 0;
             }
@@ -664,7 +625,7 @@
             
             .system-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
+                gap: 10px;
             }
             
             .device-content {
@@ -675,55 +636,60 @@
             .device-section {
                 flex: 1;
             }
+            
+            .financials-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="stars"></div>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULL</button>
     
     <!-- Login Screen -->
-    <button class="fullscreen-btn" onclick="toggleFullscreen()" style="position: fixed; top: 15px; right: 15px; z-index: 1000; padding: 6px 10px; font-size: 8px;">⛶ FULL</button>
-    
-    <div class="login-container" id="mobileLogin">
-        <div class="login-title">VAULT PRO</div>
-        <div class="login-subtitle">MOBILE SECURE ACCESS</div>
-        
-        <div class="input-group">
-            <label class="input-label">SECURITY CLEARANCE</label>
-            <input type="password" class="input-field" id="mobilePassword" placeholder="Enter access code...">
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <div class="login-title">VAULT PRO</div>
+            <div class="login-subtitle">MOBILE SECURE ACCESS</div>
+            
+            <div class="input-group">
+                <label class="input-label">SECURITY CLEARANCE</label>
+                <input type="password" class="input-field" id="password" placeholder="Enter access code...">
+            </div>
+            
+            <button class="login-btn" onclick="authenticate()">AUTHENTICATE</button>
+            <div class="error-message" id="error">ACCESS DENIED - INVALID CREDENTIALS</div>
         </div>
-        
-        <button class="login-btn" onclick="mobileAuthenticate()">AUTHENTICATE</button>
-        <div class="error-message" id="mobileError">ACCESS DENIED - INVALID CREDENTIALS</div>
     </div>
 
     <!-- Main Panel -->
-    <div class="main-panel" id="mobileMain">
-        <div class="main-header">
-            <div class="main-title">VAULT PRO - MOBILE</div>
-            <div class="vault-nav">
-                <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULL</button>
-                <button class="logout-btn" onclick="mobileLogout()">LOGOUT</button>
+    <div class="main-container" id="mainPanel">
+        <div class="header">
+            <div class="title">VAULT PRO - MOBILE</div>
+            <div class="nav-buttons">
+                <button class="nav-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>
         
-        <div class="main-content-center">
+        <div class="content">
             <div class="system-grid">
-                <div class="system-card" onclick="openMobileVault()">
+                <div class="system-card" onclick="openVault()">
                     <div class="system-icon">🔒</div>
                     <div class="system-title">SECURE STORAGE</div>
                     <div class="system-description">Access encrypted documents, passwords, and secret notes</div>
                     <div class="system-status">OPERATIONAL</div>
                 </div>
                 
-                <div class="system-card" onclick="openMobileDeviceManager()">
+                <div class="system-card" onclick="openDeviceManager()">
                     <div class="system-icon">📱</div>
                     <div class="system-title">DEVICE MANAGER</div>
                     <div class="system-description">Generate links and manage connected devices</div>
                     <div class="system-status">OPERATIONAL</div>
                 </div>
                 
-                <div class="system-card" onclick="openMobileFinancials()">
+                <div class="system-card" onclick="openFinancials()">
                     <div class="system-icon">💳</div>
                     <div class="system-title">FINANCIALS</div>
                     <div class="system-description">Manage spending and card storage</div>
@@ -740,130 +706,647 @@
         </div>
     </div>
 
-    <!-- Vault Interface -->
-    <div class="vault-container" id="mobileVault">
-        <div class="vault-header">
-            <div class="vault-title">SECURE STORAGE</div>
-            <div class="vault-nav">
-                <button class="back-btn" onclick="backToMobileMain()">← BACK</button>
-                <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULL</button>
-                <button class="logout-btn" onclick="mobileLogout()">LOGOUT</button>
+    <!-- Vault Panel -->
+    <div class="main-container" id="vaultPanel">
+        <div class="header">
+            <div class="title">SECURE STORAGE</div>
+            <div class="nav-buttons">
+                <button class="nav-btn back" onclick="backToMain()">← BACK</button>
+                <button class="nav-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>
         
-        <div class="vault-content">
-            <div class="sidebar">
-                <button class="add-btn" onclick="openMobileAddModal()">+ ADD NEW ITEM</button>
-                <button class="category-btn active" data-category="all">ALL ITEMS</button>
-                <button class="category-btn" data-category="documents">DOCUMENTS</button>
-                <button class="category-btn" data-category="passwords">PASSWORDS</button>
-                <button class="category-btn" data-category="notes">SECRET NOTES</button>
-            </div>
-            
-            <div class="main-content" id="mobileContent">
-                <div style="text-align: center; color: #888; margin-top: 30px;">
-                    <div style="font-size: 36px; margin-bottom: 15px;">🔒</div>
-                    <div>Loading secure storage...</div>
+        <div class="content">
+            <div class="vault-content">
+                <div class="sidebar">
+                    <button class="add-btn" onclick="showAddPanel()">+ ADD NEW ITEM</button>
+                    <button class="category-btn active" data-category="all" onclick="filterItems('all')">ALL ITEMS</button>
+                    <button class="category-btn" data-category="documents" onclick="filterItems('documents')">DOCUMENTS</button>
+                    <button class="category-btn" data-category="passwords" onclick="filterItems('passwords')">PASSWORDS</button>
+                    <button class="category-btn" data-category="notes" onclick="filterItems('notes')">SECRET NOTES</button>
+                </div>
+                
+                <div class="main-content" id="vaultContent">
+                    <div style="text-align: center; color: #888; margin-top: 30px;">
+                        <div style="font-size: 32px; margin-bottom: 15px;">🔒</div>
+                        <div>Loading secure storage...</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Device Manager Panel -->
-    <div class="device-panel" id="mobileDevicePanel">
-        <div class="device-header">
-            <div class="device-title">DEVICE MANAGER</div>
-            <div class="device-nav">
-                <button class="back-btn" onclick="backToMobileMain()">← BACK</button>
-                <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULL</button>
-                <button class="logout-btn" onclick="mobileLogout()">LOGOUT</button>
+    <div class="main-container" id="devicePanel">
+        <div class="header">
+            <div class="title">DEVICE MANAGER</div>
+            <div class="nav-buttons">
+                <button class="nav-btn back" onclick="backToMain()">← BACK</button>
+                <button class="nav-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>
         
-        <div class="device-content">
-            <div class="device-section">
-                <div class="section-title">🔗 LINK ACCESS</div>
-                <div class="link-generator">
+        <div class="content">
+            <div class="device-content">
+                <div class="device-section">
+                    <div class="section-title">🔗 LINK ACCESS</div>
                     <div class="link-info">
                         <div class="link-label">DESKTOP LINK:</div>
-                        <div class="link-display" id="mobileDesktopLink">Generating...</div>
-                        <button class="copy-btn" onclick="copyMobileDesktopLink()">COPY DESKTOP LINK</button>
+                        <div class="link-display" id="desktopLink">Generating...</div>
+                        <button class="copy-btn" onclick="copyDesktopLink()">COPY DESKTOP LINK</button>
                     </div>
                     
                     <div class="link-info">
                         <div class="link-label">TABLET LINK:</div>
-                        <div class="link-display" id="mobileTabletLink">Generating...</div>
-                        <button class="copy-btn" onclick="copyMobileTabletLink()">COPY TABLET LINK</button>
+                        <div class="link-display" id="tabletLink">Generating...</div>
+                        <button class="copy-btn" onclick="copyTabletLink()">COPY TABLET LINK</button>
                     </div>
                 </div>
-            </div>
-            
-            <div class="device-section">
-                <div class="section-title">💻 CONNECTED DEVICES</div>
-                <div class="device-list" id="mobileDeviceList">
+                
+                <div class="device-section">
+                    <div class="section-title">💻 CONNECTED DEVICES</div>
                     <div class="device-item current-device">
-                        <div class="device-icon">💻</div>
+                        <div class="device-icon">📱</div>
                         <div class="device-info">
-                            <div class="device-name">HOST COMPUTER</div>
-                            <div class="device-details">Windows PC - Current Session</div>
+                            <div class="device-name">MOBILE DEVICE</div>
+                            <div class="device-details">Current Session</div>
                             <div class="device-status online">ONLINE</div>
                         </div>
-                        <div class="device-actions">
-                            <span class="device-badge">PRIMARY</span>
-                        </div>
+                        <div class="device-badge">PRIMARY</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Mobile Financials Panel -->
-    <div class="device-panel" id="mobileFinancialsPanel">
-        <div class="device-header">
-            <div class="device-title">FINANCIALS</div>
-            <div class="device-nav">
-                <button class="back-btn" onclick="backToMobileMain()">← BACK</button>
-                <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULL</button>
-                <button class="logout-btn" onclick="mobileLogout()">LOGOUT</button>
+    <!-- Financials Panel -->
+    <div class="main-container" id="financialsPanel">
+        <div class="header">
+            <div class="title">FINANCIALS</div>
+            <div class="nav-buttons">
+                <button class="nav-btn back" onclick="backToMain()">← BACK</button>
+                <button class="nav-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>
         
-        <div class="device-content">
-            <div class="device-section">
-                <div class="section-title">📈 SPEND ANALYSIS</div>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
-                    <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid #0f3460; border-radius: 6px; padding: 12px; text-align: center;">
-                        <div style="color: #888; font-size: 8px; margin-bottom: 5px;">TOTAL SPENDING</div>
-                        <div style="color: #00ff41; font-size: 14px; font-weight: bold;" id="mobileTotalSpending">₹0.00</div>
-                    </div>
-                    <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid #0f3460; border-radius: 6px; padding: 12px; text-align: center;">
-                        <div style="color: #888; font-size: 8px; margin-bottom: 5px;">THIS MONTH</div>
-                        <div style="color: #00ff41; font-size: 14px; font-weight: bold;" id="mobileMonthlySpending">₹0.00</div>
-                    </div>
-                    <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid #0f3460; border-radius: 6px; padding: 12px; text-align: center;">
-                        <div style="color: #888; font-size: 8px; margin-bottom: 5px;">LAST TRANSACTION</div>
-                        <div style="color: #00ff41; font-size: 14px; font-weight: bold;" id="mobileLastTransaction">₹0.00</div>
+        <div class="content">
+            <div class="device-content">
+                <div class="device-section">
+                    <div class="section-title">📈 SPEND ANALYSIS</div>
+                    <div class="financials-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">TOTAL SPENDING</div>
+                            <div class="stat-value" id="totalSpending">₹0.00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">THIS MONTH</div>
+                            <div class="stat-value" id="monthlySpending">₹0.00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">LAST TRANSACTION</div>
+                            <div class="stat-value" id="lastTransaction">₹0.00</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="device-section">
-                <div class="section-title">💳 CARD STORAGE</div>
-                <div style="margin-bottom: 15px;">
-                    <button class="copy-btn" onclick="alert('Add card feature coming soon')" style="margin-bottom: 8px;">+ ADD NEW CARD</button>
-                    <button class="copy-btn" onclick="alert('Upload transactions feature coming soon')">UPLOAD TRANSACTIONS</button>
-                </div>
-                <div id="mobileCardsList">
-                    <div style="text-align: center; padding: 20px; color: #888;">
-                        <div style="font-size: 32px; margin-bottom: 10px;">💳</div>
-                        <div>No cards stored</div>
-                        <div style="font-size: 8px; margin-top: 5px;">Click "ADD NEW CARD" to get started</div>
+                
+                <div class="device-section">
+                    <div class="section-title">💳 CARD STORAGE</div>
+                    <div style="margin-bottom: 12px;">
+                        <button class="copy-btn" onclick="showAddCardPanel()" style="margin-bottom: 6px;">+ ADD NEW CARD</button>
+                        <button class="copy-btn" onclick="showUploadPanel()">UPLOAD TRANSACTIONS</button>
+                    </div>
+                    <div id="cardsList">
+                        <div style="text-align: center; padding: 20px; color: #888;">
+                            <div style="font-size: 32px; margin-bottom: 10px;">💳</div>
+                            <div>Loading cards...</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="mobile.js?v=2.0.1"></script>
+    <!-- Add Item Panel -->
+    <div class="main-container" id="addItemPanel">
+        <div class="header">
+            <div class="title">ADD NEW ITEM</div>
+            <div class="nav-buttons">
+                <button class="nav-btn back" onclick="backToVault()">← BACK</button>
+                <button class="nav-btn" onclick="logout()">LOGOUT</button>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="device-section" style="height: 100%;">
+                <div class="section-title">📝 ITEM DETAILS</div>
+                
+                <div style="margin-bottom: 12px;">
+                    <div class="link-label">CATEGORY</div>
+                    <select class="input-field" id="itemCategory" style="margin-bottom: 10px;">
+                        <option value="documents">DOCUMENTS</option>
+                        <option value="passwords">PASSWORDS</option>
+                        <option value="notes">SECRET NOTES</option>
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 12px;">
+                    <div class="link-label">TITLE</div>
+                    <input type="text" class="input-field" id="itemTitle" placeholder="Enter title..." style="margin-bottom: 10px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <div class="link-label">CONTENT</div>
+                    <textarea class="input-field" id="itemContent" placeholder="Enter content..." style="height: 120px; resize: vertical; margin-bottom: 10px;"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 8px;">
+                    <button class="copy-btn" onclick="backToVault()" style="background: rgba(233, 69, 96, 0.1); border-color: #e94560; color: #e94560;">CANCEL</button>
+                    <button class="copy-btn" onclick="saveItem()">SAVE ITEM</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Card Panel -->
+    <div class="main-container" id="addCardPanel">
+        <div class="header">
+            <div class="title">ADD NEW CARD</div>
+            <div class="nav-buttons">
+                <button class="nav-btn back" onclick="backToFinancials()">← BACK</button>
+                <button class="nav-btn" onclick="logout()">LOGOUT</button>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="device-section" style="height: 100%;">
+                <div class="section-title">💳 CARD DETAILS</div>
+                
+                <div style="margin-bottom: 12px;">
+                    <div class="link-label">CARD NAME</div>
+                    <input type="text" class="input-field" id="cardName" placeholder="Enter card name..." style="margin-bottom: 10px;">
+                </div>
+                
+                <div style="margin-bottom: 12px;">
+                    <div class="link-label">CARD TYPE</div>
+                    <select class="input-field" id="cardType" style="margin-bottom: 10px;">
+                        <option value="DEBIT">DEBIT CARD</option>
+                        <option value="CREDIT">CREDIT CARD</option>
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 12px;">
+                    <div class="link-label">CARD NUMBER</div>
+                    <input type="text" class="input-field" id="cardNumber" placeholder="Enter card number..." maxlength="19" style="margin-bottom: 10px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <div class="link-label">BANK NAME</div>
+                    <input type="text" class="input-field" id="bankName" placeholder="Enter bank name..." style="margin-bottom: 10px;">
+                </div>
+                
+                <div style="display: flex; gap: 8px;">
+                    <button class="copy-btn" onclick="backToFinancials()" style="background: rgba(233, 69, 96, 0.1); border-color: #e94560; color: #e94560;">CANCEL</button>
+                    <button class="copy-btn" onclick="saveCard()">SAVE CARD</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPanel = 'login';
+        let currentCategory = 'all';
+        let vaultItems = [];
+        let cards = [];
+
+        function toggleFullscreen() {
+            const elem = document.documentElement;
+            
+            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.mozRequestFullScreen) {
+                    elem.mozRequestFullScreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
+        function authenticate() {
+            const password = document.getElementById('password').value;
+            const errorElement = document.getElementById('error');
+            
+            if (password === 'OMEGA###') {
+                showPanel('main');
+                errorElement.style.display = 'none';
+            } else {
+                errorElement.style.display = 'block';
+                document.getElementById('password').value = '';
+            }
+        }
+
+        function showPanel(panel) {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('mainPanel').style.display = 'none';
+            document.getElementById('vaultPanel').style.display = 'none';
+            document.getElementById('devicePanel').style.display = 'none';
+            document.getElementById('financialsPanel').style.display = 'none';
+            document.getElementById('addItemPanel').style.display = 'none';
+            document.getElementById('addCardPanel').style.display = 'none';
+            
+            if (panel === 'login') {
+                document.getElementById('loginContainer').style.display = 'flex';
+            } else if (panel === 'main') {
+                document.getElementById('mainPanel').style.display = 'block';
+            } else if (panel === 'vault') {
+                document.getElementById('vaultPanel').style.display = 'block';
+                loadVaultData();
+            } else if (panel === 'device') {
+                document.getElementById('devicePanel').style.display = 'block';
+                generateLinks();
+            } else if (panel === 'financials') {
+                document.getElementById('financialsPanel').style.display = 'block';
+                loadFinancialData();
+            } else if (panel === 'addItem') {
+                document.getElementById('addItemPanel').style.display = 'block';
+            } else if (panel === 'addCard') {
+                document.getElementById('addCardPanel').style.display = 'block';
+            }
+            
+            currentPanel = panel;
+        }
+
+        function openVault() {
+            showPanel('vault');
+        }
+
+        function openDeviceManager() {
+            showPanel('device');
+        }
+
+        function openFinancials() {
+            showPanel('financials');
+        }
+
+        function showAddPanel() {
+            showPanel('addItem');
+        }
+
+        function showAddCardPanel() {
+            showPanel('addCard');
+        }
+
+        function showUploadPanel() {
+            // Create file input and trigger click
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv,.json,.txt';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        try {
+                            const data = JSON.parse(event.target.result);
+                            if (Array.isArray(data)) {
+                                const transactions = JSON.parse(localStorage.getItem('vaultTransactions') || '[]');
+                                const newTransactions = [...transactions, ...data];
+                                localStorage.setItem('vaultTransactions', JSON.stringify(newTransactions));
+                                localStorage.setItem('transactions', JSON.stringify(newTransactions));
+                                loadFinancialData();
+                            }
+                        } catch (error) {
+                            console.error('Error parsing file:', error);
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        function backToMain() {
+            showPanel('main');
+        }
+
+        function backToVault() {
+            showPanel('vault');
+        }
+
+        function backToFinancials() {
+            showPanel('financials');
+        }
+
+        function logout() {
+            showPanel('login');
+            document.getElementById('password').value = '';
+        }
+
+        function loadVaultData() {
+            console.log('Loading vault data for mobile...');
+            
+            // Load from server API first
+            fetch('/api/items')
+                .then(response => {
+                    if (!response.ok) throw new Error('Server not available');
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Server vault data:', data);
+                    const localData = JSON.parse(localStorage.getItem('vaultItems') || '[]');
+                    const allData = [...data, ...localData];
+                    const uniqueData = allData.filter((item, index, self) => 
+                        index === self.findIndex(t => t.id === item.id)
+                    );
+                    vaultItems = uniqueData;
+                    localStorage.setItem('vaultItems', JSON.stringify(uniqueData));
+                    renderVaultItems();
+                })
+                .catch(error => {
+                    console.log('Server unavailable, loading from localStorage:', error);
+                    vaultItems = JSON.parse(localStorage.getItem('vaultItems') || '[]');
+                    renderVaultItems();
+                });
+        }
+
+        function renderVaultItems() {
+            const content = document.getElementById('vaultContent');
+            const filteredItems = currentCategory === 'all' ? vaultItems : vaultItems.filter(item => item.category === currentCategory);
+            
+            if (!filteredItems || filteredItems.length === 0) {
+                content.innerHTML = '<div style="text-align: center; color: #888; margin-top: 30px;"><div style="font-size: 32px; margin-bottom: 15px;">📁</div><div>No items found</div><div style="font-size: 9px; margin-top: 8px;">Click "ADD NEW ITEM" to get started</div></div>';
+                return;
+            }
+
+            content.innerHTML = filteredItems.map(item => `
+                <div class="item-card">
+                    <div class="item-title">${item.title}</div>
+                    <div class="item-content">${item.content.substring(0, 80)}${item.content.length > 80 ? '...' : ''}</div>
+                    <div class="item-actions">
+                        <button class="action-btn" onclick="viewItem('${item.id}')">VIEW</button>
+                        <button class="action-btn" onclick="editItem('${item.id}')">EDIT</button>
+                        <button class="action-btn delete-btn" onclick="deleteItem('${item.id}')">DELETE</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterItems(category) {
+            currentCategory = category;
+            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-category="${category}"]`).classList.add('active');
+            renderVaultItems();
+        }
+
+        function generateLinks() {
+            const baseUrl = window.location.origin;
+            document.getElementById('desktopLink').textContent = baseUrl;
+            document.getElementById('tabletLink').textContent = baseUrl + '/tablet';
+        }
+
+        function copyDesktopLink() {
+            navigator.clipboard.writeText(document.getElementById('desktopLink').textContent);
+        }
+
+        function copyTabletLink() {
+            navigator.clipboard.writeText(document.getElementById('tabletLink').textContent);
+        }
+
+        function loadFinancialData() {
+            console.log('Loading financial data for mobile...');
+            
+            // Load from all possible localStorage keys
+            const vaultCards = JSON.parse(localStorage.getItem('vaultCards') || '[]');
+            const localCards = JSON.parse(localStorage.getItem('cards') || '[]');
+            const desktopCards = JSON.parse(localStorage.getItem('desktopCards') || '[]');
+            
+            const vaultTransactions = JSON.parse(localStorage.getItem('vaultTransactions') || '[]');
+            const localTransactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+            const desktopTransactions = JSON.parse(localStorage.getItem('desktopTransactions') || '[]');
+            
+            // Merge all sources
+            const allCards = [...vaultCards, ...localCards, ...desktopCards];
+            const allTransactions = [...vaultTransactions, ...localTransactions, ...desktopTransactions];
+            
+            console.log('All card sources:', { vaultCards, localCards, desktopCards });
+            
+            // Remove duplicates
+            const uniqueCards = allCards.filter((card, index, self) => {
+                if (!card || !card.id) return false;
+                return index === self.findIndex(c => 
+                    c && (c.id === card.id || 
+                    (c.number && card.number && c.number === card.number) ||
+                    (c.name && card.name && c.name === card.name && c.type === card.type))
+                );
+            });
+            
+            const uniqueTransactions = allTransactions.filter((trans, index, self) => {
+                if (!trans || !trans.id) return false;
+                return index === self.findIndex(t => t && t.id === trans.id);
+            });
+            
+            console.log('Final unique cards:', uniqueCards);
+            
+            cards = uniqueCards;
+            
+            // Save to all storage keys
+            localStorage.setItem('vaultCards', JSON.stringify(uniqueCards));
+            localStorage.setItem('cards', JSON.stringify(uniqueCards));
+            localStorage.setItem('vaultTransactions', JSON.stringify(uniqueTransactions));
+            localStorage.setItem('transactions', JSON.stringify(uniqueTransactions));
+            
+            // Calculate totals
+            const total = uniqueTransactions.reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
+            const thisMonth = uniqueTransactions.filter(t => {
+                const date = new Date(t.date);
+                const now = new Date();
+                return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+            }).reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
+            
+            const lastTransaction = uniqueTransactions.length > 0 ? uniqueTransactions[uniqueTransactions.length - 1].amount : 0;
+            
+            document.getElementById('totalSpending').textContent = `₹${total.toFixed(2)}`;
+            document.getElementById('monthlySpending').textContent = `₹${thisMonth.toFixed(2)}`;
+            document.getElementById('lastTransaction').textContent = `₹${parseFloat(lastTransaction || 0).toFixed(2)}`;
+            
+            renderCards();
+        }
+
+        function renderCards() {
+            const cardsList = document.getElementById('cardsList');
+            if (!cards || cards.length === 0) {
+                cardsList.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;"><div style="font-size: 32px; margin-bottom: 10px;">💳</div><div>No cards stored</div><div style="font-size: 9px; margin-top: 8px;">Click "ADD NEW CARD" to get started</div></div>';
+                return;
+            }
+            
+            cardsList.innerHTML = cards.map(card => `
+                <div class="item-card">
+                    <div class="item-title">${card.name || 'Card'} - ${card.type || 'CARD'}</div>
+                    <div class="item-content">**** **** **** ${card.number ? card.number.slice(-4) : '****'}<br>${card.bank || 'Bank'}</div>
+                    <div class="item-actions">
+                        <button class="action-btn" onclick="viewCard('${card.id}')">VIEW</button>
+                        <button class="action-btn delete-btn" onclick="deleteCard('${card.id}')">DELETE</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function saveItem() {
+            const category = document.getElementById('itemCategory').value;
+            const title = document.getElementById('itemTitle').value;
+            const content = document.getElementById('itemContent').value;
+            
+            if (!title || !content) return;
+            
+            const newItem = {
+                id: Date.now().toString(),
+                category: category,
+                title: title,
+                content: content,
+                created: new Date().toISOString(),
+                modified: new Date().toISOString()
+            };
+            
+            // Save to server
+            fetch('/api/items', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newItem)
+            }).catch(() => {
+                // If server fails, save to localStorage
+                vaultItems.push(newItem);
+                localStorage.setItem('vaultItems', JSON.stringify(vaultItems));
+            });
+            
+            // Clear form
+            document.getElementById('itemTitle').value = '';
+            document.getElementById('itemContent').value = '';
+            
+            backToVault();
+        }
+
+        function saveCard() {
+            const name = document.getElementById('cardName').value;
+            const type = document.getElementById('cardType').value;
+            const number = document.getElementById('cardNumber').value;
+            const bank = document.getElementById('bankName').value;
+            
+            if (!name || !number) return;
+            
+            const newCard = {
+                id: Date.now().toString(),
+                name: name,
+                type: type,
+                number: number,
+                bank: bank,
+                created: new Date().toISOString()
+            };
+            
+            cards.push(newCard);
+            localStorage.setItem('vaultCards', JSON.stringify(cards));
+            localStorage.setItem('cards', JSON.stringify(cards));
+            
+            // Clear form
+            document.getElementById('cardName').value = '';
+            document.getElementById('cardNumber').value = '';
+            document.getElementById('bankName').value = '';
+            
+            backToFinancials();
+        }
+
+        function viewItem(id) {
+            const item = vaultItems.find(i => i.id === id);
+            if (item) {
+                // Show item in a simple overlay
+                const overlay = document.createElement('div');
+                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;';
+                overlay.innerHTML = `
+                    <div style="background:linear-gradient(145deg, #2a2a3e, #1e1e32);border:2px solid #00d4ff;border-radius:8px;padding:20px;max-width:90%;max-height:80%;overflow-y:auto;">
+                        <div style="color:#e94560;font-size:14px;font-weight:bold;margin-bottom:10px;">${item.title}</div>
+                        <div style="color:#ccc;font-size:10px;line-height:1.4;margin-bottom:15px;">${item.content}</div>
+                        <button onclick="this.parentElement.parentElement.remove()" style="background:rgba(233,69,96,0.1);border:1px solid #e94560;color:#e94560;padding:8px 12px;border-radius:4px;cursor:pointer;font-family:'Courier New',monospace;font-size:9px;">CLOSE</button>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+            }
+        }
+
+        function editItem(id) {
+            const item = vaultItems.find(i => i.id === id);
+            if (item) {
+                document.getElementById('itemCategory').value = item.category;
+                document.getElementById('itemTitle').value = item.title;
+                document.getElementById('itemContent').value = item.content;
+                showPanel('addItem');
+            }
+        }
+
+        function deleteItem(id) {
+            vaultItems = vaultItems.filter(i => i.id !== id);
+            localStorage.setItem('vaultItems', JSON.stringify(vaultItems));
+            
+            fetch(`/api/items/${id}`, { method: 'DELETE' }).catch(() => {});
+            
+            renderVaultItems();
+        }
+
+        function viewCard(id) {
+            const card = cards.find(c => c.id === id);
+            if (card) {
+                const overlay = document.createElement('div');
+                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;';
+                overlay.innerHTML = `
+                    <div style="background:linear-gradient(145deg, #2a2a3e, #1e1e32);border:2px solid #00d4ff;border-radius:8px;padding:20px;max-width:90%;">
+                        <div style="color:#e94560;font-size:14px;font-weight:bold;margin-bottom:10px;">${card.name} - ${card.type}</div>
+                        <div style="color:#ccc;font-size:10px;margin-bottom:5px;">Card Number: ${card.number}</div>
+                        <div style="color:#ccc;font-size:10px;margin-bottom:15px;">Bank: ${card.bank}</div>
+                        <button onclick="this.parentElement.parentElement.remove()" style="background:rgba(233,69,96,0.1);border:1px solid #e94560;color:#e94560;padding:8px 12px;border-radius:4px;cursor:pointer;font-family:'Courier New',monospace;font-size:9px;">CLOSE</button>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+            }
+        }
+
+        function deleteCard(id) {
+            cards = cards.filter(c => c.id !== id);
+            localStorage.setItem('vaultCards', JSON.stringify(cards));
+            localStorage.setItem('cards', JSON.stringify(cards));
+            renderCards();
+        }
+
+        // Format card number input
+        document.addEventListener('DOMContentLoaded', function() {
+            const cardNumberInput = document.getElementById('cardNumber');
+            if (cardNumberInput) {
+                cardNumberInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+                    let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+                    e.target.value = formattedValue;
+                });
+            }
+        });
+
+        // Handle Enter key in password field
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                authenticate();
+            }
+        });
+
+        // Initialize
+        showPanel('login');
+    </script>
 </body>
 </html>

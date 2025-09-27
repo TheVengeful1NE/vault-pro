@@ -62,12 +62,8 @@
         }
 
         .fullscreen-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
             background: linear-gradient(145deg, #2a2a3e, #1e1e32);
-            border: 1px solid #00d4ff;
+            border: 2px solid #00d4ff;
             border-radius: 6px;
             color: #00d4ff;
             cursor: pointer;
@@ -76,11 +72,15 @@
             padding: 10px 15px;
             font-family: 'Courier New', monospace;
             text-shadow: 0 0 4px #00d4ff;
+            min-width: 80px;
+            display: inline-block;
+            transition: all 0.2s ease;
         }
 
         .fullscreen-btn:hover {
             background: linear-gradient(145deg, #3a3a4e, #2e2e42);
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+            border-color: #00d4ff;
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
         }
 
         .login-container {
@@ -195,6 +195,8 @@
         .nav-buttons {
             display: flex;
             gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         .nav-btn {
@@ -620,22 +622,96 @@
             
             .sidebar {
                 max-height: 200px;
+                overflow-y: auto;
             }
             
             .device-content {
                 grid-template-columns: 1fr;
+                gap: 15px;
             }
             
             .financials-grid {
                 grid-template-columns: 1fr;
                 gap: 10px;
             }
+            
+            .nav-buttons {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            
+            .nav-btn, .fullscreen-btn {
+                font-size: 11px;
+                padding: 8px 12px;
+                min-width: 70px;
+            }
+            
+            .title {
+                font-size: 16px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 15px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+            
+            .nav-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .system-card {
+                padding: 20px;
+                min-height: 150px;
+            }
+            
+            .system-icon {
+                font-size: 36px;
+            }
+            
+            .system-title {
+                font-size: 14px;
+            }
+            
+            .system-description {
+                font-size: 11px;
+            }
+            
+            .vault-content {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+                gap: 15px;
+            }
+            
+            .sidebar {
+                max-height: 180px;
+                padding: 15px;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+            
+            .device-content {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .device-section {
+                padding: 15px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="stars"></div>
-    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULL</button>
     
     <!-- Login Screen -->
     <div class="login-container" id="loginContainer">
@@ -658,6 +734,7 @@
         <div class="header">
             <div class="title">VAULT PRO - TABLET COMMAND CENTER</div>
             <div class="nav-buttons">
+                <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULL</button>
                 <button class="nav-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>
@@ -701,6 +778,7 @@
             <div class="title">SECURE STORAGE</div>
             <div class="nav-buttons">
                 <button class="nav-btn back" onclick="backToMain()">← BACK</button>
+                <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULL</button>
                 <button class="nav-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>
@@ -731,6 +809,7 @@
             <div class="title">DEVICE MANAGER</div>
             <div class="nav-buttons">
                 <button class="nav-btn back" onclick="backToMain()">← BACK</button>
+                <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULL</button>
                 <button class="nav-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>
@@ -774,6 +853,7 @@
             <div class="title">FINANCIALS</div>
             <div class="nav-buttons">
                 <button class="nav-btn back" onclick="backToMain()">← BACK</button>
+                <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULL</button>
                 <button class="nav-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>
@@ -973,32 +1053,47 @@
         function loadFinancialData() {
             console.log('Loading financial data for tablet...');
             
-            // Load from both localStorage and try to sync with other platforms
-            const cards = JSON.parse(localStorage.getItem('vaultCards') || '[]');
-            const transactions = JSON.parse(localStorage.getItem('vaultTransactions') || '[]');
+            // Load from all possible localStorage keys used across platforms
+            const vaultCards = JSON.parse(localStorage.getItem('vaultCards') || '[]');
+            const cards = JSON.parse(localStorage.getItem('cards') || '[]');
+            const desktopCards = JSON.parse(localStorage.getItem('desktopCards') || '[]');
+            const mobileCards = JSON.parse(localStorage.getItem('mobileCards') || '[]');
             
-            // Try to load from desktop data if available
-            const desktopCards = JSON.parse(localStorage.getItem('cards') || '[]');
-            const desktopTransactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+            const vaultTransactions = JSON.parse(localStorage.getItem('vaultTransactions') || '[]');
+            const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+            const desktopTransactions = JSON.parse(localStorage.getItem('desktopTransactions') || '[]');
+            const mobileTransactions = JSON.parse(localStorage.getItem('mobileTransactions') || '[]');
             
-            // Merge data from different sources
-            const allCards = [...cards, ...desktopCards];
-            const allTransactions = [...transactions, ...desktopTransactions];
+            // Merge all card sources
+            const allCards = [...vaultCards, ...cards, ...desktopCards, ...mobileCards];
+            const allTransactions = [...vaultTransactions, ...transactions, ...desktopTransactions, ...mobileTransactions];
             
-            // Remove duplicates
-            const uniqueCards = allCards.filter((card, index, self) => 
-                index === self.findIndex(c => c.id === card.id || (c.number && c.number === card.number))
-            );
-            const uniqueTransactions = allTransactions.filter((trans, index, self) => 
-                index === self.findIndex(t => t.id === trans.id)
-            );
+            console.log('All card sources:', { vaultCards, cards, desktopCards, mobileCards });
+            console.log('All cards merged:', allCards);
             
-            console.log('Merged cards:', uniqueCards);
-            console.log('Merged transactions:', uniqueTransactions);
+            // Remove duplicates more thoroughly
+            const uniqueCards = allCards.filter((card, index, self) => {
+                if (!card || !card.id) return false;
+                return index === self.findIndex(c => 
+                    c && c.id === card.id || 
+                    (c && c.number && card.number && c.number === card.number) ||
+                    (c && c.name && card.name && c.name === card.name && c.type === card.type)
+                );
+            });
             
-            // Save merged data back
+            const uniqueTransactions = allTransactions.filter((trans, index, self) => {
+                if (!trans || !trans.id) return false;
+                return index === self.findIndex(t => t && t.id === trans.id);
+            });
+            
+            console.log('Final unique cards:', uniqueCards);
+            console.log('Final unique transactions:', uniqueTransactions);
+            
+            // Save to all storage keys for cross-platform compatibility
             localStorage.setItem('vaultCards', JSON.stringify(uniqueCards));
+            localStorage.setItem('cards', JSON.stringify(uniqueCards));
             localStorage.setItem('vaultTransactions', JSON.stringify(uniqueTransactions));
+            localStorage.setItem('transactions', JSON.stringify(uniqueTransactions));
             
             // Calculate totals
             const total = uniqueTransactions.reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);

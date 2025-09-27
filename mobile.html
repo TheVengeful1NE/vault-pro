@@ -1086,7 +1086,22 @@
             
             console.log('Local storage sources:', { vaultItems_local, items_local, desktopItems, tabletItems });
             
-            // Try server API
+            // Merge local sources first
+            const allData = [...vaultItems_local, ...items_local, ...desktopItems, ...tabletItems];
+            const uniqueData = allData.filter((item, index, self) => {
+                if (!item || !item.id) return false;
+                return index === self.findIndex(t => t && t.id === item.id);
+            });
+            
+            console.log('Merged vault items from localStorage:', uniqueData);
+            vaultItems = uniqueData;
+            
+            // Save merged data back to localStorage
+            localStorage.setItem('vaultItems', JSON.stringify(uniqueData));
+            localStorage.setItem('items', JSON.stringify(uniqueData));
+            localStorage.setItem('mobileItems', JSON.stringify(uniqueData));
+            
+            // Try server API as backup
             fetch('/api/items')
                 .then(response => {
                     if (!response.ok) throw new Error('Server not available');
@@ -1094,33 +1109,32 @@
                 })
                 .then(serverData => {
                     console.log('Server vault data:', serverData);
-                    // Merge all sources
-                    const allData = [...serverData, ...vaultItems_local, ...items_local, ...desktopItems, ...tabletItems];
-                    const uniqueData = allData.filter((item, index, self) => {
-                        if (!item || !item.id) return false;
-                        return index === self.findIndex(t => t && t.id === item.id);
-                    });
+                    // Server data format: { items: [...] }
+                    const serverItems = serverData.items || [];
                     
-                    console.log('Final merged vault items:', uniqueData);
-                    vaultItems = uniqueData;
-                    
-                    // Save to all storage keys for cross-platform compatibility
-                    localStorage.setItem('vaultItems', JSON.stringify(uniqueData));
-                    localStorage.setItem('items', JSON.stringify(uniqueData));
-                    
-                    renderVaultItems();
+                    if (serverItems.length > 0) {
+                        // Merge server items with local items
+                        const combinedData = [...uniqueData, ...serverItems];
+                        const finalData = combinedData.filter((item, index, self) => {
+                            if (!item || !item.id) return false;
+                            return index === self.findIndex(t => t && t.id === item.id);
+                        });
+                        
+                        console.log('Final merged with server:', finalData);
+                        vaultItems = finalData;
+                        
+                        // Save updated data
+                        localStorage.setItem('vaultItems', JSON.stringify(finalData));
+                        localStorage.setItem('items', JSON.stringify(finalData));
+                        localStorage.setItem('mobileItems', JSON.stringify(finalData));
+                        
+                        renderVaultItems();
+                    } else {
+                        renderVaultItems();
+                    }
                 })
                 .catch(error => {
                     console.log('Server unavailable, using localStorage only:', error);
-                    // Merge local sources only
-                    const allData = [...vaultItems_local, ...items_local, ...desktopItems, ...tabletItems];
-                    const uniqueData = allData.filter((item, index, self) => {
-                        if (!item || !item.id) return false;
-                        return index === self.findIndex(t => t && t.id === item.id);
-                    });
-                    
-                    console.log('Local only vault items:', uniqueData);
-                    vaultItems = uniqueData;
                     renderVaultItems();
                 });
         }
@@ -1285,12 +1299,17 @@
             
             vaultItems.push(newItem);
             
+            console.log('Saving new item:', newItem);
+            console.log('Updated vaultItems:', vaultItems);
+            
             // Save to ALL storage keys for cross-platform sync
             localStorage.setItem('vaultItems', JSON.stringify(vaultItems));
             localStorage.setItem('items', JSON.stringify(vaultItems));
             localStorage.setItem('desktopItems', JSON.stringify(vaultItems));
             localStorage.setItem('tabletItems', JSON.stringify(vaultItems));
             localStorage.setItem('mobileItems', JSON.stringify(vaultItems));
+            
+            console.log('Saved to localStorage keys');
             
             // Try to save to server
             fetch('/api/items', {

@@ -16,11 +16,17 @@
 
         body {
             font-family: 'Courier New', monospace;
-            background: radial-gradient(ellipse at center, #1a1a2e 0%, #000 70%) fixed;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #000 70%);
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-size: cover;
             color: #00d4ff;
             overflow: hidden;
             height: 100vh;
+            width: 100vw;
             position: relative;
+            margin: 0;
+            padding: 0;
         }
 
         .stars {
@@ -885,13 +891,23 @@
         function loadVaultData() {
             // Load vault items from server
             fetch('/api/items')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('Loaded vault data:', data);
                     renderVaultItems(data);
                 })
                 .catch(error => {
                     console.error('Error loading vault data:', error);
-                    document.getElementById('vaultContent').innerHTML = '<div style="text-align: center; color: #888; margin-top: 50px;"><div style="font-size: 48px; margin-bottom: 20px;">❌</div><div>Error loading data</div></div>';
+                    // Try loading from localStorage as fallback
+                    const localData = JSON.parse(localStorage.getItem('vaultItems') || '[]');
+                    if (localData.length > 0) {
+                        renderVaultItems(localData);
+                    } else {
+                        document.getElementById('vaultContent').innerHTML = '<div style="text-align: center; color: #888; margin-top: 50px;"><div style="font-size: 48px; margin-bottom: 20px;">📁</div><div>No items found</div><div style="font-size: 12px; margin-top: 8px;">Click "ADD NEW ITEM" to get started</div></div>';
+                    }
                 });
         }
 
@@ -932,9 +948,14 @@
         }
 
         function loadFinancialData() {
+            console.log('Loading financial data...');
+            
             // Load financial data from localStorage
             const cards = JSON.parse(localStorage.getItem('vaultCards') || '[]');
             const transactions = JSON.parse(localStorage.getItem('vaultTransactions') || '[]');
+            
+            console.log('Cards:', cards);
+            console.log('Transactions:', transactions);
             
             // Calculate totals
             const total = transactions.reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
@@ -949,6 +970,28 @@
             document.getElementById('totalSpending').textContent = `₹${total.toFixed(2)}`;
             document.getElementById('monthlySpending').textContent = `₹${thisMonth.toFixed(2)}`;
             document.getElementById('lastTransaction').textContent = `₹${parseFloat(lastTransaction || 0).toFixed(2)}`;
+            
+            // Render cards
+            renderCards(cards);
+        }
+        
+        function renderCards(cards) {
+            const cardsList = document.getElementById('cardsList');
+            if (!cards || cards.length === 0) {
+                cardsList.innerHTML = '<div style="text-align: center; padding: 30px; color: #888;"><div style="font-size: 48px; margin-bottom: 15px;">💳</div><div>No cards stored</div><div style="font-size: 10px; margin-top: 8px;">Click "ADD NEW CARD" to get started</div></div>';
+                return;
+            }
+            
+            cardsList.innerHTML = cards.map(card => `
+                <div class="item-card" style="margin-bottom: 15px;">
+                    <div class="item-title">${card.name || 'Card'} - ${card.type || 'CARD'}</div>
+                    <div class="item-content">**** **** **** ${card.number ? card.number.slice(-4) : '****'}</div>
+                    <div class="item-actions">
+                        <button class="action-btn" onclick="viewCard('${card.id}')">VIEW</button>
+                        <button class="action-btn delete-btn" onclick="deleteCard('${card.id}')">DELETE</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function viewItem(id) {
@@ -962,6 +1005,16 @@
         function deleteItem(id) {
             if (confirm('Are you sure you want to delete this item?')) {
                 alert('Delete item feature coming soon');
+            }
+        }
+        
+        function viewCard(id) {
+            alert('View card feature coming soon');
+        }
+        
+        function deleteCard(id) {
+            if (confirm('Are you sure you want to delete this card?')) {
+                alert('Delete card feature coming soon');
             }
         }
 

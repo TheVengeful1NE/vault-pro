@@ -16,10 +16,11 @@
 
         body {
             font-family: 'Courier New', monospace;
-            background: radial-gradient(ellipse at center, #1a1a2e 0%, #000 70%);
+            background: #000;
+            background-image: radial-gradient(ellipse at center, #1a1a2e 0%, #000 70%);
             background-attachment: fixed;
             background-repeat: no-repeat;
-            background-size: cover;
+            background-size: 100% 100%;
             color: #00d4ff;
             overflow: hidden;
             height: 100vh;
@@ -27,6 +28,16 @@
             position: relative;
             margin: 0;
             padding: 0;
+        }
+        
+        html {
+            background: #000;
+            background-image: radial-gradient(ellipse at center, #1a1a2e 0%, #000 70%);
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            height: 100%;
+            width: 100%;
         }
 
         .stars {
@@ -188,7 +199,7 @@
 
         .nav-btn {
             background: linear-gradient(145deg, #2a2a3e, #1e1e32);
-            border: 1px solid #0f3460;
+            border: 2px solid #0f3460;
             border-radius: 6px;
             color: #e94560;
             cursor: pointer;
@@ -198,19 +209,24 @@
             transition: all 0.2s ease;
             text-shadow: 0 0 4px #e94560;
             font-family: 'Courier New', monospace;
+            min-width: 80px;
+            display: inline-block;
         }
 
         .nav-btn.back {
             color: #00d4ff;
             text-shadow: 0 0 4px #00d4ff;
+            border-color: #00d4ff;
         }
 
         .nav-btn:hover {
             background: linear-gradient(145deg, #3a3a4e, #2e2e42);
+            border-color: #e94560;
             box-shadow: 0 0 8px rgba(233, 69, 96, 0.4);
         }
 
         .nav-btn.back:hover {
+            border-color: #00d4ff;
             box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
         }
 
@@ -889,25 +905,32 @@
         }
 
         function loadVaultData() {
-            // Load vault items from server
+            console.log('Loading vault data for tablet...');
+            
+            // First try server API
             fetch('/api/items')
                 .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
+                    if (!response.ok) throw new Error('Server not available');
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Loaded vault data:', data);
-                    renderVaultItems(data);
+                    console.log('Server vault data:', data);
+                    // Merge with localStorage data
+                    const localData = JSON.parse(localStorage.getItem('vaultItems') || '[]');
+                    const allData = [...data, ...localData];
+                    // Remove duplicates by id
+                    const uniqueData = allData.filter((item, index, self) => 
+                        index === self.findIndex(t => t.id === item.id)
+                    );
+                    renderVaultItems(uniqueData);
+                    // Save merged data back to localStorage
+                    localStorage.setItem('vaultItems', JSON.stringify(uniqueData));
                 })
                 .catch(error => {
-                    console.error('Error loading vault data:', error);
-                    // Try loading from localStorage as fallback
+                    console.log('Server unavailable, loading from localStorage:', error);
+                    // Load from localStorage only
                     const localData = JSON.parse(localStorage.getItem('vaultItems') || '[]');
-                    if (localData.length > 0) {
-                        renderVaultItems(localData);
-                    } else {
-                        document.getElementById('vaultContent').innerHTML = '<div style="text-align: center; color: #888; margin-top: 50px;"><div style="font-size: 48px; margin-bottom: 20px;">📁</div><div>No items found</div><div style="font-size: 12px; margin-top: 8px;">Click "ADD NEW ITEM" to get started</div></div>';
-                    }
+                    renderVaultItems(localData);
                 });
         }
 
@@ -948,31 +971,51 @@
         }
 
         function loadFinancialData() {
-            console.log('Loading financial data...');
+            console.log('Loading financial data for tablet...');
             
-            // Load financial data from localStorage
+            // Load from both localStorage and try to sync with other platforms
             const cards = JSON.parse(localStorage.getItem('vaultCards') || '[]');
             const transactions = JSON.parse(localStorage.getItem('vaultTransactions') || '[]');
             
-            console.log('Cards:', cards);
-            console.log('Transactions:', transactions);
+            // Try to load from desktop data if available
+            const desktopCards = JSON.parse(localStorage.getItem('cards') || '[]');
+            const desktopTransactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+            
+            // Merge data from different sources
+            const allCards = [...cards, ...desktopCards];
+            const allTransactions = [...transactions, ...desktopTransactions];
+            
+            // Remove duplicates
+            const uniqueCards = allCards.filter((card, index, self) => 
+                index === self.findIndex(c => c.id === card.id || (c.number && c.number === card.number))
+            );
+            const uniqueTransactions = allTransactions.filter((trans, index, self) => 
+                index === self.findIndex(t => t.id === trans.id)
+            );
+            
+            console.log('Merged cards:', uniqueCards);
+            console.log('Merged transactions:', uniqueTransactions);
+            
+            // Save merged data back
+            localStorage.setItem('vaultCards', JSON.stringify(uniqueCards));
+            localStorage.setItem('vaultTransactions', JSON.stringify(uniqueTransactions));
             
             // Calculate totals
-            const total = transactions.reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
-            const thisMonth = transactions.filter(t => {
+            const total = uniqueTransactions.reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
+            const thisMonth = uniqueTransactions.filter(t => {
                 const date = new Date(t.date);
                 const now = new Date();
                 return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
             }).reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
             
-            const lastTransaction = transactions.length > 0 ? transactions[transactions.length - 1].amount : 0;
+            const lastTransaction = uniqueTransactions.length > 0 ? uniqueTransactions[uniqueTransactions.length - 1].amount : 0;
             
             document.getElementById('totalSpending').textContent = `₹${total.toFixed(2)}`;
             document.getElementById('monthlySpending').textContent = `₹${thisMonth.toFixed(2)}`;
             document.getElementById('lastTransaction').textContent = `₹${parseFloat(lastTransaction || 0).toFixed(2)}`;
             
             // Render cards
-            renderCards(cards);
+            renderCards(uniqueCards);
         }
         
         function renderCards(cards) {

@@ -669,6 +669,7 @@
         <div class="header">
             <div class="title">VAULT PRO - MOBILE</div>
             <div class="nav-buttons">
+                <button class="nav-btn" onclick="toggleFullscreen()">⛶ FULL</button>
                 <button class="nav-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>
@@ -712,6 +713,7 @@
             <div class="title">SECURE STORAGE</div>
             <div class="nav-buttons">
                 <button class="nav-btn back" onclick="backToMain()">← BACK</button>
+                <button class="nav-btn" onclick="toggleFullscreen()">⛶ FULL</button>
                 <button class="nav-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>
@@ -742,6 +744,7 @@
             <div class="title">DEVICE MANAGER</div>
             <div class="nav-buttons">
                 <button class="nav-btn back" onclick="backToMain()">← BACK</button>
+                <button class="nav-btn" onclick="toggleFullscreen()">⛶ FULL</button>
                 <button class="nav-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>
@@ -785,6 +788,7 @@
             <div class="title">FINANCIALS</div>
             <div class="nav-buttons">
                 <button class="nav-btn back" onclick="backToMain()">← BACK</button>
+                <button class="nav-btn" onclick="toggleFullscreen()">⛶ FULL</button>
                 <button class="nav-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>
@@ -832,6 +836,7 @@
             <div class="title">ADD NEW ITEM</div>
             <div class="nav-buttons">
                 <button class="nav-btn back" onclick="backToVault()">← BACK</button>
+                <button class="nav-btn" onclick="toggleFullscreen()">⛶ FULL</button>
                 <button class="nav-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>
@@ -873,6 +878,7 @@
             <div class="title">ADD NEW CARD</div>
             <div class="nav-buttons">
                 <button class="nav-btn back" onclick="backToFinancials()">← BACK</button>
+                <button class="nav-btn" onclick="toggleFullscreen()">⛶ FULL</button>
                 <button class="nav-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>
@@ -1057,26 +1063,49 @@
         function loadVaultData() {
             console.log('Loading vault data for mobile...');
             
-            // Load from server API first
+            // Load from all possible localStorage keys used across platforms
+            const vaultItems_local = JSON.parse(localStorage.getItem('vaultItems') || '[]');
+            const items_local = JSON.parse(localStorage.getItem('items') || '[]');
+            const desktopItems = JSON.parse(localStorage.getItem('desktopItems') || '[]');
+            const tabletItems = JSON.parse(localStorage.getItem('tabletItems') || '[]');
+            
+            console.log('Local storage sources:', { vaultItems_local, items_local, desktopItems, tabletItems });
+            
+            // Try server API
             fetch('/api/items')
                 .then(response => {
                     if (!response.ok) throw new Error('Server not available');
                     return response.json();
                 })
-                .then(data => {
-                    console.log('Server vault data:', data);
-                    const localData = JSON.parse(localStorage.getItem('vaultItems') || '[]');
-                    const allData = [...data, ...localData];
-                    const uniqueData = allData.filter((item, index, self) => 
-                        index === self.findIndex(t => t.id === item.id)
-                    );
+                .then(serverData => {
+                    console.log('Server vault data:', serverData);
+                    // Merge all sources
+                    const allData = [...serverData, ...vaultItems_local, ...items_local, ...desktopItems, ...tabletItems];
+                    const uniqueData = allData.filter((item, index, self) => {
+                        if (!item || !item.id) return false;
+                        return index === self.findIndex(t => t && t.id === item.id);
+                    });
+                    
+                    console.log('Final merged vault items:', uniqueData);
                     vaultItems = uniqueData;
+                    
+                    // Save to all storage keys for cross-platform compatibility
                     localStorage.setItem('vaultItems', JSON.stringify(uniqueData));
+                    localStorage.setItem('items', JSON.stringify(uniqueData));
+                    
                     renderVaultItems();
                 })
                 .catch(error => {
-                    console.log('Server unavailable, loading from localStorage:', error);
-                    vaultItems = JSON.parse(localStorage.getItem('vaultItems') || '[]');
+                    console.log('Server unavailable, using localStorage only:', error);
+                    // Merge local sources only
+                    const allData = [...vaultItems_local, ...items_local, ...desktopItems, ...tabletItems];
+                    const uniqueData = allData.filter((item, index, self) => {
+                        if (!item || !item.id) return false;
+                        return index === self.findIndex(t => t && t.id === item.id);
+                    });
+                    
+                    console.log('Local only vault items:', uniqueData);
+                    vaultItems = uniqueData;
                     renderVaultItems();
                 });
         }
@@ -1127,45 +1156,65 @@
         function loadFinancialData() {
             console.log('Loading financial data for mobile...');
             
-            // Load from all possible localStorage keys
+            // Load from ALL possible localStorage keys used across platforms
             const vaultCards = JSON.parse(localStorage.getItem('vaultCards') || '[]');
             const localCards = JSON.parse(localStorage.getItem('cards') || '[]');
             const desktopCards = JSON.parse(localStorage.getItem('desktopCards') || '[]');
+            const tabletCards = JSON.parse(localStorage.getItem('tabletCards') || '[]');
+            const mobileCards = JSON.parse(localStorage.getItem('mobileCards') || '[]');
             
             const vaultTransactions = JSON.parse(localStorage.getItem('vaultTransactions') || '[]');
             const localTransactions = JSON.parse(localStorage.getItem('transactions') || '[]');
             const desktopTransactions = JSON.parse(localStorage.getItem('desktopTransactions') || '[]');
+            const tabletTransactions = JSON.parse(localStorage.getItem('tabletTransactions') || '[]');
+            const mobileTransactions = JSON.parse(localStorage.getItem('mobileTransactions') || '[]');
             
-            // Merge all sources
-            const allCards = [...vaultCards, ...localCards, ...desktopCards];
-            const allTransactions = [...vaultTransactions, ...localTransactions, ...desktopTransactions];
+            console.log('All card sources:', { vaultCards, localCards, desktopCards, tabletCards, mobileCards });
             
-            console.log('All card sources:', { vaultCards, localCards, desktopCards });
+            // Merge ALL sources
+            const allCards = [...vaultCards, ...localCards, ...desktopCards, ...tabletCards, ...mobileCards];
+            const allTransactions = [...vaultTransactions, ...localTransactions, ...desktopTransactions, ...tabletTransactions, ...mobileTransactions];
             
-            // Remove duplicates
+            console.log('All cards before filtering:', allCards);
+            
+            // Enhanced duplicate removal
             const uniqueCards = allCards.filter((card, index, self) => {
-                if (!card || !card.id) return false;
-                return index === self.findIndex(c => 
-                    c && (c.id === card.id || 
-                    (c.number && card.number && c.number === card.number) ||
-                    (c.name && card.name && c.name === card.name && c.type === card.type))
-                );
+                if (!card) return false;
+                // Create a unique identifier for each card
+                const cardId = card.id || `${card.name}_${card.number}_${card.type}`;
+                return index === self.findIndex(c => {
+                    if (!c) return false;
+                    const cId = c.id || `${c.name}_${c.number}_${c.type}`;
+                    return cId === cardId;
+                });
             });
             
             const uniqueTransactions = allTransactions.filter((trans, index, self) => {
-                if (!trans || !trans.id) return false;
-                return index === self.findIndex(t => t && t.id === trans.id);
+                if (!trans) return false;
+                const transId = trans.id || `${trans.date}_${trans.amount}_${trans.description}`;
+                return index === self.findIndex(t => {
+                    if (!t) return false;
+                    const tId = t.id || `${t.date}_${t.amount}_${t.description}`;
+                    return tId === transId;
+                });
             });
             
-            console.log('Final unique cards:', uniqueCards);
+            console.log('Final unique cards after filtering:', uniqueCards);
             
             cards = uniqueCards;
             
-            // Save to all storage keys
+            // Save to ALL storage keys for maximum compatibility
             localStorage.setItem('vaultCards', JSON.stringify(uniqueCards));
             localStorage.setItem('cards', JSON.stringify(uniqueCards));
+            localStorage.setItem('desktopCards', JSON.stringify(uniqueCards));
+            localStorage.setItem('tabletCards', JSON.stringify(uniqueCards));
+            localStorage.setItem('mobileCards', JSON.stringify(uniqueCards));
+            
             localStorage.setItem('vaultTransactions', JSON.stringify(uniqueTransactions));
             localStorage.setItem('transactions', JSON.stringify(uniqueTransactions));
+            localStorage.setItem('desktopTransactions', JSON.stringify(uniqueTransactions));
+            localStorage.setItem('tabletTransactions', JSON.stringify(uniqueTransactions));
+            localStorage.setItem('mobileTransactions', JSON.stringify(uniqueTransactions));
             
             // Calculate totals
             const total = uniqueTransactions.reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);

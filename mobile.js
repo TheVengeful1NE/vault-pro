@@ -388,9 +388,69 @@ function openMobileVault() {
     window.mobileVault = new MobileVaultPro();
 }
 
+// Fullscreen functionality
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
+}
+
 function backToMobileMain() {
     document.getElementById('mobileVault').style.display = 'none';
+    document.getElementById('mobileDevicePanel').style.display = 'none';
     document.getElementById('mobileMain').style.display = 'block';
+}
+
+function openMobileDeviceManager() {
+    document.getElementById('mobileMain').style.display = 'none';
+    document.getElementById('mobileDevicePanel').style.display = 'block';
+    initializeMobileDeviceManager();
+}
+
+function initializeMobileDeviceManager() {
+    fetch('/api/network-info')
+        .then(response => response.json())
+        .then(data => {
+            let baseURL;
+            if (data.networkIP) {
+                baseURL = data.networkIP.includes('http') ? data.networkIP : `http://${data.networkIP}:3000`;
+            } else {
+                baseURL = window.location.origin;
+            }
+            
+            document.getElementById('mobileDesktopLink').textContent = baseURL;
+            document.getElementById('mobileTabletLink').textContent = `${baseURL}/tablet`;
+        })
+        .catch(error => {
+            console.error('Error getting network info:', error);
+            const fallbackURL = window.location.origin;
+            document.getElementById('mobileDesktopLink').textContent = fallbackURL;
+            document.getElementById('mobileTabletLink').textContent = `${fallbackURL}/tablet`;
+        });
+}
+
+function copyMobileDesktopLink() {
+    const link = document.getElementById('mobileDesktopLink').textContent;
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(link).then(() => {
+            showMobileNotification('Desktop link copied!');
+        });
+    } else {
+        showMobileNotification('Desktop link: ' + link);
+    }
+}
+
+function copyMobileTabletLink() {
+    const link = document.getElementById('mobileTabletLink').textContent;
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(link).then(() => {
+            showMobileNotification('Tablet link copied!');
+        });
+    } else {
+        showMobileNotification('Tablet link: ' + link);
+    }
 }
 
 function openMobileAddModal() {

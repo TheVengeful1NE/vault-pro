@@ -194,7 +194,7 @@
             text-shadow: 0 0 6px #00d4ff;
         }
 
-        .mobile-logout {
+        .mobile-logout, .mobile-fullscreen {
             background: rgba(233, 69, 96, 0.2);
             border: 1px solid #e94560;
             border-radius: 6px;
@@ -205,6 +205,13 @@
             letter-spacing: 1px;
             padding: 8px 12px;
             font-family: 'Courier New', monospace;
+        }
+
+        .mobile-fullscreen {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+            color: #00d4ff;
+            margin-right: 8px;
         }
 
         .mobile-grid {
@@ -779,7 +786,10 @@
     <div class="mobile-main" id="mobileMain">
         <div class="mobile-header">
             <div class="mobile-title">VAULT PRO MOBILE</div>
-            <button class="mobile-logout" onclick="mobileLogout()">LOGOUT</button>
+            <div>
+                <button class="mobile-fullscreen" onclick="toggleFullscreen()">⛶ FULL</button>
+                <button class="mobile-logout" onclick="mobileLogout()">LOGOUT</button>
+            </div>
         </div>
         
         <div class="mobile-grid">
@@ -790,11 +800,11 @@
                 <div class="mobile-status operational">OPERATIONAL</div>
             </div>
             
-            <div class="mobile-card disabled">
-                <div class="mobile-card-icon">⚙️</div>
-                <div class="mobile-card-title">SETTINGS</div>
-                <div class="mobile-card-desc">Configure mobile app preferences</div>
-                <div class="mobile-status coming-soon">COMING SOON</div>
+            <div class="mobile-card" onclick="openMobileDeviceManager()">
+                <div class="mobile-card-icon">📱</div>
+                <div class="mobile-card-title">DEVICE MANAGER</div>
+                <div class="mobile-card-desc">Generate links and manage connected devices</div>
+                <div class="mobile-status operational">OPERATIONAL</div>
             </div>
             
             <div class="mobile-card disabled">
@@ -810,7 +820,10 @@
     <div class="mobile-vault" id="mobileVault">
         <div class="mobile-header">
             <div class="mobile-title">SECURE STORAGE</div>
-            <button class="mobile-logout" onclick="backToMobileMain()">← BACK</button>
+            <div>
+                <button class="mobile-fullscreen" onclick="toggleFullscreen()">⛶ FULL</button>
+                <button class="mobile-logout" onclick="backToMobileMain()">← BACK</button>
+            </div>
         </div>
         
         <div class="mobile-nav" id="mobileNav">
@@ -939,6 +952,41 @@
             <div class="mobile-form-actions" style="margin-top: 30px;">
                 <button class="mobile-form-btn cancel" onclick="closeMobileItemPanel()">CANCEL</button>
                 <button class="mobile-form-btn save" onclick="saveMobileItem()">SAVE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Device Manager Panel -->
+    <div class="mobile-vault" id="mobileDevicePanel" style="display: none;">
+        <div class="mobile-header">
+            <div class="mobile-title">DEVICE MANAGER</div>
+            <div>
+                <button class="mobile-fullscreen" onclick="toggleFullscreen()">⛶ FULL</button>
+                <button class="mobile-logout" onclick="backToMobileMain()">← BACK</button>
+            </div>
+        </div>
+        
+        <div class="mobile-content">
+            <div class="mobile-view-field">
+                <div class="mobile-view-label">DESKTOP LINK:</div>
+                <div class="mobile-view-value" id="mobileDesktopLink" style="word-break: break-all; font-size: 10px;">Generating...</div>
+                <button class="mobile-form-btn save" onclick="copyMobileDesktopLink()" style="margin-top: 10px;">COPY DESKTOP LINK</button>
+            </div>
+            
+            <div class="mobile-view-field">
+                <div class="mobile-view-label">TABLET LINK:</div>
+                <div class="mobile-view-value" id="mobileTabletLink" style="word-break: break-all; font-size: 10px;">Generating...</div>
+                <button class="mobile-form-btn save" onclick="copyMobileTabletLink()" style="margin-top: 10px;">COPY TABLET LINK</button>
+            </div>
+            
+            <div class="mobile-view-field">
+                <div class="mobile-view-label">CONNECTED DEVICES:</div>
+                <div id="mobileDeviceList">
+                    <div style="text-align: center; padding: 20px; color: #888;">
+                        <div style="font-size: 32px; margin-bottom: 10px;">💻</div>
+                        <div>HOST COMPUTER - ONLINE</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

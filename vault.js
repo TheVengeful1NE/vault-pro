@@ -1179,6 +1179,15 @@ function showNotification(message, type = 'success') {
     }
 }
 
+// Fullscreen functionality
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     // Don't auto-focus on mobile to prevent keyboard popup

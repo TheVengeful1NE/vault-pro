@@ -170,7 +170,7 @@
             text-shadow: 0 0 8px #00d4ff;
         }
 
-        .logout-btn {
+        .logout-btn, .fullscreen-btn {
             background: linear-gradient(145deg, #2a2a3e, #1e1e32);
             border: 1px solid #0f3460;
             border-radius: 4px;
@@ -185,10 +185,21 @@
             font-family: 'Courier New', monospace;
         }
 
+        .fullscreen-btn {
+            color: #00d4ff;
+            text-shadow: 0 0 4px #00d4ff;
+        }
+
         .logout-btn:hover {
             background: linear-gradient(145deg, #3a3a4e, #2e2e42);
             border-color: #e94560;
             box-shadow: 0 0 8px rgba(233, 69, 96, 0.4);
+        }
+
+        .fullscreen-btn:hover {
+            background: linear-gradient(145deg, #3a3a4e, #2e2e42);
+            border-color: #00d4ff;
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
         }
 
         .vault-content {
@@ -1460,7 +1471,10 @@
     <div class="main-panel" id="mainPanel">
         <div class="main-header">
             <div class="main-title">VAULT PRO - COMMAND CENTER</div>
-            <button class="logout-btn" onclick="logout()">LOGOUT</button>
+            <div style="display: flex; gap: 10px;">
+                <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULLSCREEN</button>
+                <button class="logout-btn" onclick="logout()">LOGOUT</button>
+            </div>
         </div>
         
         <div class="main-content-center">
@@ -1505,6 +1519,7 @@
             <div class="device-title">DEVICE LINK MANAGER</div>
             <div class="device-nav">
                 <button class="back-btn" onclick="backToMain()">← BACK TO MAIN</button>
+                <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULLSCREEN</button>
                 <button class="logout-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>
@@ -1554,6 +1569,7 @@
             <div class="vault-title">VAULT PRO - SECURE STORAGE</div>
             <div class="vault-nav">
                 <button class="back-btn" onclick="backToMain()">← BACK TO MAIN</button>
+                <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULLSCREEN</button>
                 <button class="logout-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>
@@ -1609,6 +1625,7 @@
             <div class="device-title">FINANCIALS MANAGER</div>
             <div class="device-nav">
                 <button class="back-btn" onclick="backToMain()">← BACK TO MAIN</button>
+                <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULLSCREEN</button>
                 <button class="logout-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>

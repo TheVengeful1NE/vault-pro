@@ -1176,5 +1176,32 @@
     </div>
 
     <script src="vault.js?v=2.0.1"></script>
+    <script>
+        // Tablet-specific fullscreen function
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log('Error attempting to enable fullscreen:', err.message);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        
+        // Override authenticate function for tablet
+        function authenticate() {
+            const password = document.getElementById('password').value;
+            const errorElement = document.getElementById('error');
+            
+            if (password === 'OMEGA###') {
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('mainPanel').style.display = 'flex';
+                errorElement.style.display = 'none';
+            } else {
+                errorElement.style.display = 'block';
+                document.getElementById('password').value = '';
+            }
+        }
+    </script>
 </body>
 </html>

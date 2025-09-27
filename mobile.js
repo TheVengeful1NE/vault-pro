@@ -8,6 +8,17 @@ class MobileVaultPro {
     }
 
     async init() {
+        // Show loading state
+        const mobileContent = document.getElementById('mobileContent');
+        if (mobileContent) {
+            mobileContent.innerHTML = `
+                <div class="mobile-loading">
+                    <div class="mobile-spinner"></div>
+                    <div style="margin-top: 15px; font-size: 12px; color: #888;">Loading secure storage...</div>
+                </div>
+            `;
+        }
+        
         await this.loadData();
         this.setupEventListeners();
         this.renderItems();
@@ -16,10 +27,17 @@ class MobileVaultPro {
     async loadData() {
         try {
             const response = await fetch('/api/items');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             this.data = await response.json();
+            if (!this.data || !this.data.items) {
+                this.data = { items: [] };
+            }
         } catch (error) {
             console.error('Error loading data:', error);
             this.data = { items: [] };
+            showMobileNotification('Failed to load data. Using offline mode.', 'error');
         }
     }
 
@@ -83,17 +101,26 @@ class MobileVaultPro {
     }
 
     getFilteredItems() {
+        if (!this.data || !this.data.items || !Array.isArray(this.data.items)) {
+            return [];
+        }
+        
         if (this.currentCategory === 'all') {
             return this.data.items;
         }
-        return this.data.items.filter(item => item.category === this.currentCategory);
+        return this.data.items.filter(item => item && item.category === this.currentCategory);
     }
 
     renderItems() {
         const mobileContent = document.getElementById('mobileContent');
+        if (!mobileContent) {
+            console.error('Mobile content element not found');
+            return;
+        }
+        
         const items = this.getFilteredItems();
         
-        if (items.length === 0) {
+        if (!items || items.length === 0) {
             mobileContent.innerHTML = `
                 <div class="mobile-empty">
                     <div class="mobile-empty-icon">🔒</div>
@@ -103,37 +130,49 @@ class MobileVaultPro {
             return;
         }
 
-        const shouldMaskPasswords = this.currentCategory === 'passwords' && !this.passwordAccessGranted;
-
-        mobileContent.innerHTML = items.map(item => {
-            const isPassword = item.category === 'passwords';
-            const shouldMaskThis = isPassword && !this.passwordAccessGranted;
-            
-            return `
-                <div class="mobile-item">
-                    <div class="mobile-item-title ${shouldMaskThis ? 'password-masked' : ''}">
-                        ${shouldMaskThis ? this.maskText(item.title) : this.escapeHtml(item.title)}
+        try {
+            mobileContent.innerHTML = items.map(item => {
+                if (!item) return '';
+                
+                const isPassword = item.category === 'passwords';
+                const shouldMaskThis = isPassword && !this.passwordAccessGranted;
+                const content = item.content || '';
+                const title = item.title || 'Untitled';
+                
+                return `
+                    <div class="mobile-item">
+                        <div class="mobile-item-title ${shouldMaskThis ? 'password-masked' : ''}">
+                            ${shouldMaskThis ? this.maskText(title) : this.escapeHtml(title)}
+                        </div>
+                        <div class="mobile-item-content ${shouldMaskThis ? 'password-masked' : ''}">
+                            ${shouldMaskThis ? this.maskText(content) : 
+                              this.escapeHtml(content).substring(0, 100)}${content.length > 100 ? '...' : ''}
+                        </div>
+                        <div class="mobile-item-meta">
+                            ${(item.category || 'unknown').toUpperCase()} | ${new Date(item.created || Date.now()).toLocaleDateString()}
+                        </div>
+                        <div class="mobile-item-actions">
+                            ${shouldMaskThis ? 
+                                `<button class="mobile-action-btn" onclick="mobileVault.showMobilePasswordAuth()">🔒 UNLOCK</button>` :
+                                item.category === 'documents' ? 
+                                    `<button class="mobile-action-btn" onclick="mobileVault.downloadDocument('${item.id}')">DOWNLOAD</button>` :
+                                    `<button class="mobile-action-btn" onclick="mobileVault.viewMobileItem('${item.id}')">VIEW</button>`
+                            }
+                            ${!shouldMaskThis ? `<button class="mobile-action-btn" onclick="mobileVault.openMobileEditModal('${item.id}')">EDIT</button>` : ''}
+                            ${!shouldMaskThis ? `<button class="mobile-action-btn delete" onclick="mobileVault.deleteMobileItem('${item.id}')">DELETE</button>` : ''}
+                        </div>
                     </div>
-                    <div class="mobile-item-content ${shouldMaskThis ? 'password-masked' : ''}">
-                        ${shouldMaskThis ? this.maskText(item.content) : 
-                          this.escapeHtml(item.content).substring(0, 100)}${item.content.length > 100 ? '...' : ''}
-                    </div>
-                    <div class="mobile-item-meta">
-                        ${item.category.toUpperCase()} | ${new Date(item.created).toLocaleDateString()}
-                    </div>
-                    <div class="mobile-item-actions">
-                        ${shouldMaskThis ? 
-                            `<button class="mobile-action-btn" onclick="mobileVault.showMobilePasswordAuth()">🔒 UNLOCK</button>` :
-                            item.category === 'documents' ? 
-                                `<button class="mobile-action-btn" onclick="mobileVault.downloadDocument('${item.id}')">DOWNLOAD</button>` :
-                                `<button class="mobile-action-btn" onclick="mobileVault.viewMobileItem('${item.id}')">VIEW</button>`
-                        }
-                        ${!shouldMaskThis ? `<button class="mobile-action-btn" onclick="mobileVault.openMobileEditModal('${item.id}')">EDIT</button>` : ''}
-                        ${!shouldMaskThis ? `<button class="mobile-action-btn delete" onclick="mobileVault.deleteMobileItem('${item.id}')">DELETE</button>` : ''}
-                    </div>
+                `;
+            }).join('');
+        } catch (error) {
+            console.error('Error rendering items:', error);
+            mobileContent.innerHTML = `
+                <div class="mobile-empty">
+                    <div class="mobile-empty-icon">⚠️</div>
+                    <div class="mobile-empty-text">Error loading items<br>Please try refreshing</div>
                 </div>
             `;
-        }).join('');
+        }
     }
 
     viewMobileItem(id) {
@@ -321,6 +360,11 @@ function openMobileVault() {
     
     if (!window.mobileVault) {
         window.mobileVault = new MobileVaultPro();
+    } else {
+        // Refresh data when reopening vault
+        window.mobileVault.loadData().then(() => {
+            window.mobileVault.renderItems();
+        });
     }
 }
 

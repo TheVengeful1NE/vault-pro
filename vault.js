@@ -116,10 +116,17 @@ class VaultPro {
     async loadData() {
         try {
             const response = await fetch('/api/items');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             this.data = await response.json();
+            if (!this.data || !this.data.items) {
+                this.data = { items: [] };
+            }
         } catch (error) {
             console.error('Error loading data:', error);
             this.data = { items: [] };
+            showNotification('Failed to load data. Please check connection.', 'error');
         }
     }
 

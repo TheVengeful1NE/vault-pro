@@ -170,12 +170,20 @@
         .vault-header, .main-header, .device-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 2px solid #0f3460;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 15px;
+        }
+
+        @media (max-width: 480px) {
+            .vault-header, .main-header, .device-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
         }
 
         .vault-title, .main-title, .device-title {
@@ -250,8 +258,8 @@
         .category-btn {
             display: block;
             width: 100%;
-            margin-bottom: 8px;
-            padding: 12px;
+            margin-bottom: 10px;
+            padding: 14px 12px;
             background: linear-gradient(145deg, #1a1a2e, #16213e);
             border: 1px solid #0f3460;
             border-radius: 6px;
@@ -259,8 +267,9 @@
             cursor: pointer;
             transition: all 0.2s ease;
             font-family: 'Courier New', monospace;
-            font-size: 10px;
+            font-size: 11px;
             text-align: left;
+            white-space: nowrap;
         }
 
         .category-btn:hover, .category-btn.active {
@@ -321,7 +330,7 @@
         .item-actions {
             margin-top: 12px;
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
 
@@ -331,13 +340,26 @@
             border-radius: 4px;
             color: #00d4ff;
             cursor: pointer;
-            font-size: 8px;
-            padding: 6px 10px;
+            font-size: 9px;
+            padding: 8px 12px;
             transition: all 0.2s ease;
             font-family: 'Courier New', monospace;
             flex: 1;
             text-align: center;
-            min-width: 50px;
+            min-width: 60px;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 480px) {
+            .item-actions {
+                flex-direction: column;
+                gap: 6px;
+            }
+            
+            .action-btn {
+                width: 100%;
+                flex: none;
+            }
         }
 
         .action-btn:hover {
@@ -592,22 +614,30 @@
 
         .vault-nav, .device-nav {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             align-items: center;
             flex-wrap: wrap;
             justify-content: flex-end;
         }
 
+        .vault-nav button, .device-nav button {
+            min-width: 60px;
+            white-space: nowrap;
+        }
+
         @media (max-width: 480px) {
             .vault-nav, .device-nav {
                 flex-direction: column;
-                gap: 4px;
+                gap: 8px;
                 align-items: stretch;
+                width: 100%;
             }
             
             .vault-nav button, .device-nav button {
-                font-size: 8px;
-                padding: 6px 8px;
+                font-size: 9px;
+                padding: 8px 12px;
+                width: 100%;
+                margin: 0;
             }
         }
 
@@ -661,7 +691,7 @@
     <div class="main-panel" id="mobileMain">
         <div class="main-header">
             <div class="main-title">VAULT PRO - MOBILE</div>
-            <div style="display: flex; gap: 8px;">
+            <div class="vault-nav">
                 <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULL</button>
                 <button class="logout-btn" onclick="mobileLogout()">LOGOUT</button>
             </div>

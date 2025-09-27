@@ -531,7 +531,12 @@ function saveCard() {
         cards.push(cardData);
     }
     
+    // Save to ALL storage keys for cross-platform sync
     localStorage.setItem('vaultCards', JSON.stringify(cards));
+    localStorage.setItem('cards', JSON.stringify(cards));
+    localStorage.setItem('desktopCards', JSON.stringify(cards));
+    localStorage.setItem('tabletCards', JSON.stringify(cards));
+    localStorage.setItem('mobileCards', JSON.stringify(cards));
     
     closeCardPanel();
     loadCards();

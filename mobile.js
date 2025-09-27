@@ -382,6 +382,7 @@ function mobileLogout() {
     document.getElementById('mobileMain').style.display = 'none';
     document.getElementById('mobileVault').style.display = 'none';
     document.getElementById('mobileDevicePanel').style.display = 'none';
+    document.getElementById('mobileFinancialsPanel').style.display = 'none';
     document.getElementById('mobileLogin').style.display = 'flex';
     document.getElementById('mobilePassword').value = '';
 }
@@ -406,7 +407,13 @@ function toggleFullscreen() {
 function backToMobileMain() {
     document.getElementById('mobileVault').style.display = 'none';
     document.getElementById('mobileDevicePanel').style.display = 'none';
+    document.getElementById('mobileFinancialsPanel').style.display = 'none';
     document.getElementById('mobileMain').style.display = 'block';
+}
+
+function openMobileFinancials() {
+    document.getElementById('mobileMain').style.display = 'none';
+    document.getElementById('mobileFinancialsPanel').style.display = 'block';
 }
 
 function openMobileDeviceManager() {

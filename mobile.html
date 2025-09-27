@@ -592,9 +592,23 @@
 
         .vault-nav, .device-nav {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
             flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        @media (max-width: 480px) {
+            .vault-nav, .device-nav {
+                flex-direction: column;
+                gap: 4px;
+                align-items: stretch;
+            }
+            
+            .vault-nav button, .device-nav button {
+                font-size: 8px;
+                padding: 6px 8px;
+            }
         }
 
         @media screen and (orientation: landscape) {
@@ -669,11 +683,11 @@
                     <div class="system-status">OPERATIONAL</div>
                 </div>
                 
-                <div class="system-card disabled">
-                    <div class="system-icon">⚙️</div>
-                    <div class="system-title">SETTINGS</div>
-                    <div class="system-description">Configure mobile preferences</div>
-                    <div class="system-status">COMING SOON</div>
+                <div class="system-card" onclick="openMobileFinancials()">
+                    <div class="system-icon">💳</div>
+                    <div class="system-title">FINANCIALS</div>
+                    <div class="system-description">Manage spending and card storage</div>
+                    <div class="system-status">OPERATIONAL</div>
                 </div>
                 
                 <div class="system-card disabled">
@@ -758,6 +772,51 @@
                             <span class="device-badge">PRIMARY</span>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Financials Panel -->
+    <div class="device-panel" id="mobileFinancialsPanel">
+        <div class="device-header">
+            <div class="device-title">FINANCIALS</div>
+            <div class="device-nav">
+                <button class="back-btn" onclick="backToMobileMain()">← BACK</button>
+                <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULL</button>
+                <button class="logout-btn" onclick="mobileLogout()">LOGOUT</button>
+            </div>
+        </div>
+        
+        <div class="device-content">
+            <div class="device-section">
+                <div class="section-title">📈 SPEND ANALYSIS</div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
+                    <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid #0f3460; border-radius: 6px; padding: 12px; text-align: center;">
+                        <div style="color: #888; font-size: 8px; margin-bottom: 5px;">TOTAL SPENDING</div>
+                        <div style="color: #00ff41; font-size: 14px; font-weight: bold;">₹0.00</div>
+                    </div>
+                    <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid #0f3460; border-radius: 6px; padding: 12px; text-align: center;">
+                        <div style="color: #888; font-size: 8px; margin-bottom: 5px;">THIS MONTH</div>
+                        <div style="color: #00ff41; font-size: 14px; font-weight: bold;">₹0.00</div>
+                    </div>
+                    <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid #0f3460; border-radius: 6px; padding: 12px; text-align: center;">
+                        <div style="color: #888; font-size: 8px; margin-bottom: 5px;">LAST TRANSACTION</div>
+                        <div style="color: #00ff41; font-size: 14px; font-weight: bold;">₹0.00</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="device-section">
+                <div class="section-title">💳 CARD STORAGE</div>
+                <div style="margin-bottom: 15px;">
+                    <button class="copy-btn" onclick="alert('Add card feature coming soon')" style="margin-bottom: 8px;">+ ADD NEW CARD</button>
+                    <button class="copy-btn" onclick="alert('Upload transactions feature coming soon')">UPLOAD TRANSACTIONS</button>
+                </div>
+                <div style="text-align: center; padding: 20px; color: #888;">
+                    <div style="font-size: 32px; margin-bottom: 10px;">💳</div>
+                    <div>No cards stored</div>
+                    <div style="font-size: 8px; margin-top: 5px;">Click "ADD NEW CARD" to get started</div>
                 </div>
             </div>
         </div>

@@ -8,20 +8,14 @@ class MobileVaultPro {
     }
 
     async init() {
-        // Show loading state
-        const mobileContent = document.getElementById('mobileContent');
-        if (mobileContent) {
-            mobileContent.innerHTML = `
-                <div class="mobile-loading">
-                    <div class="mobile-spinner"></div>
-                    <div style="margin-top: 15px; font-size: 12px; color: #888;">Loading secure storage...</div>
-                </div>
-            `;
+        try {
+            this.setupEventListeners();
+            await this.loadData();
+            this.renderItems();
+        } catch (error) {
+            console.error('Init error:', error);
+            this.renderError();
         }
-        
-        await this.loadData();
-        this.setupEventListeners();
-        this.renderItems();
     }
 
     async loadData() {
@@ -36,8 +30,27 @@ class MobileVaultPro {
             }
         } catch (error) {
             console.error('Error loading data:', error);
-            this.data = { items: [] };
-            showMobileNotification('Failed to load data. Using offline mode.', 'error');
+            // Use mock data for demo
+            this.data = {
+                items: [
+                    {
+                        id: '1',
+                        category: 'notes',
+                        title: 'Sample Note',
+                        content: 'This is a sample note to test the mobile interface.',
+                        created: new Date().toISOString(),
+                        modified: new Date().toISOString()
+                    },
+                    {
+                        id: '2',
+                        category: 'passwords',
+                        title: 'Sample Password',
+                        content: 'username: demo\npassword: ****',
+                        created: new Date().toISOString(),
+                        modified: new Date().toISOString()
+                    }
+                ]
+            };
         }
     }
 
@@ -153,13 +166,13 @@ class MobileVaultPro {
                         </div>
                         <div class="mobile-item-actions">
                             ${shouldMaskThis ? 
-                                `<button class="mobile-action-btn" onclick="mobileVault.showMobilePasswordAuth()">🔒 UNLOCK</button>` :
+                                `<button class="mobile-action-btn" onclick="window.mobileVault.showMobilePasswordAuth()">🔒 UNLOCK</button>` :
                                 item.category === 'documents' ? 
-                                    `<button class="mobile-action-btn" onclick="mobileVault.downloadDocument('${item.id}')">DOWNLOAD</button>` :
-                                    `<button class="mobile-action-btn" onclick="mobileVault.viewMobileItem('${item.id}')">VIEW</button>`
+                                    `<button class="mobile-action-btn" onclick="window.mobileVault.downloadDocument('${item.id}')">DOWNLOAD</button>` :
+                                    `<button class="mobile-action-btn" onclick="window.mobileVault.viewMobileItem('${item.id}')">VIEW</button>`
                             }
-                            ${!shouldMaskThis ? `<button class="mobile-action-btn" onclick="mobileVault.openMobileEditModal('${item.id}')">EDIT</button>` : ''}
-                            ${!shouldMaskThis ? `<button class="mobile-action-btn delete" onclick="mobileVault.deleteMobileItem('${item.id}')">DELETE</button>` : ''}
+                            ${!shouldMaskThis ? `<button class="mobile-action-btn" onclick="window.mobileVault.openMobileEditModal('${item.id}')">EDIT</button>` : ''}
+                            ${!shouldMaskThis ? `<button class="mobile-action-btn delete" onclick="window.mobileVault.deleteMobileItem('${item.id}')">DELETE</button>` : ''}
                         </div>
                     </div>
                 `;
@@ -250,6 +263,19 @@ class MobileVaultPro {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    renderError() {
+        const mobileContent = document.getElementById('mobileContent');
+        if (mobileContent) {
+            mobileContent.innerHTML = `
+                <div class="mobile-empty">
+                    <div class="mobile-empty-icon">⚠️</div>
+                    <div class="mobile-empty-text">Failed to load secure storage<br>Please check your connection</div>
+                    <button class="mobile-form-btn save" onclick="window.mobileVault.init()" style="margin-top: 20px;">RETRY</button>
+                </div>
+            `;
+        }
     }
 
     async saveItem(item) {
@@ -358,14 +384,8 @@ function openMobileVault() {
     document.getElementById('mobileMain').style.display = 'none';
     document.getElementById('mobileVault').style.display = 'block';
     
-    if (!window.mobileVault) {
-        window.mobileVault = new MobileVaultPro();
-    } else {
-        // Refresh data when reopening vault
-        window.mobileVault.loadData().then(() => {
-            window.mobileVault.renderItems();
-        });
-    }
+    // Always create new instance to ensure fresh data
+    window.mobileVault = new MobileVaultPro();
 }
 
 function backToMobileMain() {

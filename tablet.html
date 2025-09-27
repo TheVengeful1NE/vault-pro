@@ -7,10 +7,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>VAULT PRO - TABLET INTERFACE</title>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <meta name="cache-buster" content="v2.0.1">
     <style>
         * {
             margin: 0;
@@ -23,13 +19,8 @@
             background: radial-gradient(ellipse at center, #1a1a2e 0%, #000 70%) fixed;
             color: #00d4ff;
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             height: 100vh;
             position: relative;
-            font-size: 16px;
-            min-height: 100vh;
         }
 
         .stars {
@@ -53,82 +44,68 @@
             100% { opacity: 1; }
         }
 
+        .fullscreen-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
+            border: 1px solid #00d4ff;
+            border-radius: 6px;
+            color: #00d4ff;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 10px 15px;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 4px #00d4ff;
+        }
+
+        .fullscreen-btn:hover {
+            background: linear-gradient(145deg, #3a3a4e, #2e2e42);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+        }
+
         .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .login-box {
             background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
             border: 2px solid #00d4ff;
             border-radius: 12px;
-            padding: 50px;
-            width: 500px;
+            padding: 40px;
+            width: 450px;
             text-align: center;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3), 0 0 60px rgba(233, 69, 96, 0.2);
-            position: relative;
-            z-index: 10;
-        }
-
-        .main-panel {
-            display: none;
-            width: 95%;
-            max-width: 1400px;
-            height: 90vh;
-            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
-            border: 2px solid #00d4ff;
-            border-radius: 12px;
-            padding: 25px;
             box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
-            position: relative;
-            z-index: 10;
-        }
-
-        .vault-container {
-            display: none;
-            width: 95%;
-            max-width: 1400px;
-            height: 90vh;
-            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
-            border: 2px solid #00d4ff;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
-            position: relative;
-            z-index: 10;
-        }
-
-        .device-panel {
-            display: none;
-            width: 95%;
-            max-width: 1400px;
-            height: 90vh;
-            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
-            border: 2px solid #00d4ff;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
-            position: relative;
-            z-index: 10;
         }
 
         .login-title {
-            font-size: 28px;
-            margin-bottom: 12px;
+            font-size: 24px;
+            margin-bottom: 10px;
             color: #e94560;
-            text-shadow: 0 0 12px #e94560;
+            text-shadow: 0 0 10px #e94560;
         }
 
         .login-subtitle {
-            font-size: 14px;
+            font-size: 12px;
             color: #888;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
         }
 
         .input-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             text-align: left;
         }
 
         .input-label {
             display: block;
             margin-bottom: 8px;
-            font-size: 14px;
+            font-size: 12px;
             color: #00d4ff;
         }
 
@@ -139,7 +116,7 @@
             border: 1px solid #00d4ff;
             color: #00d4ff;
             font-family: 'Courier New', monospace;
-            font-size: 16px;
+            font-size: 14px;
             border-radius: 6px;
         }
 
@@ -150,12 +127,12 @@
 
         .login-btn {
             width: 100%;
-            padding: 18px;
+            padding: 15px;
             background: rgba(0, 212, 255, 0.1);
             border: 2px solid #00d4ff;
             color: #00d4ff;
             font-family: 'Courier New', monospace;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
             transition: all 0.3s;
             border-radius: 6px;
@@ -168,227 +145,103 @@
 
         .error-message {
             color: #ff0000;
-            font-size: 14px;
+            font-size: 12px;
             margin-top: 15px;
             display: none;
         }
 
-        .vault-header, .main-header, .device-header {
+        .main-container {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
             border-bottom: 2px solid #0f3460;
         }
 
-        .vault-title, .main-title, .device-title {
+        .title {
             color: #00d4ff;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: bold;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px #00d4ff;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px #00d4ff;
         }
 
-        .logout-btn, .back-btn, .fullscreen-btn {
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
             background: linear-gradient(145deg, #2a2a3e, #1e1e32);
             border: 1px solid #0f3460;
             border-radius: 6px;
             color: #e94560;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
-            letter-spacing: 1px;
-            padding: 12px 20px;
+            padding: 10px 15px;
             transition: all 0.2s ease;
             text-shadow: 0 0 4px #e94560;
             font-family: 'Courier New', monospace;
         }
 
-        .fullscreen-btn {
+        .nav-btn.back {
             color: #00d4ff;
             text-shadow: 0 0 4px #00d4ff;
         }
 
-        .back-btn {
-            color: #00d4ff;
-            text-shadow: 0 0 4px #00d4ff;
-        }
-
-        .logout-btn:hover, .back-btn:hover {
+        .nav-btn:hover {
             background: linear-gradient(145deg, #3a3a4e, #2e2e42);
-            border-color: #e94560;
-            box-shadow: 0 0 10px rgba(233, 69, 96, 0.4);
+            box-shadow: 0 0 8px rgba(233, 69, 96, 0.4);
         }
 
-        .back-btn:hover {
-            border-color: #00d4ff;
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+        .nav-btn.back:hover {
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
         }
 
-        .fullscreen-btn:hover {
-            background: linear-gradient(145deg, #3a3a4e, #2e2e42);
-            border-color: #00d4ff;
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
-        }
-
-        .vault-content {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 25px;
-            height: calc(100% - 100px);
-        }
-
-        .sidebar {
-            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
-            border: 1px solid #0f3460;
-            border-radius: 10px;
-            padding: 25px;
-        }
-
-        .main-content {
-            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
-            border: 1px solid #0f3460;
-            border-radius: 10px;
-            padding: 25px;
-            overflow-y: auto;
-        }
-
-        .category-btn {
-            display: block;
-            width: 100%;
-            margin-bottom: 12px;
-            padding: 18px;
-            background: linear-gradient(145deg, #1a1a2e, #16213e);
-            border: 1px solid #0f3460;
-            border-radius: 8px;
-            color: #00d4ff;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            text-align: left;
-        }
-
-        .category-btn:hover, .category-btn.active {
-            background: linear-gradient(145deg, #3a3a4e, #2e2e42);
-            border-color: #00d4ff;
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
-        }
-
-        .add-btn {
-            background: linear-gradient(145deg, #2a4a2e, #1e3e22);
-            border: 1px solid #00ff41;
-            border-radius: 8px;
-            color: #00ff41;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            padding: 18px 25px;
-            transition: all 0.2s ease;
-            text-shadow: 0 0 4px #00ff41;
-            font-family: 'Courier New', monospace;
-            margin-bottom: 25px;
-        }
-
-        .add-btn:hover {
-            background: linear-gradient(145deg, #3a5a3e, #2e4e32);
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
-        }
-
-        .item-card {
-            background: linear-gradient(145deg, #1a1a2e, #16213e);
-            border: 1px solid #0f3460;
-            border-radius: 10px;
-            padding: 30px;
-            margin-bottom: 20px;
-            transition: all 0.2s ease;
-        }
-
-        .item-card:hover {
-            border-color: #00d4ff;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
-        }
-
-        .item-title {
-            color: #e94560;
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 12px;
-        }
-
-        .item-content {
-            color: #ccc;
-            font-size: 14px;
-            line-height: 1.4;
-            word-break: break-all;
-        }
-
-        .item-actions {
-            margin-top: 18px;
-            display: flex;
-            gap: 12px;
-        }
-
-        .action-btn {
-            background: rgba(0, 212, 255, 0.1);
-            border: 1px solid #0f3460;
-            border-radius: 6px;
-            color: #00d4ff;
-            cursor: pointer;
-            font-size: 12px;
-            padding: 10px 16px;
-            transition: all 0.2s ease;
-            font-family: 'Courier New', monospace;
-        }
-
-        .action-btn:hover {
-            background: rgba(0, 212, 255, 0.2);
-            border-color: #00d4ff;
-        }
-
-        .delete-btn {
-            background: rgba(233, 69, 96, 0.1);
-            border-color: #e94560;
-            color: #e94560;
-        }
-
-        .delete-btn:hover {
-            background: rgba(233, 69, 96, 0.2);
-        }
-
-        .main-content-center {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: calc(100% - 100px);
+        .content {
+            height: calc(100vh - 120px);
+            overflow: hidden;
         }
 
         .system-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 40px;
-            max-width: 1000px;
+            gap: 30px;
+            height: 100%;
+            align-content: center;
+            justify-content: center;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .system-card {
             background: linear-gradient(145deg, #2a2a3e, #1e1e32);
             border: 2px solid #0f3460;
-            border-radius: 15px;
-            padding: 40px;
+            border-radius: 12px;
+            padding: 30px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            min-height: 200px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .system-card:hover:not(.disabled) {
             border-color: #00d4ff;
-            box-shadow: 0 0 25px rgba(0, 212, 255, 0.4);
-            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+            transform: translateY(-3px);
         }
 
         .system-card.disabled {
@@ -396,39 +249,34 @@
             cursor: not-allowed;
         }
 
-        .system-card.disabled:hover {
-            transform: none;
-            box-shadow: none;
-        }
-
         .system-icon {
-            font-size: 60px;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.5));
+            font-size: 48px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
         }
 
         .system-title {
             color: #00d4ff;
-            font-size: 20px;
+            font-size: 16px;
             font-weight: bold;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             letter-spacing: 1px;
-            text-shadow: 0 0 10px #00d4ff;
+            text-shadow: 0 0 8px #00d4ff;
         }
 
         .system-description {
             color: #ccc;
-            font-size: 14px;
+            font-size: 12px;
             line-height: 1.4;
-            margin-bottom: 18px;
+            margin-bottom: 15px;
         }
 
         .system-status {
-            font-size: 12px;
+            font-size: 10px;
             font-weight: bold;
             letter-spacing: 1px;
-            padding: 8px 15px;
-            border-radius: 20px;
+            padding: 6px 12px;
+            border-radius: 15px;
             display: inline-block;
         }
 
@@ -446,73 +294,195 @@
             text-shadow: 0 0 4px #e94560;
         }
 
+        .vault-content {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+            height: 100%;
+        }
+
+        .sidebar {
+            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            background: linear-gradient(145deg, #2a2a3e, #1e1e32);
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .add-btn {
+            background: linear-gradient(145deg, #2a4a2e, #1e3e22);
+            border: 1px solid #00ff41;
+            border-radius: 6px;
+            color: #00ff41;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            padding: 15px 20px;
+            transition: all 0.2s ease;
+            text-shadow: 0 0 4px #00ff41;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .add-btn:hover {
+            background: linear-gradient(145deg, #3a5a3e, #2e4e32);
+            box-shadow: 0 0 12px rgba(0, 255, 65, 0.4);
+        }
+
+        .category-btn {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 15px;
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 1px solid #0f3460;
+            border-radius: 6px;
+            color: #00d4ff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background: linear-gradient(145deg, #3a3a4e, #2e2e42);
+            border-color: #00d4ff;
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+        }
+
+        .item-card {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .item-card:hover {
+            border-color: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .item-title {
+            color: #e94560;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .item-content {
+            color: #ccc;
+            font-size: 12px;
+            line-height: 1.4;
+            word-break: break-all;
+        }
+
+        .item-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #0f3460;
+            border-radius: 4px;
+            color: #00d4ff;
+            cursor: pointer;
+            font-size: 10px;
+            padding: 8px 12px;
+            transition: all 0.2s ease;
+            font-family: 'Courier New', monospace;
+            flex: 1;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+        }
+
+        .delete-btn {
+            background: rgba(233, 69, 96, 0.1);
+            border-color: #e94560;
+            color: #e94560;
+        }
+
+        .delete-btn:hover {
+            background: rgba(233, 69, 96, 0.2);
+        }
+
         .device-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            height: calc(100% - 100px);
-            overflow: hidden;
+            gap: 20px;
+            height: 100%;
         }
 
         .device-section {
             background: linear-gradient(145deg, #2a2a3e, #1e1e32);
             border: 1px solid #0f3460;
-            border-radius: 10px;
-            padding: 25px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
         }
 
         .section-title {
             color: #00d4ff;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
-            margin-bottom: 25px;
-            text-shadow: 0 0 8px #00d4ff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 6px #00d4ff;
             letter-spacing: 1px;
-        }
-
-        .link-generator {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
         }
 
         .link-info {
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid #0f3460;
-            border-radius: 8px;
-            padding: 18px;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
         }
 
         .link-label {
             color: #888;
-            font-size: 12px;
-            margin-bottom: 10px;
+            font-size: 10px;
+            margin-bottom: 8px;
             letter-spacing: 1px;
         }
 
         .link-display {
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid #00d4ff;
-            border-radius: 6px;
-            padding: 12px;
+            border-radius: 4px;
+            padding: 10px;
             color: #00d4ff;
             font-family: 'Courier New', monospace;
-            font-size: 13px;
+            font-size: 11px;
             word-break: break-all;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .copy-btn {
             background: rgba(0, 255, 65, 0.1);
             border: 1px solid #00ff41;
-            border-radius: 6px;
+            border-radius: 4px;
             color: #00ff41;
             cursor: pointer;
-            font-size: 12px;
-            padding: 10px 15px;
+            font-size: 10px;
+            padding: 8px 12px;
             transition: all 0.2s ease;
             font-family: 'Courier New', monospace;
             width: 100%;
@@ -520,41 +490,18 @@
 
         .copy-btn:hover {
             background: rgba(0, 255, 65, 0.2);
-            box-shadow: 0 0 10px rgba(0, 255, 65, 0.4);
-        }
-
-        .device-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            overflow-y: auto;
-            flex: 1;
-            max-height: calc(100% - 50px);
-            padding-right: 8px;
-        }
-
-        .device-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .device-list::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 3px;
-        }
-
-        .device-list::-webkit-scrollbar-thumb {
-            background: #00d4ff;
-            border-radius: 3px;
+            box-shadow: 0 0 8px rgba(0, 255, 65, 0.4);
         }
 
         .device-item {
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid #0f3460;
-            border-radius: 8px;
-            padding: 18px;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 15px;
         }
 
         .device-item.current-device {
@@ -563,8 +510,8 @@
         }
 
         .device-icon {
-            font-size: 28px;
-            width: 45px;
+            font-size: 24px;
+            width: 35px;
             text-align: center;
         }
 
@@ -574,22 +521,22 @@
 
         .device-name {
             color: #00d4ff;
-            font-size: 16px;
+            font-size: 12px;
             font-weight: bold;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .device-details {
             color: #888;
-            font-size: 12px;
-            margin-bottom: 6px;
+            font-size: 10px;
+            margin-bottom: 4px;
         }
 
         .device-status {
-            font-size: 11px;
+            font-size: 9px;
             font-weight: bold;
-            padding: 3px 10px;
-            border-radius: 12px;
+            padding: 2px 6px;
+            border-radius: 8px;
             display: inline-block;
         }
 
@@ -603,450 +550,188 @@
             background: rgba(0, 212, 255, 0.2);
             color: #00d4ff;
             border: 1px solid #00d4ff;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 8px;
             font-weight: bold;
             letter-spacing: 1px;
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
-            border: 2px solid #00d4ff;
-            border-radius: 10px;
-            padding: 35px;
-            width: 600px;
-            max-width: 90%;
-        }
-
-        .modal-title {
-            color: #e94560;
-            font-size: 20px;
-            margin-bottom: 25px;
-            text-shadow: 0 0 10px #e94560;
-        }
-
-        .form-group {
+        .financials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
             margin-bottom: 20px;
         }
 
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            color: #00d4ff;
-            font-size: 14px;
-        }
-
-        .form-input, .form-textarea {
-            width: 100%;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid #00d4ff;
-            color: #00d4ff;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
+        .stat-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #0f3460;
             border-radius: 6px;
-        }
-
-        .form-input:focus, .form-textarea:focus {
-            outline: none;
-            box-shadow: 0 0 12px rgba(0, 212, 255, 0.5);
-            border-color: #00d4ff;
-        }
-
-        .form-textarea {
-            height: 120px;
-            resize: vertical;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 15px;
-            justify-content: flex-end;
-            margin-top: 25px;
-        }
-
-        .modal-btn {
-            padding: 12px 25px;
-            border: 1px solid;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            transition: all 0.2s ease;
-        }
-
-        .save-btn {
-            background: rgba(0, 255, 65, 0.1);
-            border-color: #00ff41;
-            color: #00ff41;
-        }
-
-        .save-btn:hover {
-            background: rgba(0, 255, 65, 0.2);
-        }
-
-        .cancel-btn {
-            background: rgba(233, 69, 96, 0.1);
-            border-color: #e94560;
-            color: #e94560;
-        }
-
-        .cancel-btn:hover {
-            background: rgba(233, 69, 96, 0.2);
-        }
-
-        .password-auth-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .password-auth-content {
-            background: linear-gradient(145deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
-            border: 2px solid #e94560;
-            border-radius: 10px;
-            padding: 45px;
-            width: 450px;
+            padding: 15px;
             text-align: center;
-            box-shadow: 0 0 35px rgba(233, 69, 96, 0.5);
         }
 
-        .password-auth-title {
-            color: #e94560;
-            font-size: 22px;
-            margin-bottom: 12px;
-            text-shadow: 0 0 12px #e94560;
-            letter-spacing: 2px;
-        }
-
-        .password-auth-subtitle {
+        .stat-label {
             color: #888;
-            font-size: 14px;
-            margin-bottom: 35px;
+            font-size: 10px;
+            margin-bottom: 8px;
         }
 
-        .password-auth-input {
-            width: 100%;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid #e94560;
-            color: #e94560;
-            font-family: 'Courier New', monospace;
+        .stat-value {
+            color: #00ff41;
             font-size: 16px;
-            border-radius: 6px;
-            margin-bottom: 25px;
-            text-align: center;
-            letter-spacing: 2px;
-        }
-
-        .password-auth-input:focus {
-            outline: none;
-            box-shadow: 0 0 18px rgba(233, 69, 96, 0.5);
-        }
-
-        .password-auth-btn {
-            width: 100%;
-            padding: 15px;
-            background: rgba(233, 69, 96, 0.1);
-            border: 2px solid #e94560;
-            color: #e94560;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border-radius: 6px;
-            margin-bottom: 12px;
-        }
-
-        .password-auth-btn:hover {
-            background: rgba(233, 69, 96, 0.2);
-            box-shadow: 0 0 18px rgba(233, 69, 96, 0.5);
-        }
-
-        .password-auth-cancel {
-            background: rgba(0, 212, 255, 0.1);
-            border-color: #00d4ff;
-            color: #00d4ff;
-        }
-
-        .password-auth-cancel:hover {
-            background: rgba(0, 212, 255, 0.2);
-            box-shadow: 0 0 18px rgba(0, 212, 255, 0.5);
-        }
-
-        .password-auth-error {
-            color: #ff0000;
-            font-size: 14px;
-            margin-top: 12px;
-            display: none;
-        }
-
-        .password-masked {
-            filter: blur(8px);
-            user-select: none;
-            transition: filter 0.3s ease;
-        }
-
-        .password-category-locked {
-            opacity: 0.7;
-            position: relative;
-        }
-
-        .password-category-locked::after {
-            content: '🔒 LOCKED - AUTHENTICATION REQUIRED';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(233, 69, 96, 0.9);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 6px;
-            font-size: 14px;
             font-weight: bold;
-            letter-spacing: 1px;
-            z-index: 10;
         }
 
-        .file-input-wrapper {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .file-input-custom {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(145deg, rgba(0, 212, 255, 0.1), rgba(0, 212, 255, 0.05));
-            border: 2px dashed #00d4ff;
-            color: #00d4ff;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            border-radius: 6px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .file-input-custom:hover {
-            background: linear-gradient(145deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.1));
-            border-color: #00ff41;
-            box-shadow: 0 0 18px rgba(0, 212, 255, 0.3);
-        }
-
-        .file-input-custom.has-file {
-            background: linear-gradient(145deg, rgba(0, 255, 65, 0.1), rgba(0, 255, 65, 0.05));
-            border-color: #00ff41;
-            border-style: solid;
-        }
-
-        .file-input-hidden {
-            position: absolute;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-
-        .file-input-text {
-            pointer-events: none;
-        }
-
-        .file-input-icon {
-            font-size: 18px;
-            margin-right: 10px;
-        }
-
-        .vault-nav, .device-nav {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        /* Landscape orientation optimizations */
-        @media screen and (orientation: landscape) {
-            .login-container {
-                width: 600px;
-                padding: 40px;
-            }
-            
-            .main-panel, .vault-container, .device-panel {
-                width: 98%;
-                max-width: 1600px;
-                height: 95vh;
+        @media (orientation: portrait) {
+            .system-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                max-width: 400px;
             }
             
             .vault-content {
-                grid-template-columns: 280px 1fr;
-                gap: 30px;
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
             }
             
-            .system-grid {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 30px;
-                max-width: 1200px;
-            }
-            
-            .system-card {
-                padding: 30px;
-                min-height: 180px;
-            }
-            
-            .system-icon {
-                font-size: 50px;
-            }
-            
-            .device-content {
-                grid-template-columns: 1fr 1fr;
-                gap: 30px;
-            }
-            
-            .item-card {
-                padding: 25px;
-            }
-            
-            .modal-content {
-                width: 700px;
-                max-width: 85%;
-            }
-        }
-
-        /* Portrait tablet optimizations */
-        @media screen and (orientation: portrait) and (min-width: 768px) {
-            .system-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 35px;
-            }
-            
-            .vault-content {
-                grid-template-columns: 320px 1fr;
+            .sidebar {
+                max-height: 200px;
             }
             
             .device-content {
                 grid-template-columns: 1fr;
-                gap: 25px;
+            }
+            
+            .financials-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
             }
         }
     </style>
 </head>
 <body>
     <div class="stars"></div>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULL</button>
     
     <!-- Login Screen -->
-    <button class="fullscreen-btn" onclick="toggleFullscreen()" style="position: fixed; top: 20px; right: 20px; z-index: 1000; padding: 10px 15px; font-size: 12px;">⛶ FULLSCREEN</button>
-    
     <div class="login-container" id="loginContainer">
-        <div class="login-title">VAULT PRO</div>
-        <div class="login-subtitle">TABLET INTERFACE - SECURE DATA STORAGE</div>
-        
-        <div class="input-group">
-            <label class="input-label">SECURITY CLEARANCE</label>
-            <input type="password" class="input-field" id="password" placeholder="Enter access code...">
+        <div class="login-box">
+            <div class="login-title">VAULT PRO</div>
+            <div class="login-subtitle">TABLET INTERFACE - SECURE ACCESS</div>
+            
+            <div class="input-group">
+                <label class="input-label">SECURITY CLEARANCE</label>
+                <input type="password" class="input-field" id="password" placeholder="Enter access code...">
+            </div>
+            
+            <button class="login-btn" onclick="authenticate()">AUTHENTICATE</button>
+            <div class="error-message" id="error">ACCESS DENIED - INVALID CREDENTIALS</div>
         </div>
-        
-        <button class="login-btn" onclick="authenticate()">AUTHENTICATE</button>
-        <div class="error-message" id="error">ACCESS DENIED - INVALID CREDENTIALS</div>
     </div>
 
     <!-- Main Panel -->
-    <div class="main-panel" id="mainPanel">
-        <div class="main-header">
-            <div class="main-title">VAULT PRO - TABLET COMMAND CENTER</div>
-            <div style="display: flex; gap: 15px;">
-                <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULLSCREEN</button>
-                <button class="logout-btn" onclick="logout()">LOGOUT</button>
+    <div class="main-container" id="mainPanel">
+        <div class="header">
+            <div class="title">VAULT PRO - TABLET COMMAND CENTER</div>
+            <div class="nav-buttons">
+                <button class="nav-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>
         
-        <div class="main-content-center">
+        <div class="content">
             <div class="system-grid">
-                <div class="system-card" onclick="openVaultStorage()">
+                <div class="system-card" onclick="openVault()">
                     <div class="system-icon">🔒</div>
                     <div class="system-title">SECURE STORAGE</div>
-                    <div class="system-description">Access encrypted document vault, password manager, and secret notes</div>
+                    <div class="system-description">Access encrypted documents, passwords, and secret notes</div>
                     <div class="system-status">OPERATIONAL</div>
                 </div>
                 
-                <div class="system-card" onclick="openDeviceLink()">
+                <div class="system-card" onclick="openDeviceManager()">
                     <div class="system-icon">📱</div>
-                    <div class="system-title">DEVICE LINK</div>
-                    <div class="system-description">Generate access links and manage connected devices</div>
+                    <div class="system-title">DEVICE MANAGER</div>
+                    <div class="system-description">Generate links and manage connected devices</div>
                     <div class="system-status">OPERATIONAL</div>
                 </div>
                 
                 <div class="system-card" onclick="openFinancials()">
                     <div class="system-icon">💳</div>
                     <div class="system-title">FINANCIALS</div>
-                    <div class="system-description">Manage spending analysis and secure card storage</div>
+                    <div class="system-description">Manage spending and card storage</div>
                     <div class="system-status">OPERATIONAL</div>
                 </div>
                 
                 <div class="system-card disabled">
-                    <div class="system-icon">⚙️</div>
-                    <div class="system-title">SYSTEM CONFIG</div>
-                    <div class="system-description">Configure vault settings and security parameters</div>
+                    <div class="system-icon">📊</div>
+                    <div class="system-title">ANALYTICS</div>
+                    <div class="system-description">View usage statistics</div>
                     <div class="system-status">COMING SOON</div>
                 </div>
-                
-
             </div>
         </div>
     </div>
 
-    <!-- Device Link Panel -->
-    <div class="device-panel" id="devicePanel">
-        <div class="device-header">
-            <div class="device-title">DEVICE LINK MANAGER</div>
-            <div class="device-nav">
-                <button class="back-btn" onclick="backToMain()">← BACK TO MAIN</button>
-                <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULLSCREEN</button>
-                <button class="logout-btn" onclick="logout()">LOGOUT</button>
+    <!-- Vault Panel -->
+    <div class="main-container" id="vaultPanel">
+        <div class="header">
+            <div class="title">SECURE STORAGE</div>
+            <div class="nav-buttons">
+                <button class="nav-btn back" onclick="backToMain()">← BACK</button>
+                <button class="nav-btn" onclick="logout()">LOGOUT</button>
             </div>
         </div>
         
-        <div class="device-content">
-            <div class="device-section">
-                <div class="section-title">🔗 LINK ACCESS</div>
-                <div class="link-generator">
-                    <div class="link-info">
-                        <div class="link-label">CURRENT SERVER ADDRESS:</div>
-                        <div class="link-display" id="serverLink">http://localhost:3000</div>
-                        <button class="copy-btn" onclick="copyLink()">COPY LINK</button>
-                    </div>
-                    
-                    <div class="link-info">
-                        <div class="link-label">DESKTOP OPTIMIZED LINK:</div>
-                        <div class="link-display" id="networkLink">Generating...</div>
-                        <button class="copy-btn" onclick="copyNetworkLink()">COPY DESKTOP LINK</button>
+        <div class="content">
+            <div class="vault-content">
+                <div class="sidebar">
+                    <button class="add-btn" onclick="alert('Add item feature coming soon')">+ ADD NEW ITEM</button>
+                    <button class="category-btn active" data-category="all">ALL ITEMS</button>
+                    <button class="category-btn" data-category="documents">DOCUMENTS</button>
+                    <button class="category-btn" data-category="passwords">PASSWORDS</button>
+                    <button class="category-btn" data-category="notes">SECRET NOTES</button>
+                </div>
+                
+                <div class="main-content" id="vaultContent">
+                    <div style="text-align: center; color: #888; margin-top: 50px;">
+                        <div style="font-size: 48px; margin-bottom: 20px;">🔒</div>
+                        <div>Loading secure storage...</div>
                     </div>
                 </div>
             </div>
-            
-            <div class="device-section">
-                <div class="section-title">💻 CONNECTED DEVICES</div>
-                <div class="device-list" id="deviceList">
+        </div>
+    </div>
+
+    <!-- Device Manager Panel -->
+    <div class="main-container" id="devicePanel">
+        <div class="header">
+            <div class="title">DEVICE MANAGER</div>
+            <div class="nav-buttons">
+                <button class="nav-btn back" onclick="backToMain()">← BACK</button>
+                <button class="nav-btn" onclick="logout()">LOGOUT</button>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="device-content">
+                <div class="device-section">
+                    <div class="section-title">🔗 LINK ACCESS</div>
+                    <div class="link-info">
+                        <div class="link-label">DESKTOP LINK:</div>
+                        <div class="link-display" id="desktopLink">Generating...</div>
+                        <button class="copy-btn" onclick="copyDesktopLink()">COPY DESKTOP LINK</button>
+                    </div>
+                    
+                    <div class="link-info">
+                        <div class="link-label">MOBILE LINK:</div>
+                        <div class="link-display" id="mobileLink">Generating...</div>
+                        <button class="copy-btn" onclick="copyMobileLink()">COPY MOBILE LINK</button>
+                    </div>
+                </div>
+                
+                <div class="device-section">
+                    <div class="section-title">💻 CONNECTED DEVICES</div>
                     <div class="device-item current-device">
                         <div class="device-icon">💻</div>
                         <div class="device-info">
@@ -1054,8 +739,54 @@
                             <div class="device-details">Windows PC - Current Session</div>
                             <div class="device-status online">ONLINE</div>
                         </div>
-                        <div class="device-actions">
-                            <span class="device-badge">PRIMARY</span>
+                        <div class="device-badge">PRIMARY</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financials Panel -->
+    <div class="main-container" id="financialsPanel">
+        <div class="header">
+            <div class="title">FINANCIALS</div>
+            <div class="nav-buttons">
+                <button class="nav-btn back" onclick="backToMain()">← BACK</button>
+                <button class="nav-btn" onclick="logout()">LOGOUT</button>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="device-content">
+                <div class="device-section">
+                    <div class="section-title">📈 SPEND ANALYSIS</div>
+                    <div class="financials-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">TOTAL SPENDING</div>
+                            <div class="stat-value" id="totalSpending">₹0.00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">THIS MONTH</div>
+                            <div class="stat-value" id="monthlySpending">₹0.00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">LAST TRANSACTION</div>
+                            <div class="stat-value" id="lastTransaction">₹0.00</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="device-section">
+                    <div class="section-title">💳 CARD STORAGE</div>
+                    <div style="margin-bottom: 15px;">
+                        <button class="copy-btn" onclick="alert('Add card feature coming soon')" style="margin-bottom: 8px;">+ ADD NEW CARD</button>
+                        <button class="copy-btn" onclick="alert('Upload transactions feature coming soon')">UPLOAD TRANSACTIONS</button>
+                    </div>
+                    <div id="cardsList">
+                        <div style="text-align: center; padding: 30px; color: #888;">
+                            <div style="font-size: 48px; margin-bottom: 15px;">💳</div>
+                            <div>No cards stored</div>
+                            <div style="font-size: 10px; margin-top: 8px;">Click "ADD NEW CARD" to get started</div>
                         </div>
                     </div>
                 </div>
@@ -1063,121 +794,9 @@
         </div>
     </div>
 
-    <!-- Vault Storage Interface -->
-    <div class="vault-container" id="vaultContainer">
-        <div class="vault-header">
-            <div class="vault-title">VAULT PRO - SECURE STORAGE</div>
-            <div class="vault-nav">
-                <button class="back-btn" onclick="backToMain()">← BACK TO MAIN</button>
-                <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULLSCREEN</button>
-                <button class="logout-btn" onclick="logout()">LOGOUT</button>
-            </div>
-        </div>
-        
-        <div class="vault-content">
-            <div class="sidebar">
-                <button class="add-btn" onclick="openAddModal()">+ ADD NEW ITEM</button>
-                <button class="category-btn active" data-category="all">ALL ITEMS</button>
-                <button class="category-btn" data-category="documents">DOCUMENTS</button>
-                <button class="category-btn" data-category="passwords">PASSWORDS</button>
-                <button class="category-btn" data-category="notes">SECRET NOTES</button>
-            </div>
-            
-            <div class="main-content" id="mainContent">
-                <div id="itemsList"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Password Authentication Panel -->
-    <div class="device-panel" id="passwordAuthPanel">
-        <div class="device-header">
-            <div class="device-title">PASSWORD ACCESS</div>
-            <div class="device-nav">
-                <button class="back-btn" onclick="closePasswordAuth()">← BACK</button>
-            </div>
-        </div>
-        
-        <div class="device-content" style="grid-template-columns: 1fr; justify-content: center; align-items: center;">
-            <div class="device-section" style="max-width: 500px; margin: 0 auto; text-align: center;">
-                <div style="font-size: 64px; margin-bottom: 20px;">🔐</div>
-                <div class="section-title">ENTER SECURITY CODE TO ACCESS PASSWORD VAULT</div>
-                
-                <div class="form-group" style="margin: 30px 0;">
-                    <input type="password" class="form-input" id="passwordAuthInput" placeholder="Enter access code..." style="text-align: center; letter-spacing: 2px; font-size: 18px; padding: 20px;">
-                </div>
-                
-                <div style="display: flex; gap: 20px; justify-content: center;">
-                    <button class="modal-btn cancel-btn" onclick="closePasswordAuth()">CANCEL</button>
-                    <button class="modal-btn save-btn" onclick="authenticatePasswordAccess()">AUTHENTICATE</button>
-                </div>
-                
-                <div id="passwordAuthError" style="color: #ff0000; font-size: 14px; margin-top: 20px; display: none;">
-                    ACCESS DENIED - INVALID CREDENTIALS
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Item Management Panel -->
-    <div class="device-panel" id="itemPanel">
-        <div class="device-header">
-            <div class="device-title" id="itemPanelTitle">ADD NEW ITEM</div>
-            <div class="device-nav">
-                <button class="back-btn" onclick="closeItemPanel()">← BACK</button>
-            </div>
-        </div>
-        
-        <div class="device-content" style="grid-template-columns: 1fr;">
-            <div class="device-section">
-                <div class="section-title">📝 ITEM DETAILS</div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 25px; margin-bottom: 25px;">
-                    <div class="form-group">
-                        <label class="form-label">CATEGORY</label>
-                        <select class="form-input" id="itemCategory">
-                            <option value="documents">DOCUMENTS</option>
-                            <option value="passwords">PASSWORDS</option>
-                            <option value="notes">SECRET NOTES</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">TITLE</label>
-                        <input type="text" class="form-input" id="itemTitle" placeholder="Enter title...">
-                    </div>
-                </div>
-                
-                <div class="form-group" id="contentGroup">
-                    <label class="form-label">CONTENT</label>
-                    <textarea class="form-textarea" id="itemContent" placeholder="Enter content..." style="height: 180px;"></textarea>
-                </div>
-                
-                <div class="form-group" id="fileGroup" style="display: none;">
-                    <label class="form-label">DOCUMENT FILE</label>
-                    <div class="file-input-wrapper">
-                        <div class="file-input-custom" id="fileInputCustom">
-                            <span class="file-input-icon">📁</span>
-                            <span class="file-input-text" id="fileInputText">CLICK TO SELECT FILE OR DRAG & DROP</span>
-                        </div>
-                        <input type="file" class="file-input-hidden" id="documentFile" accept="*/*">
-                    </div>
-                    <div style="font-size: 14px; color: #888; margin-top: 12px; text-align: center;">
-                        🔒 FILE WILL BE ENCRYPTED AND STORED SECURELY
-                    </div>
-                </div>
-                
-                <div style="display: flex; gap: 20px; justify-content: flex-end; margin-top: 35px;">
-                    <button class="modal-btn cancel-btn" onclick="closeItemPanel()">CANCEL</button>
-                    <button class="modal-btn save-btn" onclick="saveItem()">SAVE</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="vault.js?v=2.0.1"></script>
     <script>
-        // Tablet-specific fullscreen function
+        let currentPanel = 'login';
+
         function toggleFullscreen() {
             const elem = document.documentElement;
             
@@ -1203,21 +822,160 @@
                 }
             }
         }
-        
-        // Override authenticate function for tablet
+
         function authenticate() {
             const password = document.getElementById('password').value;
             const errorElement = document.getElementById('error');
             
             if (password === 'OMEGA###') {
-                document.getElementById('loginContainer').style.display = 'none';
-                document.getElementById('mainPanel').style.display = 'flex';
+                showPanel('main');
                 errorElement.style.display = 'none';
             } else {
                 errorElement.style.display = 'block';
                 document.getElementById('password').value = '';
             }
         }
+
+        function showPanel(panel) {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('mainPanel').style.display = 'none';
+            document.getElementById('vaultPanel').style.display = 'none';
+            document.getElementById('devicePanel').style.display = 'none';
+            document.getElementById('financialsPanel').style.display = 'none';
+            
+            if (panel === 'login') {
+                document.getElementById('loginContainer').style.display = 'flex';
+            } else if (panel === 'main') {
+                document.getElementById('mainPanel').style.display = 'block';
+            } else if (panel === 'vault') {
+                document.getElementById('vaultPanel').style.display = 'block';
+                loadVaultData();
+            } else if (panel === 'device') {
+                document.getElementById('devicePanel').style.display = 'block';
+                generateLinks();
+            } else if (panel === 'financials') {
+                document.getElementById('financialsPanel').style.display = 'block';
+                loadFinancialData();
+            }
+            
+            currentPanel = panel;
+        }
+
+        function openVault() {
+            showPanel('vault');
+        }
+
+        function openDeviceManager() {
+            showPanel('device');
+        }
+
+        function openFinancials() {
+            showPanel('financials');
+        }
+
+        function backToMain() {
+            showPanel('main');
+        }
+
+        function logout() {
+            showPanel('login');
+            document.getElementById('password').value = '';
+        }
+
+        function loadVaultData() {
+            // Load vault items from server
+            fetch('/api/items')
+                .then(response => response.json())
+                .then(data => {
+                    renderVaultItems(data);
+                })
+                .catch(error => {
+                    console.error('Error loading vault data:', error);
+                    document.getElementById('vaultContent').innerHTML = '<div style="text-align: center; color: #888; margin-top: 50px;"><div style="font-size: 48px; margin-bottom: 20px;">❌</div><div>Error loading data</div></div>';
+                });
+        }
+
+        function renderVaultItems(items) {
+            const content = document.getElementById('vaultContent');
+            if (!items || items.length === 0) {
+                content.innerHTML = '<div style="text-align: center; color: #888; margin-top: 50px;"><div style="font-size: 48px; margin-bottom: 20px;">📁</div><div>No items found</div><div style="font-size: 12px; margin-top: 8px;">Click "ADD NEW ITEM" to get started</div></div>';
+                return;
+            }
+
+            content.innerHTML = items.map(item => `
+                <div class="item-card">
+                    <div class="item-title">${item.title}</div>
+                    <div class="item-content">${item.content.substring(0, 100)}${item.content.length > 100 ? '...' : ''}</div>
+                    <div class="item-actions">
+                        <button class="action-btn" onclick="viewItem('${item.id}')">VIEW</button>
+                        <button class="action-btn" onclick="editItem('${item.id}')">EDIT</button>
+                        <button class="action-btn delete-btn" onclick="deleteItem('${item.id}')">DELETE</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function generateLinks() {
+            const baseUrl = window.location.origin;
+            document.getElementById('desktopLink').textContent = baseUrl;
+            document.getElementById('mobileLink').textContent = baseUrl + '/mobile';
+        }
+
+        function copyDesktopLink() {
+            navigator.clipboard.writeText(document.getElementById('desktopLink').textContent);
+            alert('Desktop link copied to clipboard!');
+        }
+
+        function copyMobileLink() {
+            navigator.clipboard.writeText(document.getElementById('mobileLink').textContent);
+            alert('Mobile link copied to clipboard!');
+        }
+
+        function loadFinancialData() {
+            // Load financial data from localStorage
+            const cards = JSON.parse(localStorage.getItem('vaultCards') || '[]');
+            const transactions = JSON.parse(localStorage.getItem('vaultTransactions') || '[]');
+            
+            // Calculate totals
+            const total = transactions.reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
+            const thisMonth = transactions.filter(t => {
+                const date = new Date(t.date);
+                const now = new Date();
+                return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+            }).reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
+            
+            const lastTransaction = transactions.length > 0 ? transactions[transactions.length - 1].amount : 0;
+            
+            document.getElementById('totalSpending').textContent = `₹${total.toFixed(2)}`;
+            document.getElementById('monthlySpending').textContent = `₹${thisMonth.toFixed(2)}`;
+            document.getElementById('lastTransaction').textContent = `₹${parseFloat(lastTransaction || 0).toFixed(2)}`;
+        }
+
+        function viewItem(id) {
+            alert('View item feature coming soon');
+        }
+
+        function editItem(id) {
+            alert('Edit item feature coming soon');
+        }
+
+        function deleteItem(id) {
+            if (confirm('Are you sure you want to delete this item?')) {
+                alert('Delete item feature coming soon');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            showPanel('login');
+        });
+
+        // Handle Enter key in password field
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                authenticate();
+            }
+        });
     </script>
 </body>
 </html>

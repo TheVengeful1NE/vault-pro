@@ -216,15 +216,31 @@
         .nav-btn.back {
             color: #00d4ff;
             text-shadow: 0 0 4px #00d4ff;
+            border-color: #00d4ff;
+        }
+
+        .nav-btn.fullscreen {
+            color: #00d4ff;
+            text-shadow: 0 0 4px #00d4ff;
+            border-color: #00d4ff;
+        }
+
+        .nav-btn.logout {
+            color: #e94560;
+            text-shadow: 0 0 4px #e94560;
+            border-color: #e94560;
         }
 
         .nav-btn:hover {
             background: linear-gradient(145deg, #3a3a4e, #2e2e42);
-            box-shadow: 0 0 8px rgba(233, 69, 96, 0.4);
         }
 
-        .nav-btn.back:hover {
+        .nav-btn.back:hover, .nav-btn.fullscreen:hover {
             box-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+        }
+
+        .nav-btn.logout:hover {
+            box-shadow: 0 0 8px rgba(233, 69, 96, 0.4);
         }
 
         .content {
@@ -646,7 +662,6 @@
 </head>
 <body>
     <div class="stars"></div>
-    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULL</button>
     
     <!-- Login Screen -->
     <div class="login-container" id="loginContainer">
@@ -1268,16 +1283,21 @@
                 modified: new Date().toISOString()
             };
             
-            // Save to server
+            vaultItems.push(newItem);
+            
+            // Save to ALL storage keys for cross-platform sync
+            localStorage.setItem('vaultItems', JSON.stringify(vaultItems));
+            localStorage.setItem('items', JSON.stringify(vaultItems));
+            localStorage.setItem('desktopItems', JSON.stringify(vaultItems));
+            localStorage.setItem('tabletItems', JSON.stringify(vaultItems));
+            localStorage.setItem('mobileItems', JSON.stringify(vaultItems));
+            
+            // Try to save to server
             fetch('/api/items', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newItem)
-            }).catch(() => {
-                // If server fails, save to localStorage
-                vaultItems.push(newItem);
-                localStorage.setItem('vaultItems', JSON.stringify(vaultItems));
-            });
+            }).catch(() => console.log('Server save failed, using localStorage'));
             
             // Clear form
             document.getElementById('itemTitle').value = '';
@@ -1304,8 +1324,13 @@
             };
             
             cards.push(newCard);
+            
+            // Save to ALL storage keys for cross-platform sync
             localStorage.setItem('vaultCards', JSON.stringify(cards));
             localStorage.setItem('cards', JSON.stringify(cards));
+            localStorage.setItem('desktopCards', JSON.stringify(cards));
+            localStorage.setItem('tabletCards', JSON.stringify(cards));
+            localStorage.setItem('mobileCards', JSON.stringify(cards));
             
             // Clear form
             document.getElementById('cardName').value = '';

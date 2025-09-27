@@ -153,26 +153,27 @@ class MobileVaultPro {
                 const title = item.title || 'Untitled';
                 
                 return `
-                    <div class="mobile-item">
-                        <div class="mobile-item-title ${shouldMaskThis ? 'password-masked' : ''}">
+                    <div class="item-card ${shouldMaskThis ? 'password-category-locked' : ''}">
+                        <div class="item-title ${shouldMaskThis ? 'password-masked' : ''}">
                             ${shouldMaskThis ? this.maskText(title) : this.escapeHtml(title)}
                         </div>
-                        <div class="mobile-item-content ${shouldMaskThis ? 'password-masked' : ''}">
+                        <div class="item-content ${shouldMaskThis ? 'password-masked' : ''}">
                             ${shouldMaskThis ? this.maskText(content) : 
-                              this.escapeHtml(content).substring(0, 100)}${content.length > 100 ? '...' : ''}
+                              this.escapeHtml(content).substring(0, 200)}${content.length > 200 ? '...' : ''}
                         </div>
-                        <div class="mobile-item-meta">
-                            ${(item.category || 'unknown').toUpperCase()} | ${new Date(item.created || Date.now()).toLocaleDateString()}
+                        <div style="font-size: 10px; color: #666; margin-top: 10px;">
+                            Category: ${(item.category || 'unknown').toUpperCase()} | Created: ${new Date(item.created || Date.now()).toLocaleDateString()}
+                            ${item.category === 'documents' ? ' | 🔒 ENCRYPTED' : ' | 🔐 ENCRYPTED'}
                         </div>
-                        <div class="mobile-item-actions">
+                        <div class="item-actions">
                             ${shouldMaskThis ? 
-                                `<button class="mobile-action-btn" onclick="window.mobileVault.showMobilePasswordAuth()">🔒 UNLOCK</button>` :
+                                `<button class="action-btn" onclick="window.mobileVault.showMobilePasswordAuth()">🔒 UNLOCK</button>` :
                                 item.category === 'documents' ? 
-                                    `<button class="mobile-action-btn" onclick="window.mobileVault.downloadDocument('${item.id}')">DOWNLOAD</button>` :
-                                    `<button class="mobile-action-btn" onclick="window.mobileVault.viewMobileItem('${item.id}')">VIEW</button>`
+                                    `<button class="action-btn" onclick="window.mobileVault.downloadDocument('${item.id}')">DOWNLOAD</button>` :
+                                    `<button class="action-btn" onclick="window.mobileVault.viewMobileItem('${item.id}')">VIEW</button>`
                             }
-                            ${!shouldMaskThis ? `<button class="mobile-action-btn" onclick="window.mobileVault.openMobileEditModal('${item.id}')">EDIT</button>` : ''}
-                            ${!shouldMaskThis ? `<button class="mobile-action-btn delete" onclick="window.mobileVault.deleteMobileItem('${item.id}')">DELETE</button>` : ''}
+                            ${!shouldMaskThis ? `<button class="action-btn" onclick="window.mobileVault.openMobileEditModal('${item.id}')">EDIT</button>` : ''}
+                            ${!shouldMaskThis ? `<button class="action-btn delete-btn" onclick="window.mobileVault.deleteMobileItem('${item.id}')">DELETE</button>` : ''}
                         </div>
                     </div>
                 `;
@@ -233,17 +234,19 @@ class MobileVaultPro {
     }
 
     showMobilePasswordAuth() {
-        document.getElementById('mobileVault').style.display = 'none';
-        document.getElementById('mobilePasswordPanel').style.display = 'block';
-        setTimeout(() => {
-            document.getElementById('mobilePasswordAuthInput').focus();
-        }, 100);
+        // For mobile, we'll use a simple alert for now since we don't have the password panel in the new layout
+        const password = prompt('Enter password vault access code:');
+        if (password === 'PASSWORD###') {
+            this.grantMobilePasswordAccess();
+        } else if (password !== null) {
+            alert('ACCESS DENIED - INVALID CREDENTIALS');
+        }
     }
 
     grantMobilePasswordAccess() {
         this.passwordAccessGranted = true;
         if (this.currentCategory !== 'passwords') {
-            document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
             document.querySelector('[data-category="passwords"]').classList.add('active');
             this.currentCategory = 'passwords';
         }
@@ -457,88 +460,44 @@ function copyMobileTabletLink() {
 }
 
 function openMobileAddModal() {
-    window.mobileVault.editingId = null;
-    document.getElementById('mobileItemPanelTitle').textContent = 'ADD NEW ITEM';
-    document.getElementById('mobileItemCategory').value = 'documents';
-    document.getElementById('mobileItemTitle').value = '';
-    document.getElementById('mobileItemContent').value = '';
-    document.getElementById('mobileDocumentFile').value = '';
-    window.mobileVault.handleMobileFileSelection(null);
-    window.mobileVault.toggleMobileContentFields('documents');
+    // For mobile, use simple prompts for now
+    const category = prompt('Enter category (documents/passwords/notes):', 'documents');
+    if (!category) return;
     
-    document.getElementById('mobileVault').style.display = 'none';
-    document.getElementById('mobileItemPanel').style.display = 'block';
+    const title = prompt('Enter title:');
+    if (!title) return;
+    
+    let content = '';
+    if (category !== 'documents') {
+        content = prompt('Enter content:');
+        if (!content) return;
+    }
+    
+    // Add the item
+    if (window.mobileVault) {
+        window.mobileVault.addItem(category, title, content);
+    }
 }
 
+// Simplified mobile functions
 function closeMobileItemPanel() {
-    document.getElementById('mobileItemPanel').style.display = 'none';
-    document.getElementById('mobileVault').style.display = 'block';
+    // Not needed in simplified mobile interface
 }
 
 function closeMobileViewPanel() {
-    document.getElementById('mobileViewPanel').style.display = 'none';
-    document.getElementById('mobileVault').style.display = 'block';
+    // Not needed in simplified mobile interface
 }
 
 function closeMobilePasswordAuth() {
-    document.getElementById('mobilePasswordPanel').style.display = 'none';
-    document.getElementById('mobileVault').style.display = 'block';
-    document.getElementById('mobilePasswordAuthInput').value = '';
-    document.getElementById('mobilePasswordAuthError').style.display = 'none';
+    // Not needed in simplified mobile interface
 }
 
 function authenticateMobilePasswordAccess() {
-    const password = document.getElementById('mobilePasswordAuthInput').value;
-    const errorMsg = document.getElementById('mobilePasswordAuthError');
-    
-    if (password === 'PASSWORD###') {
-        errorMsg.style.display = 'none';
-        closeMobilePasswordAuth();
-        window.mobileVault.grantMobilePasswordAccess();
-    } else {
-        errorMsg.style.display = 'block';
-        document.getElementById('mobilePasswordAuthInput').value = '';
-    }
+    // Not needed in simplified mobile interface
 }
 
 async function saveMobileItem() {
-    const category = document.getElementById('mobileItemCategory').value;
-    const title = document.getElementById('mobileItemTitle').value.trim();
-    
-    if (!title) {
-        showMobileNotification('Please enter a title', 'error');
-        return;
-    }
-    
-    let content = '';
-    let file = null;
-    
-    if (category === 'documents') {
-        const fileInput = document.getElementById('mobileDocumentFile');
-        if (!window.mobileVault.editingId && !fileInput.files[0]) {
-            showMobileNotification('Please select a file to upload', 'error');
-            return;
-        }
-        file = fileInput.files[0];
-    } else {
-        content = document.getElementById('mobileItemContent').value.trim();
-        if (!content) {
-            showMobileNotification('Please enter content', 'error');
-            return;
-        }
-    }
-    
-    try {
-        if (window.mobileVault.editingId) {
-            await window.mobileVault.editItem(window.mobileVault.editingId, category, title, content, file);
-        } else {
-            await window.mobileVault.addItem(category, title, content, file);
-        }
-        closeMobileItemPanel();
-        showMobileNotification('Item saved successfully!');
-    } catch (error) {
-        showMobileNotification('Error saving item: ' + error.message, 'error');
-    }
+    // Not needed in simplified mobile interface
 }
 
 function showMobileNotification(message, type = 'success') {

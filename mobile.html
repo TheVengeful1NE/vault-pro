@@ -794,15 +794,15 @@
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
                     <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid #0f3460; border-radius: 6px; padding: 12px; text-align: center;">
                         <div style="color: #888; font-size: 8px; margin-bottom: 5px;">TOTAL SPENDING</div>
-                        <div style="color: #00ff41; font-size: 14px; font-weight: bold;">₹0.00</div>
+                        <div style="color: #00ff41; font-size: 14px; font-weight: bold;" id="mobileTotalSpending">₹0.00</div>
                     </div>
                     <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid #0f3460; border-radius: 6px; padding: 12px; text-align: center;">
                         <div style="color: #888; font-size: 8px; margin-bottom: 5px;">THIS MONTH</div>
-                        <div style="color: #00ff41; font-size: 14px; font-weight: bold;">₹0.00</div>
+                        <div style="color: #00ff41; font-size: 14px; font-weight: bold;" id="mobileMonthlySpending">₹0.00</div>
                     </div>
                     <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid #0f3460; border-radius: 6px; padding: 12px; text-align: center;">
                         <div style="color: #888; font-size: 8px; margin-bottom: 5px;">LAST TRANSACTION</div>
-                        <div style="color: #00ff41; font-size: 14px; font-weight: bold;">₹0.00</div>
+                        <div style="color: #00ff41; font-size: 14px; font-weight: bold;" id="mobileLastTransaction">₹0.00</div>
                     </div>
                 </div>
             </div>
@@ -813,10 +813,12 @@
                     <button class="copy-btn" onclick="alert('Add card feature coming soon')" style="margin-bottom: 8px;">+ ADD NEW CARD</button>
                     <button class="copy-btn" onclick="alert('Upload transactions feature coming soon')">UPLOAD TRANSACTIONS</button>
                 </div>
-                <div style="text-align: center; padding: 20px; color: #888;">
-                    <div style="font-size: 32px; margin-bottom: 10px;">💳</div>
-                    <div>No cards stored</div>
-                    <div style="font-size: 8px; margin-top: 5px;">Click "ADD NEW CARD" to get started</div>
+                <div id="mobileCardsList">
+                    <div style="text-align: center; padding: 20px; color: #888;">
+                        <div style="font-size: 32px; margin-bottom: 10px;">💳</div>
+                        <div>No cards stored</div>
+                        <div style="font-size: 8px; margin-top: 5px;">Click "ADD NEW CARD" to get started</div>
+                    </div>
                 </div>
             </div>
         </div>

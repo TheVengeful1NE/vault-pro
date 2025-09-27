@@ -114,23 +114,79 @@ class VaultPro {
     }
 
     async loadData() {
+        console.log('Loading vault data for desktop...');
+        
+        // Load from all localStorage sources first
+        const vaultItems_local = JSON.parse(localStorage.getItem('vaultItems') || '[]');
+        const items_local = JSON.parse(localStorage.getItem('items') || '[]');
+        const desktopItems = JSON.parse(localStorage.getItem('desktopItems') || '[]');
+        const tabletItems = JSON.parse(localStorage.getItem('tabletItems') || '[]');
+        const mobileItems = JSON.parse(localStorage.getItem('mobileItems') || '[]');
+        
+        console.log('Local storage sources:', { vaultItems_local, items_local, desktopItems, tabletItems, mobileItems });
+        
         try {
             const response = await fetch('/api/items');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            this.data = await response.json();
-            if (!this.data || !this.data.items) {
-                this.data = { items: [] };
-            }
+            const serverData = await response.json();
+            const serverItems = serverData.items || [];
+            
+            console.log('Server data:', serverItems);
+            
+            // Merge all sources
+            const allItems = [...serverItems, ...vaultItems_local, ...items_local, ...desktopItems, ...tabletItems, ...mobileItems];
+            const uniqueItems = allItems.filter((item, index, self) => {
+                if (!item || !item.id) return false;
+                return index === self.findIndex(t => t && t.id === item.id);
+            });
+            
+            console.log('Final merged items:', uniqueItems);
+            
+            this.data = { items: uniqueItems };
+            
+            // Save merged data back to localStorage for cross-platform sync
+            localStorage.setItem('vaultItems', JSON.stringify(uniqueItems));
+            localStorage.setItem('items', JSON.stringify(uniqueItems));
+            localStorage.setItem('desktopItems', JSON.stringify(uniqueItems));
+            
         } catch (error) {
-            console.error('Error loading data:', error);
-            this.data = { items: [] };
-            showNotification('Failed to load data. Please check connection.', 'error');
+            console.error('Server unavailable, using localStorage only:', error);
+            
+            // Merge local sources only
+            const allItems = [...vaultItems_local, ...items_local, ...desktopItems, ...tabletItems, ...mobileItems];
+            const uniqueItems = allItems.filter((item, index, self) => {
+                if (!item || !item.id) return false;
+                return index === self.findIndex(t => t && t.id === item.id);
+            });
+            
+            console.log('Local only items:', uniqueItems);
+            this.data = { items: uniqueItems };
         }
     }
 
     async saveItem(item) {
+        // Save to localStorage first for immediate cross-platform sync
+        const currentItems = this.data.items || [];
+        const existingIndex = currentItems.findIndex(i => i.id === item.id);
+        
+        if (existingIndex !== -1) {
+            currentItems[existingIndex] = item;
+        } else {
+            currentItems.push(item);
+        }
+        
+        this.data.items = currentItems;
+        
+        // Save to all localStorage keys for cross-platform sync
+        localStorage.setItem('vaultItems', JSON.stringify(currentItems));
+        localStorage.setItem('items', JSON.stringify(currentItems));
+        localStorage.setItem('desktopItems', JSON.stringify(currentItems));
+        localStorage.setItem('tabletItems', JSON.stringify(currentItems));
+        localStorage.setItem('mobileItems', JSON.stringify(currentItems));
+        
+        // Try to save to server as backup
         try {
             await fetch('/api/items', {
                 method: 'POST',
@@ -138,7 +194,7 @@ class VaultPro {
                 body: JSON.stringify(item)
             });
         } catch (error) {
-            console.error('Error saving item:', error);
+            console.error('Server save failed, using localStorage only:', error);
         }
     }
 

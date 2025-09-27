@@ -704,8 +704,7 @@ function updateMobileLinks(baseURL) {
             <button class="copy-btn" onclick="copyTabletLink()">COPY TABLET LINK</button>
         `;
         
-        const mobileLinkInfo = document.getElementById('mobileLinkInfo');
-        linkGenerator.insertBefore(tabletLinkSection, mobileLinkInfo.nextSibling);
+        linkGenerator.appendChild(tabletLinkSection);
     } else {
         document.getElementById('tabletLink').textContent = tabletURL;
     }

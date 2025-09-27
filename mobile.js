@@ -105,6 +105,7 @@ class MobileVaultPro {
     }
 
     renderItems() {
+        console.log('Rendering mobile items...');
         const mobileContent = document.getElementById('mobileContent');
         if (!mobileContent) {
             console.error('Mobile content element not found');
@@ -112,12 +113,14 @@ class MobileVaultPro {
         }
         
         const items = this.getFilteredItems();
+        console.log('Items to render:', items.length);
         
         if (!items || items.length === 0) {
             mobileContent.innerHTML = `
-                <div class="mobile-empty">
-                    <div class="mobile-empty-icon">🔒</div>
-                    <div class="mobile-empty-text">No items in this category<br>Tap + to add new items</div>
+                <div style="text-align: center; color: #888; margin-top: 50px;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">🔒</div>
+                    <div>No items in this category</div>
+                    <div style="font-size: 10px; margin-top: 10px;">Add items on desktop to see them here</div>
                 </div>
             `;
             return;
@@ -373,6 +376,15 @@ function openMobileVault() {
     
     // Always create new instance to ensure fresh data
     window.mobileVault = new MobileVaultPro();
+    
+    // Force data load after a short delay
+    setTimeout(() => {
+        if (window.mobileVault) {
+            window.mobileVault.loadData().then(() => {
+                window.mobileVault.renderItems();
+            });
+        }
+    }, 100);
 }
 
 // Fullscreen functionality
@@ -398,33 +410,42 @@ function openMobileFinancials() {
 }
 
 function loadMobileFinancials() {
+    console.log('Loading mobile financials...');
+    
     // Load cards from localStorage (same as desktop)
     const cards = JSON.parse(localStorage.getItem('vaultCards') || '[]');
+    console.log('Found cards:', cards.length);
+    
     const cardsList = document.getElementById('mobileCardsList');
+    if (!cardsList) {
+        console.error('mobileCardsList element not found');
+        return;
+    }
     
     if (cards.length === 0) {
         cardsList.innerHTML = `
             <div style="text-align: center; padding: 20px; color: #888;">
                 <div style="font-size: 32px; margin-bottom: 10px;">💳</div>
                 <div>No cards stored</div>
-                <div style="font-size: 8px; margin-top: 5px;">Click "ADD NEW CARD" to get started</div>
+                <div style="font-size: 8px; margin-top: 5px;">Add cards on desktop to see them here</div>
             </div>
         `;
-        return;
+    } else {
+        cardsList.innerHTML = cards.map(card => `
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; padding: 15px; margin-bottom: 10px; color: white; position: relative; min-height: 80px;">
+                <div style="position: absolute; top: 10px; right: 10px; font-size: 8px; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">${(card.category || 'DEBIT').toUpperCase()}</div>
+                <div style="font-size: 10px; margin-bottom: 5px;">${card.company || 'BANK'}</div>
+                <div style="font-size: 12px; font-weight: bold; margin-bottom: 5px;">**** **** **** ${card.number ? card.number.slice(-4) : '****'}</div>
+                <div style="font-size: 9px;">${card.holder || 'CARDHOLDER'}</div>
+                <div style="position: absolute; bottom: 10px; right: 10px; font-size: 8px;">${card.expiry || 'MM/YY'}</div>
+            </div>
+        `).join('');
     }
-    
-    cardsList.innerHTML = cards.map(card => `
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; padding: 15px; margin-bottom: 10px; color: white; position: relative; min-height: 80px;">
-            <div style="position: absolute; top: 10px; right: 10px; font-size: 8px; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">${(card.category || 'DEBIT').toUpperCase()}</div>
-            <div style="font-size: 10px; margin-bottom: 5px;">${card.company || 'BANK'}</div>
-            <div style="font-size: 12px; font-weight: bold; margin-bottom: 5px;">**** **** **** ${card.number.slice(-4)}</div>
-            <div style="font-size: 9px;">${card.holder}</div>
-            <div style="position: absolute; bottom: 10px; right: 10px; font-size: 8px;">${card.expiry}</div>
-        </div>
-    `).join('');
     
     // Update spend analysis
     const transactions = JSON.parse(localStorage.getItem('vaultTransactions') || '[]');
+    console.log('Found transactions:', transactions.length);
+    
     const total = transactions.reduce((sum, t) => sum + (t.amount || 0), 0);
     const thisMonth = transactions.filter(t => {
         const transDate = new Date(t.date);
@@ -433,9 +454,15 @@ function loadMobileFinancials() {
     }).reduce((sum, t) => sum + (t.amount || 0), 0);
     const lastTrans = transactions.length > 0 ? transactions[transactions.length - 1].amount || 0 : 0;
     
-    document.getElementById('mobileTotalSpending').textContent = `₹${total.toFixed(2)}`;
-    document.getElementById('mobileMonthlySpending').textContent = `₹${thisMonth.toFixed(2)}`;
-    document.getElementById('mobileLastTransaction').textContent = `₹${lastTrans.toFixed(2)}`;
+    const totalEl = document.getElementById('mobileTotalSpending');
+    const monthlyEl = document.getElementById('mobileMonthlySpending');
+    const lastEl = document.getElementById('mobileLastTransaction');
+    
+    if (totalEl) totalEl.textContent = `₹${total.toFixed(2)}`;
+    if (monthlyEl) monthlyEl.textContent = `₹${thisMonth.toFixed(2)}`;
+    if (lastEl) lastEl.textContent = `₹${lastTrans.toFixed(2)}`;
+    
+    console.log('Mobile financials loaded successfully');
 }
 
 function openMobileDeviceManager() {
